@@ -61,10 +61,10 @@ Finally, build the package.
 ```bash
 python3 -m venv env && source env/bin/activate && pip install pipenv && pipenv install --dev
 # Build the wheel
-python -m build
+python3 -m build
 
 # Generate the docs
-python build_docs.py
+python3 build_docs.py
 ```
 
 **The compiled wheel package .whl file will be at `./dist` folder.**
