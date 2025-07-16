@@ -1,0 +1,52 @@
+[
+  { "id": "measure_001", "name": "Congestion charges" },
+  { "id": "measure_002", "name": "Parking charges" },
+  { "id": "measure_003", "name": "Restricted parking" },
+  {
+    "id": "measure_004",
+    "name": "Limited traffic zone / Pedestrianisation of streets"
+  },
+  { "id": "measure_005", "name": "Parking supply management" },
+  { "id": "measure_006", "name": "Speed limits" },
+  { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+  {
+    "id": "measure_008",
+    "name": "Scheduling integration in MaaS services (see task T2.3)"
+  },
+  {
+    "id": "measure_009",
+    "name": "Ticketing integration in MaaS services (see task T3.4)"
+  },
+  {
+    "id": "measure_010",
+    "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+  },
+  { "id": "measure_011", "name": "On demand vehicle sharing action plan" },
+  { "id": "measure_012", "name": "Nudging (gamification or rewards)" },
+  { "id": "measure_013", "name": "Dynamic pricing of NSM" },
+  {
+    "id": "measure_014",
+    "name": "Improved information about the availability of shared modes"
+  },
+  {
+    "id": "measure_015",
+    "name": "Introduction of new NSM services (ex. bike-sharing)"
+  },
+  {
+    "id": "measure_016",
+    "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)"
+  },
+  {
+    "id": "measure_017",
+    "name": "Streets retrofitting/introduction of priority lanes"
+  },
+  {
+    "id": "measure_018",
+    "name": "Dedicated parking spaces for carsharing/micromobility"
+  },
+  { "id": "measure_019", "name": "Widening PT geographical area" },
+  {
+    "id": "measure_020",
+    "name": "Central PT planning and construction program"
+  }
+]
