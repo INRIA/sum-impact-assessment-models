@@ -1,5 +1,5 @@
 import json
-from ..schemas import LivingLab, Measure, KPI, KPILivingLab
+from ..schemas.core import LivingLab, Measure, KPI, KPILivingLab
 
 
 def load_living_labs_from_file(file_path: str, kpi_definitions: list[KPI]) -> list[LivingLab]:

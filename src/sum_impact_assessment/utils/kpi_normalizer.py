@@ -1,5 +1,5 @@
 from typing import List
-from ..schemas.kpi import KPI
+from ..schemas.core import KPILivingLab
 
 
 class KPINormalizer:
@@ -7,7 +7,7 @@ class KPINormalizer:
     Normalizes KPI data by calculating the variation for each KPI.
     """
 
-    def __init__(self, kpis: List[KPI]):
+    def __init__(self, kpis: List[KPILivingLab]):
         self.kpis = kpis
 
     def normalizeKPIs(self):
@@ -18,6 +18,8 @@ class KPINormalizer:
         - progression_target == 0 (decrease desired): positive if value Decreases
         """
         for kpi in self.kpis:
+            min_boundary = kpi.value_min 
+            max_boundary = kpi.value_max
             if kpi.value_before != 0:
                 variation = ((kpi.value_after - kpi.value_before) /
                              kpi.value_before)

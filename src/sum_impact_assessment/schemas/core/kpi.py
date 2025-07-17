@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from .core.kpi_value_type import KPIValueType
+from .kpi_value_type import KPIValueType
 
 
 class KPI(BaseModel):

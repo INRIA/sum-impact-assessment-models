@@ -1,4 +1,5 @@
-from ...schemas import MeasureImpactCoefficient, Measure
+from ...schemas.core import Measure
+from ...schemas.impact_analysis import MeasureImpactCoefficient
 
 
 class KPIImpactAnalyzer:

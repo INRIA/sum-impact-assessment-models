@@ -1,4 +1,4 @@
-from .measure import Measure
+from ..core import Measure
 
 
 class MeasureImpactCoefficient(Measure):
