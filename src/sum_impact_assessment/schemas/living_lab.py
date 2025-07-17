@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from .kpi import KPI
+from .kpi_living_lab import KPILivingLab
 from .measure import Measure
 import json
 
@@ -15,7 +15,7 @@ class LivingLab(BaseModel):
     """
     id: str
     name: str
-    kpis: List[KPI]
+    kpis: List[KPILivingLab]
     measures: List[Measure]
 
     @classmethod

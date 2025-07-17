@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from .core.kpi_value_type import KPIValueType
 
 
 class KPI(BaseModel):
@@ -7,14 +8,18 @@ class KPI(BaseModel):
     KPI schema:
     - id: unique identifier
     - name: human-readable name of the KPI
-    - variation: calculated variation (e.g. percent change)
-    - value_before: value before intervention
-    - value_after: value after intervention
+    - progression_target: expected progression of the KPI, to define negative or positive change. 0: expected to go down, 1: expected to go up
+    - value_type: specifies the expected type of the value, must be one of KPIValueType
+    - value_min: optional minimum value for the KPI (can be empty)
+    - value_max: optional maximum value for the KPI (can be empty)
     """
     id: str
     name: str
-    variation: Optional[float] = Field(None, description="Computed variation (float)")
-    value_before: float = Field(..., description="Value before")
-    value_after: float = Field(..., description="Value after")
     progression_target: int = Field(
         ..., description="0: expected to go down, 1: expected to go up")
+    value_type: KPIValueType = Field(
+        ..., description="Type of the values: percentage, ratio, custom_unit, score")
+    value_min: Optional[float] = Field(
+        None, description="Optional minimum value for the KPI")
+    value_max: Optional[float] = Field(
+        None, description="Optional maximum value for the KPI")

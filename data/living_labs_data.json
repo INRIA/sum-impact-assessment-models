@@ -5,347 +5,236 @@
     "kpis": [
       {
         "id": "kpi_1",
-        "name": "Level of completion of SUMP measures",
-        "variation": null,
         "value_before": 1.0,
-        "value_after": 0.830627,
-        "progression_target": 0
+        "value_after": 0.830627
       },
       {
         "id": "kpi_2",
-        "name": "Community Involvement",
-        "variation": null,
         "value_before": 2.0,
-        "value_after": 2.023187,
-        "progression_target": 0
+        "value_after": 2.023187
       },
       {
         "id": "kpi_3.1",
-        "name": "Balance of pull - push planned measures",
-        "variation": null,
         "value_before": 3.1,
-        "value_after": 2.883446,
-        "progression_target": 0
+        "value_after": 2.883446
       },
       {
         "id": "kpi_3.2",
-        "name": "Balance of pull - push implemented measures",
-        "variation": null,
         "value_before": 3.2,
-        "value_after": 2.951379,
-        "progression_target": 1
+        "value_after": 2.951379
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 4.0,
-        "value_after": 4.62738,
-        "progression_target": 0
+        "value_after": 4.62738
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 5.0,
-        "value_after": 4.836873,
-        "progression_target": 0
+        "value_after": 4.836873
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 6.1,
-        "value_after": 5.092395,
-        "progression_target": 0
+        "value_after": 5.092395
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 6.2,
-        "value_after": 6.7496,
-        "progression_target": 0
+        "value_after": 6.7496
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 6.3,
-        "value_after": 5.960147,
-        "progression_target": 0
+        "value_after": 5.960147
       },
       {
         "id": "kpi_7.1",
-        "name": "Actual door-to-door travel time car-sharing only",
-        "variation": null,
         "value_before": 7.1,
-        "value_after": 7.210365,
-        "progression_target": 0
+        "value_after": 7.210365
       },
       {
         "id": "kpi_7.2",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 7.2,
-        "value_after": 7.987614,
-        "progression_target": 0
+        "value_after": 7.987614
       },
       {
         "id": "kpi_7.3",
-        "name": "Actual door-to-door travel time ride-hailing and shuttle services only",
-        "variation": null,
         "value_before": 7.3,
-        "value_after": 7.785258,
-        "progression_target": 0
+        "value_after": 7.785258
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 7.4,
-        "value_after": 8.03413,
-        "progression_target": 0
+        "value_after": 8.03413
       },
       {
         "id": "kpi_7.5",
-        "name": "Actual door-to-door travel time public transport and car-sharing",
-        "variation": null,
         "value_before": 7.5,
-        "value_after": 8.112535,
-        "progression_target": 0
+        "value_after": 8.112535
       },
       {
         "id": "kpi_7.6",
-        "name": "Actual door-to-door travel time public transport and micro-mobility",
-        "variation": null,
         "value_before": 7.6,
-        "value_after": 6.371223,
-        "progression_target": 0
+        "value_after": 6.371223
       },
       {
         "id": "kpi_7.7",
-        "name": "Actual door-to-door travel time public transport and ride-hailing or shuttle services",
-        "variation": null,
         "value_before": 7.7,
-        "value_after": 6.199084,
-        "progression_target": 0
+        "value_after": 6.199084
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 8.0,
-        "value_after": 8.435708,
-        "progression_target": 0
+        "value_after": 8.435708
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 9.0,
-        "value_after": 10.744935,
-        "progression_target": 0
+        "value_after": 10.744935
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.34,
-        "value_after": 0.329809,
-        "progression_target": 0
+        "value_after": 0.329809
       },
       {
         "id": "kpi_10.1.2",
-        "name": "Travel cost ratio public transport #2",
-        "variation": null,
         "value_before": 0.34,
-        "value_after": 0.406596,
-        "progression_target": 0
+        "value_after": 0.406596
       },
       {
         "id": "kpi_10.1.3",
-        "name": "Travel cost ratio public transport #3",
-        "variation": null,
         "value_before": 0.34,
-        "value_after": 0.36171,
-        "progression_target": 0
+        "value_after": 0.36171
       },
       {
         "id": "kpi_10.2.1",
-        "name": "Travel cost ratio car sharing #1",
-        "variation": null,
         "value_before": 1.64,
-        "value_after": 1.913993,
-        "progression_target": 0
+        "value_after": 1.913993
       },
       {
         "id": "kpi_10.2.2",
-        "name": "Travel cost ratio car sharing #2",
-        "variation": null,
         "value_before": 1.65,
-        "value_after": 1.610528,
-        "progression_target": 0
+        "value_after": 1.610528
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 1.65,
-        "value_after": 1.380016,
-        "progression_target": 0
+        "value_after": 1.380016
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 1.6,
-        "value_after": 1.734202,
-        "progression_target": 0
+        "value_after": 1.734202
       },
       {
         "id": "kpi_10.4.1",
-        "name": "Travel cost ratio ride-hailing and shuttle services #1",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 0
+        "value_after": 0.0
       },
       {
         "id": "kpi_10.4.2",
-        "name": "Travel cost ratio ride-hailing and shuttle services #2",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 0
+        "value_after": 0.0
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.86,
-        "value_after": 0.9574,
-        "progression_target": 0
+        "value_after": 0.9574
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 1.25,
-        "value_after": 1.390493,
-        "progression_target": 0
+        "value_after": 1.390493
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 1.36,
-        "value_after": 1.115471,
-        "progression_target": 0
+        "value_after": 1.115471
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.85,
-        "value_after": 0.708638,
-        "progression_target": 0
+        "value_after": 0.708638
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 1.01,
-        "value_after": 0.885508,
-        "progression_target": 0
+        "value_after": 0.885508
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 1.08,
-        "value_after": 1.143943,
-        "progression_target": 0
+        "value_after": 1.143943
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": 0.28,
-        "value_after": 0.307464,
-        "progression_target": 1
+        "value_after": 0.307464
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": 0.27,
-        "value_after": 0.274266,
-        "progression_target": 1
+        "value_after": 0.274266
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 1
+        "value_after": 0.0
       },
       {
         "id": "kpi_12.2.1",
-        "name": "Perceived safety diff traffic taxi",
-        "variation": null,
         "value_before": -0.1,
-        "value_after": -0.117464,
-        "progression_target": 1
+        "value_after": -0.117464
       },
       {
         "id": "kpi_12.2.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -0.43,
-        "value_after": -0.409718,
-        "progression_target": 1
+        "value_after": -0.409718
       },
       {
         "id": "kpi_12.2.3",
-        "name": "Perceived safety diff bicycle",
-        "variation": null,
         "value_before": -0.07,
-        "value_after": -0.065275,
-        "progression_target": 1
+        "value_after": -0.065275
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 13.0,
-        "value_after": 14.832937,
-        "progression_target": 1
+        "value_after": 14.832937
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 14.0,
-        "value_after": 11.263972,
-        "progression_target": 0
+        "value_after": 11.263972
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 16.0,
-        "value_after": 18.531749,
-        "progression_target": 0
+        "value_after": 18.531749
       }
     ],
     "measures": [
-      { "id": "measure_002", "name": "Parking charges" },
-      { "id": "measure_003", "name": "Restricted parking" },
-      { "id": "measure_005", "name": "Parking supply management" },
-      { "id": "measure_006", "name": "Speed limits" },
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_002",
+        "name": "Parking charges"
+      },
+      {
+        "id": "measure_003",
+        "name": "Restricted parking"
+      },
+      {
+        "id": "measure_005",
+        "name": "Parking supply management"
+      },
+      {
+        "id": "measure_006",
+        "name": "Speed limits"
+      },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_008",
         "name": "Scheduling integration in MaaS services (see task T2.3)"
@@ -354,8 +243,14 @@
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-      { "id": "measure_011", "name": "On demand vehicle sharing action plan" },
-      { "id": "measure_013", "name": "Dynamic pricing of NSM" },
+      {
+        "id": "measure_011",
+        "name": "On demand vehicle sharing action plan"
+      },
+      {
+        "id": "measure_013",
+        "name": "Dynamic pricing of NSM"
+      },
       {
         "id": "measure_014",
         "name": "Improved information about the availability of shared modes"
@@ -368,7 +263,10 @@
         "id": "measure_018",
         "name": "Dedicated parking spaces for carsharing/micromobility"
       },
-      { "id": "measure_019", "name": "Widening PT geographical area" },
+      {
+        "id": "measure_019",
+        "name": "Widening PT geographical area"
+      },
       {
         "id": "measure_020",
         "name": "Central PT planning and construction program"
@@ -381,236 +279,158 @@
     "kpis": [
       {
         "id": "kpi_1",
-        "name": "Level of completion of SUMP measures",
-        "variation": null,
         "value_before": 0.3614,
-        "value_after": 0.38684,
-        "progression_target": 1
+        "value_after": 0.38684
       },
       {
         "id": "kpi_2",
-        "name": "Community Involvement",
-        "variation": null,
         "value_before": 4.0,
-        "value_after": 4.217409,
-        "progression_target": 1
+        "value_after": 4.217409
       },
       {
         "id": "kpi_3.1",
-        "name": "Balance of pull - push  planned measures",
-        "variation": null,
         "value_before": 4.71,
-        "value_after": 3.975078,
-        "progression_target": 0
+        "value_after": 3.975078
       },
       {
         "id": "kpi_3.2",
-        "name": "Balance of pull - push implemented measures",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 1
+        "value_after": 0.0
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 3.0,
-        "value_after": 3.134114,
-        "progression_target": 1
+        "value_after": 3.134114
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.749,
-        "value_after": 0.893354,
-        "progression_target": 1
+        "value_after": 0.893354
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.1846,
-        "value_after": 0.191733,
-        "progression_target": 1
+        "value_after": 0.191733
       },
       {
         "id": "kpi_7.1",
-        "name": "Actual door-to-door travel time car-sharing only",
-        "variation": null,
         "value_before": 2.15,
-        "value_after": 1.921743,
-        "progression_target": 0
+        "value_after": 1.921743
       },
       {
         "id": "kpi_7.2",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 1.97,
-        "value_after": 1.703262,
-        "progression_target": 0
+        "value_after": 1.703262
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 2.09,
-        "value_after": 1.795776,
-        "progression_target": 0
+        "value_after": 1.795776
       },
       {
         "id": "kpi_7.6",
-        "name": "Actual door-to-door travel time public transport and micro-mobility",
-        "variation": null,
         "value_before": 1.79,
-        "value_after": 1.433469,
-        "progression_target": 0
+        "value_after": 1.433469
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 0.5505,
-        "value_after": 0.586302,
-        "progression_target": 1
+        "value_after": 0.586302
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 0.2889,
-        "value_after": 0.319237,
-        "progression_target": 1
+        "value_after": 0.319237
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 2.0,
-        "value_after": 1.940795,
-        "progression_target": 0
+        "value_after": 1.940795
       },
       {
         "id": "kpi_10.2.1",
-        "name": "Travel cost ratio car sharing #1",
-        "variation": null,
         "value_before": 10.6,
-        "value_after": 9.234196,
-        "progression_target": 0
+        "value_after": 9.234196
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 0.93,
-        "value_after": 0.805535,
-        "progression_target": 0
+        "value_after": 0.805535
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 1.2,
-        "value_after": 1.056949,
-        "progression_target": 0
+        "value_after": 1.056949
       },
       {
         "id": "kpi_10.3.3",
-        "name": "Travel cost ratio micro-mobility #3",
-        "variation": null,
         "value_before": 20.0,
-        "value_after": 16.236163,
-        "progression_target": 0
+        "value_after": 16.236163
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.25449101796407186,
-        "value_after": 0.247498,
-        "progression_target": 0
+        "value_after": 0.247498
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 3.086826347305389,
-        "value_after": 2.523794,
-        "progression_target": 0
+        "value_after": 2.523794
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 2.2035928143712575,
-        "value_after": 1.848565,
-        "progression_target": 0
+        "value_after": 1.848565
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.2694736842105263,
-        "value_after": 0.229855,
-        "progression_target": 0
+        "value_after": 0.229855
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 3.3178947368421055,
-        "value_after": 3.177372,
-        "progression_target": 0
+        "value_after": 3.177372
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 2.1515789473684213,
-        "value_after": 1.951377,
-        "progression_target": 0
+        "value_after": 1.951377
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.1412,
-        "value_after": 0.155218,
-        "progression_target": 1
+        "value_after": 0.155218
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.0708,
-        "value_after": 0.059801,
-        "progression_target": 0
+        "value_after": 0.059801
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 0.98,
-        "value_after": 0.85385,
-        "progression_target": 0
+        "value_after": 0.85385
       },
       {
         "id": "kpi_24",
-        "name": "Congestion and travel delays",
-        "variation": null,
         "value_before": 2.22,
-        "value_after": 2.007059,
-        "progression_target": 0
+        "value_after": 2.007059
       }
     ],
     "measures": [
-      { "id": "measure_001", "name": "Congestion charges" },
+      {
+        "id": "measure_001",
+        "name": "Congestion charges"
+      },
       {
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
       },
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_008",
         "name": "Scheduling integration in MaaS services (see task T2.3)"
@@ -623,8 +443,14 @@
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-      { "id": "measure_012", "name": "Nudging (gamification or rewards)" },
-      { "id": "measure_013", "name": "Dynamic pricing of NSM" },
+      {
+        "id": "measure_012",
+        "name": "Nudging (gamification or rewards)"
+      },
+      {
+        "id": "measure_013",
+        "name": "Dynamic pricing of NSM"
+      },
       {
         "id": "measure_016",
         "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)"
@@ -641,251 +467,179 @@
     "kpis": [
       {
         "id": "kpi_2",
-        "name": "Community Involvement",
-        "variation": null,
         "value_before": 4.0,
-        "value_after": 4.062832,
-        "progression_target": 1
+        "value_after": 4.062832
       },
       {
         "id": "kpi_3.2",
-        "name": "Balance of pull - push implemented measures",
-        "variation": null,
         "value_before": 0.69,
-        "value_after": 0.748602,
-        "progression_target": 1
+        "value_after": 0.748602
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 4.0,
-        "value_after": 4.551768,
-        "progression_target": 1
+        "value_after": 4.551768
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 0.596,
-        "value_after": 0.635779,
-        "progression_target": 1
+        "value_after": 0.635779
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.055,
-        "value_after": 0.060247,
-        "progression_target": 1
+        "value_after": 0.060247
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.072,
-        "value_after": 0.084548,
-        "progression_target": 1
+        "value_after": 0.084548
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 0.051,
-        "value_after": 0.055318,
-        "progression_target": 1
+        "value_after": 0.055318
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 1.04,
-        "value_after": 1.025779,
-        "progression_target": 0
+        "value_after": 1.025779
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 0.944,
-        "value_after": 0.989595,
-        "progression_target": 1
+        "value_after": 0.989595
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 1
+        "value_after": 0.0
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.5,
-        "value_after": 0.474068,
-        "progression_target": 0
+        "value_after": 0.474068
       },
       {
         "id": "kpi_10.1.2",
-        "name": "Travel cost ratio public transport #2",
-        "variation": null,
         "value_before": 0.5,
-        "value_after": 0.439963,
-        "progression_target": 0
+        "value_after": 0.439963
       },
       {
         "id": "kpi_10.2.1",
-        "name": "Travel cost ratio car sharing #1",
-        "variation": null,
         "value_before": 1.01,
-        "value_after": 0.844965,
-        "progression_target": 0
+        "value_after": 0.844965
       },
       {
         "id": "kpi_10.2.2",
-        "name": "Travel cost ratio car sharing #2",
-        "variation": null,
         "value_before": 0.44,
-        "value_after": 0.361803,
-        "progression_target": 0
+        "value_after": 0.361803
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 1.66,
-        "value_after": 1.44759,
-        "progression_target": 0
+        "value_after": 1.44759
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 1.3,
-        "value_after": 1.240236,
-        "progression_target": 0
+        "value_after": 1.240236
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.78,
-        "value_after": 0.654062,
-        "progression_target": 0
+        "value_after": 0.654062
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 1.84,
-        "value_after": 1.640058,
-        "progression_target": 0
+        "value_after": 1.640058
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 0.63,
-        "value_after": 0.599741,
-        "progression_target": 0
+        "value_after": 0.599741
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.77,
-        "value_after": 0.625959,
-        "progression_target": 0
+        "value_after": 0.625959
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 1.36,
-        "value_after": 1.273887,
-        "progression_target": 0
+        "value_after": 1.273887
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 0.38,
-        "value_after": 0.329679,
-        "progression_target": 0
+        "value_after": 0.329679
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": -0.91,
-        "value_after": -1.058398,
-        "progression_target": 1
+        "value_after": -1.058398
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -1.34,
-        "value_after": -1.359373,
-        "progression_target": 1
+        "value_after": -1.359373
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": -0.91,
-        "value_after": -0.950373,
-        "progression_target": 1
+        "value_after": -0.950373
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.413,
-        "value_after": 0.473451,
-        "progression_target": 1
+        "value_after": 0.473451
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.1436,
-        "value_after": 0.124396,
-        "progression_target": 0
+        "value_after": 0.124396
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 1.88,
-        "value_after": 1.831599,
-        "progression_target": 0
+        "value_after": 1.831599
       },
       {
         "id": "kpi_24",
-        "name": "Congestion and travel delays",
-        "variation": null,
         "value_before": 2.07,
-        "value_after": 1.735027,
-        "progression_target": 0
+        "value_after": 1.735027
       }
     ],
     "measures": [
-      { "id": "measure_003", "name": "Restricted parking" },
+      {
+        "id": "measure_003",
+        "name": "Restricted parking"
+      },
       {
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
       },
-      { "id": "measure_005", "name": "Parking supply management" },
-      { "id": "measure_006", "name": "Speed limits" },
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_005",
+        "name": "Parking supply management"
+      },
+      {
+        "id": "measure_006",
+        "name": "Speed limits"
+      },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-      { "id": "measure_011", "name": "On demand vehicle sharing action plan" },
+      {
+        "id": "measure_011",
+        "name": "On demand vehicle sharing action plan"
+      },
       {
         "id": "measure_014",
         "name": "Improved information about the availability of shared modes"
@@ -902,7 +656,10 @@
         "id": "measure_018",
         "name": "Dedicated parking spaces for carsharing/micromobility"
       },
-      { "id": "measure_019", "name": "Widening PT geographical area" },
+      {
+        "id": "measure_019",
+        "name": "Widening PT geographical area"
+      },
       {
         "id": "measure_020",
         "name": "Central PT planning and construction program"
@@ -915,275 +672,173 @@
     "kpis": [
       {
         "id": "kpi_1",
-        "name": "Level of completion of SUMP measures",
-        "variation": null,
         "value_before": 0.3182,
-        "value_after": 0.341735,
-        "progression_target": 1
+        "value_after": 0.341735
       },
       {
         "id": "kpi_2",
-        "name": "Community Involvement",
-        "variation": null,
         "value_before": 1.0,
-        "value_after": 1.158541,
-        "progression_target": 1
+        "value_after": 1.158541
       },
       {
         "id": "kpi_3.1",
-        "name": "Balance of pull - push  planned measures",
-        "variation": null,
         "value_before": 1.43,
-        "value_after": 1.253163,
-        "progression_target": 0
+        "value_after": 1.253163
       },
       {
         "id": "kpi_3.2",
-        "name": "Balance of pull - push implemented measures",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 1
+        "value_after": 0.0
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 2.0,
-        "value_after": 2.04736,
-        "progression_target": 1
+        "value_after": 2.04736
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 0.338,
-        "value_after": 0.36786,
-        "progression_target": 1
+        "value_after": 0.36786
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.4279,
-        "value_after": 0.509469,
-        "progression_target": 1
+        "value_after": 0.509469
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.403,
-        "value_after": 0.466122,
-        "progression_target": 1
+        "value_after": 0.466122
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 0.4428,
-        "value_after": 0.475332,
-        "progression_target": 1
+        "value_after": 0.475332
       },
       {
         "id": "kpi_7.2",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 1.61,
-        "value_after": 1.292031,
-        "progression_target": 0
+        "value_after": 1.292031
       },
       {
         "id": "kpi_7.3",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 0.96,
-        "value_after": 0.892,
-        "progression_target": 0
+        "value_after": 0.892
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 1.73,
-        "value_after": 1.67271,
-        "progression_target": 0
+        "value_after": 1.67271
       },
       {
         "id": "kpi_7.6",
-        "name": "Actual door-to-door travel time public transport and micro-mobility",
-        "variation": null,
         "value_before": 1.45,
-        "value_after": 1.166074,
-        "progression_target": 0
+        "value_after": 1.166074
       },
       {
         "id": "kpi_7.7",
-        "name": "Actual door-to-door travel time public transport and ride-hailing or shuttle services",
-        "variation": null,
         "value_before": 0.34,
-        "value_after": 0.315158,
-        "progression_target": 0
+        "value_after": 0.315158
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 0.0199,
-        "value_after": 0.022265,
-        "progression_target": 1
+        "value_after": 0.022265
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 0.25,
-        "value_after": 0.271789,
-        "progression_target": 1
+        "value_after": 0.271789
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.77,
-        "value_after": 0.618077,
-        "progression_target": 0
+        "value_after": 0.618077
       },
       {
         "id": "kpi_10.1.2",
-        "name": "Travel cost ratio public transport #2",
-        "variation": null,
         "value_before": 0.48,
-        "value_after": 0.443929,
-        "progression_target": 0
+        "value_after": 0.443929
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 0
+        "value_after": 0.0
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 5.77,
-        "value_after": 5.689904,
-        "progression_target": 0
+        "value_after": 5.689904
       },
       {
         "id": "kpi_10.4.1",
-        "name": "Travel cost ratio ride-hailing and shuttle services #1",
-        "variation": null,
         "value_before": 5.77,
-        "value_after": 5.099039,
-        "progression_target": 0
+        "value_after": 5.099039
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.874398249452954,
-        "value_after": 0.834891,
-        "progression_target": 0
+        "value_after": 0.834891
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 1.6216790654282578,
-        "value_after": 1.427457,
-        "progression_target": 0
+        "value_after": 1.427457
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 1.4132622966416133,
-        "value_after": 1.254707,
-        "progression_target": 0
+        "value_after": 1.254707
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.822017292478017,
-        "value_after": 0.80406,
-        "progression_target": 0
+        "value_after": 0.80406
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 1.2627525901976633,
-        "value_after": 1.231402,
-        "progression_target": 0
+        "value_after": 1.231402
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 1.0641364783109215,
-        "value_after": 0.924331,
-        "progression_target": 0
+        "value_after": 0.924331
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": -1.2663,
-        "value_after": -1.468684,
-        "progression_target": 1
+        "value_after": -1.468684
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -2.56677,
-        "value_after": -2.999903,
-        "progression_target": 1
+        "value_after": -2.999903
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": -2.9179799999999987,
-        "value_after": -3.131908,
-        "progression_target": 1
+        "value_after": -3.131908
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.199,
-        "value_after": 0.214461,
-        "progression_target": 1
+        "value_after": 0.214461
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.1592,
-        "value_after": 0.157532,
-        "progression_target": 0
+        "value_after": 0.157532
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 0.6029598877689325,
-        "value_after": 0.584166,
-        "progression_target": 0
+        "value_after": 0.584166
       },
       {
         "id": "kpi_24",
-        "name": "Congestion and travel delays",
-        "variation": null,
         "value_before": 1.66,
-        "value_after": 1.440677,
-        "progression_target": 0
+        "value_after": 1.440677
       }
     ],
     "measures": [
@@ -1191,8 +846,10 @@
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
       },
-
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_008",
         "name": "Scheduling integration in MaaS services (see task T2.3)"
@@ -1205,7 +862,6 @@
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-
       {
         "id": "measure_015",
         "name": "Introduction of new NSM services (ex. bike-sharing)"
@@ -1226,250 +882,172 @@
     "kpis": [
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 3.0,
-        "value_after": 3.175676,
-        "progression_target": 1
+        "value_after": 3.175676
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 0.5,
-        "value_after": 0.586407,
-        "progression_target": 1
+        "value_after": 0.586407
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.05,
-        "value_after": 0.051945,
-        "progression_target": 1
+        "value_after": 0.051945
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.05,
-        "value_after": 0.056775,
-        "progression_target": 1
+        "value_after": 0.056775
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 0.025,
-        "value_after": 0.026257,
-        "progression_target": 1
+        "value_after": 0.026257
       },
       {
         "id": "kpi_7.1",
-        "name": "Actual door-to-door travel time car-sharing only",
-        "variation": null,
         "value_before": 1.23,
-        "value_after": 1.027787,
-        "progression_target": 0
+        "value_after": 1.027787
       },
       {
         "id": "kpi_7.2",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 0.7,
-        "value_after": 0.691129,
-        "progression_target": 0
+        "value_after": 0.691129
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 1.73,
-        "value_after": 1.408995,
-        "progression_target": 0
+        "value_after": 1.408995
       },
       {
         "id": "kpi_7.6",
-        "name": "Actual door-to-door travel time public transport and micro-mobility",
-        "variation": null,
         "value_before": 1.04,
-        "value_after": 0.858138,
-        "progression_target": 0
+        "value_after": 0.858138
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 1.0,
-        "value_after": 1.115356,
-        "progression_target": 1
+        "value_after": 1.115356
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.96,
-        "value_after": 0.885355,
-        "progression_target": 0
+        "value_after": 0.885355
       },
       {
         "id": "kpi_10.1.2",
-        "name": "Travel cost ratio public transport #2",
-        "variation": null,
         "value_before": 1.58,
-        "value_after": 1.381235,
-        "progression_target": 0
+        "value_after": 1.381235
       },
       {
         "id": "kpi_10.1.3",
-        "name": "Travel cost ratio public transport #3",
-        "variation": null,
         "value_before": 1.48,
-        "value_after": 1.404038,
-        "progression_target": 0
+        "value_after": 1.404038
       },
       {
         "id": "kpi_10.2.1",
-        "name": "Travel cost ratio car sharing #1",
-        "variation": null,
         "value_before": 2.51,
-        "value_after": 2.168168,
-        "progression_target": 0
+        "value_after": 2.168168
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 2.51,
-        "value_after": 2.197626,
-        "progression_target": 0
+        "value_after": 2.197626
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 2.72,
-        "value_after": 2.511667,
-        "progression_target": 0
+        "value_after": 2.511667
       },
       {
         "id": "kpi_10.3.3",
-        "name": "Travel cost ratio micro-mobility #3",
-        "variation": null,
         "value_before": 3.96,
-        "value_after": 3.896485,
-        "progression_target": 0
+        "value_after": 3.896485
       },
       {
         "id": "kpi_10.4.1",
-        "name": "Travel cost ratio ride-hailing and shuttle services #1",
-        "variation": null,
         "value_before": 2.0,
-        "value_after": 1.898304,
-        "progression_target": 0
+        "value_after": 1.898304
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.39716885743174923,
-        "value_after": 0.355615,
-        "progression_target": 0
+        "value_after": 0.355615
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 0.980788675429727,
-        "value_after": 0.823055,
-        "progression_target": 0
+        "value_after": 0.823055
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 1.0116279069767442,
-        "value_after": 0.971026,
-        "progression_target": 0
+        "value_after": 0.971026
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.48780216107831126,
-        "value_after": 0.448469,
-        "progression_target": 0
+        "value_after": 0.448469
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 1.1439233596970035,
-        "value_after": 1.033779,
-        "progression_target": 0
+        "value_after": 1.033779
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 1.1100590397682968,
-        "value_after": 0.967179,
-        "progression_target": 0
+        "value_after": 0.967179
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": -3.5,
-        "value_after": -4.132827,
-        "progression_target": 1
+        "value_after": -4.132827
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -3.5,
-        "value_after": -3.723186,
-        "progression_target": 1
+        "value_after": -3.723186
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": -1.2,
-        "value_after": -1.384247,
-        "progression_target": 1
+        "value_after": -1.384247
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.8467,
-        "value_after": 0.935561,
-        "progression_target": 1
+        "value_after": 0.935561
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.289,
-        "value_after": 0.232348,
-        "progression_target": 0
+        "value_after": 0.232348
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 0.492,
-        "value_after": 0.4488,
-        "progression_target": 0
+        "value_after": 0.4488
       }
     ],
     "measures": [
-      { "id": "measure_002", "name": "Parking charges" },
-      { "id": "measure_003", "name": "Restricted parking" },
-      { "id": "measure_006", "name": "Speed limits" },
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_002",
+        "name": "Parking charges"
+      },
+      {
+        "id": "measure_003",
+        "name": "Restricted parking"
+      },
+      {
+        "id": "measure_006",
+        "name": "Speed limits"
+      },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_008",
         "name": "Scheduling integration in MaaS services (see task T2.3)"
@@ -1498,257 +1076,169 @@
     "kpis": [
       {
         "id": "kpi_1",
-        "name": "Level of completion of SUMP measures",
-        "variation": null,
         "value_before": 0.0367,
-        "value_after": 0.039789,
-        "progression_target": 1
+        "value_after": 0.039789
       },
       {
         "id": "kpi_3.1",
-        "name": "Balance of pull - push  planned measures",
-        "variation": null,
         "value_before": 1.0,
-        "value_after": 0.880683,
-        "progression_target": 0
+        "value_after": 0.880683
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 2.0,
-        "value_after": 2.17988,
-        "progression_target": 1
+        "value_after": 2.17988
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 0.3742,
-        "value_after": 0.414312,
-        "progression_target": 1
+        "value_after": 0.414312
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.183,
-        "value_after": 0.204851,
-        "progression_target": 1
+        "value_after": 0.204851
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.2026,
-        "value_after": 0.227079,
-        "progression_target": 1
+        "value_after": 0.227079
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 0.5458,
-        "value_after": 0.622479,
-        "progression_target": 1
+        "value_after": 0.622479
       },
       {
         "id": "kpi_7.1",
-        "name": "Actual door-to-door travel time car-sharing only",
-        "variation": null,
         "value_before": 1.14,
-        "value_after": 1.104346,
-        "progression_target": 0
+        "value_after": 1.104346
       },
       {
         "id": "kpi_7.2",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 1.13,
-        "value_after": 0.929084,
-        "progression_target": 0
+        "value_after": 0.929084
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 1.68,
-        "value_after": 1.619836,
-        "progression_target": 0
+        "value_after": 1.619836
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 0.2272,
-        "value_after": 0.254948,
-        "progression_target": 1
+        "value_after": 0.254948
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 0.5,
-        "value_after": 0.541262,
-        "progression_target": 1
+        "value_after": 0.541262
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.31,
-        "value_after": 0.25702,
-        "progression_target": 0
+        "value_after": 0.25702
       },
       {
         "id": "kpi_10.2.1",
-        "name": "Travel cost ratio car sharing #1",
-        "variation": null,
         "value_before": 0.97,
-        "value_after": 0.901093,
-        "progression_target": 0
+        "value_after": 0.901093
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 0.35,
-        "value_after": 0.33254,
-        "progression_target": 0
+        "value_after": 0.33254
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 0.17,
-        "value_after": 0.164304,
-        "progression_target": 0
+        "value_after": 0.164304
       },
       {
         "id": "kpi_10.4.1",
-        "name": "Travel cost ratio ride-hailing and shuttle services #1",
-        "variation": null,
         "value_before": 1.59,
-        "value_after": 1.430056,
-        "progression_target": 0
+        "value_after": 1.430056
       },
       {
         "id": "kpi_10.4.2",
-        "name": "Travel cost ratio ride-hailing and shuttle services #2",
-        "variation": null,
         "value_before": 0.66,
-        "value_after": 0.619452,
-        "progression_target": 0
+        "value_after": 0.619452
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.5512995896032832,
-        "value_after": 0.463615,
-        "progression_target": 0
+        "value_after": 0.463615
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 1.8850889192886457,
-        "value_after": 1.569029,
-        "progression_target": 0
+        "value_after": 1.569029
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 0.8255813953488372,
-        "value_after": 0.68329,
-        "progression_target": 0
+        "value_after": 0.68329
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.5648427401981905,
-        "value_after": 0.505438,
-        "progression_target": 0
+        "value_after": 0.505438
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 1.4536837570012926,
-        "value_after": 1.224198,
-        "progression_target": 0
+        "value_after": 1.224198
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 0.4971994829814735,
-        "value_after": 0.424646,
-        "progression_target": 0
+        "value_after": 0.424646
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": -1.525179856115108,
-        "value_after": -1.723649,
-        "progression_target": 1
+        "value_after": -1.723649
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -1.7697841726618706,
-        "value_after": -1.961551,
-        "progression_target": 1
+        "value_after": -1.961551
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": -0.9892086330935251,
-        "value_after": -1.028357,
-        "progression_target": 1
+        "value_after": -1.028357
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.4066,
-        "value_after": 0.43953,
-        "progression_target": 1
+        "value_after": 0.43953
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.1228,
-        "value_after": 0.111134,
-        "progression_target": 0
+        "value_after": 0.111134
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 0.00013,
-        "value_after": 0.000106,
-        "progression_target": 0
+        "value_after": 0.000106
       },
       {
         "id": "kpi_24",
-        "name": "Congestion and travel delays",
-        "variation": null,
         "value_before": 2.13,
-        "value_after": 2.025988,
-        "progression_target": 0
+        "value_after": 2.025988
       }
     ],
-
     "measures": [
-      { "id": "measure_001", "name": "Congestion charges" },
-      { "id": "measure_002", "name": "Parking charges" },
+      {
+        "id": "measure_001",
+        "name": "Congestion charges"
+      },
+      {
+        "id": "measure_002",
+        "name": "Parking charges"
+      },
       {
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
@@ -1765,7 +1255,10 @@
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-      { "id": "measure_011", "name": "On demand vehicle sharing action plan" },
+      {
+        "id": "measure_011",
+        "name": "On demand vehicle sharing action plan"
+      },
       {
         "id": "measure_014",
         "name": "Improved information about the availability of shared modes"
@@ -1781,14 +1274,26 @@
     "name": "Fredrikstad",
     "kpis": [],
     "measures": [
-      { "id": "measure_001", "name": "Congestion charges" },
-      { "id": "measure_002", "name": "Parking charges" },
-      { "id": "measure_003", "name": "Restricted parking" },
+      {
+        "id": "measure_001",
+        "name": "Congestion charges"
+      },
+      {
+        "id": "measure_002",
+        "name": "Parking charges"
+      },
+      {
+        "id": "measure_003",
+        "name": "Restricted parking"
+      },
       {
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
       },
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_008",
         "name": "Scheduling integration in MaaS services (see task T2.3)"
@@ -1801,7 +1306,10 @@
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-      { "id": "measure_013", "name": "Dynamic pricing of NSM" },
+      {
+        "id": "measure_013",
+        "name": "Dynamic pricing of NSM"
+      },
       {
         "id": "measure_015",
         "name": "Introduction of new NSM services (ex. bike-sharing)"
@@ -1818,208 +1326,135 @@
     "kpis": [
       {
         "id": "kpi_1",
-        "name": "Level of completion of SUMP measures",
-        "variation": null,
         "value_before": 0.2,
-        "value_after": 0.213127,
-        "progression_target": 1
+        "value_after": 0.213127
       },
       {
         "id": "kpi_2",
-        "name": "Community Involvement",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 1
+        "value_after": 0.0
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 1.0,
-        "value_after": 1.075979,
-        "progression_target": 1
+        "value_after": 1.075979
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 0.3881,
-        "value_after": 0.42879,
-        "progression_target": 1
+        "value_after": 0.42879
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.0398,
-        "value_after": 0.047703,
-        "progression_target": 1
+        "value_after": 0.047703
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.0199,
-        "value_after": 0.021327,
-        "progression_target": 1
+        "value_after": 0.021327
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 0.01,
-        "value_after": 0.010576,
-        "progression_target": 1
+        "value_after": 0.010576
       },
       {
         "id": "kpi_7.2",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 1.71,
-        "value_after": 1.402904,
-        "progression_target": 0
+        "value_after": 1.402904
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 2.94,
-        "value_after": 2.641746,
-        "progression_target": 0
+        "value_after": 2.641746
       },
       {
         "id": "kpi_7.6",
-        "name": "Actual door-to-door travel time public transport and micro-mobility",
-        "variation": null,
         "value_before": 1.53,
-        "value_after": 1.377738,
-        "progression_target": 0
+        "value_after": 1.377738
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 0.6312,
-        "value_after": 0.693848,
-        "progression_target": 1
+        "value_after": 0.693848
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.18,
-        "value_after": 0.158889,
-        "progression_target": 0
+        "value_after": 0.158889
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 0.62,
-        "value_after": 0.587306,
-        "progression_target": 0
+        "value_after": 0.587306
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.4677248677248677,
-        "value_after": 0.376798,
-        "progression_target": 0
+        "value_after": 0.376798
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 0.6550264550264551,
-        "value_after": 0.639528,
-        "progression_target": 0
+        "value_after": 0.639528
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 0.6275132275132275,
-        "value_after": 0.54282,
-        "progression_target": 0
+        "value_after": 0.54282
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.4169124877089479,
-        "value_after": 0.3517,
-        "progression_target": 0
+        "value_after": 0.3517
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 0.7246804326450345,
-        "value_after": 0.605147,
-        "progression_target": 0
+        "value_after": 0.605147
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 0.5408062930186824,
-        "value_after": 0.525399,
-        "progression_target": 0
+        "value_after": 0.525399
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": -1.3712871287128714,
-        "value_after": -1.596433,
-        "progression_target": 1
+        "value_after": -1.596433
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -1.5940594059405941,
-        "value_after": -1.650828,
-        "progression_target": 1
+        "value_after": -1.650828
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": -1.8415841584158417,
-        "value_after": -1.935378,
-        "progression_target": 1
+        "value_after": -1.935378
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.2376,
-        "value_after": 0.264435,
-        "progression_target": 1
+        "value_after": 0.264435
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.1713,
-        "value_after": 0.154255,
-        "progression_target": 0
+        "value_after": 0.154255
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 0.1523,
-        "value_after": 0.145,
-        "progression_target": 0
+        "value_after": 0.145
       }
     ],
-
     "measures": [
-      { "id": "measure_002", "name": "Parking charges" },
+      {
+        "id": "measure_002",
+        "name": "Parking charges"
+      },
       {
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
@@ -2028,7 +1463,10 @@
         "id": "measure_009",
         "name": "Ticketing integration in MaaS services (see task T3.4)"
       },
-      { "id": "measure_012", "name": "Nudging (gamification or rewards)" }
+      {
+        "id": "measure_012",
+        "name": "Nudging (gamification or rewards)"
+      }
     ]
   },
   {
@@ -2037,269 +1475,182 @@
     "kpis": [
       {
         "id": "kpi_1",
-        "name": "Level of completion of SUMP measures",
-        "variation": null,
         "value_before": 0.333,
-        "value_after": 0.397423,
-        "progression_target": 1
+        "value_after": 0.397423
       },
       {
         "id": "kpi_2",
-        "name": "Community Involvement",
-        "variation": null,
         "value_before": 6.0,
-        "value_after": 7.089885,
-        "progression_target": 1
+        "value_after": 7.089885
       },
       {
         "id": "kpi_3.1",
-        "name": "Balance of pull - push  planned measures",
-        "variation": null,
         "value_before": 4.71,
-        "value_after": 3.80819,
-        "progression_target": 0
+        "value_after": 3.80819
       },
       {
         "id": "kpi_3.2",
-        "name": "Balance of pull - push implemented measures",
-        "variation": null,
         "value_before": 3.06,
-        "value_after": 3.166504,
-        "progression_target": 1
+        "value_after": 3.166504
       },
       {
         "id": "kpi_4",
-        "name": "Number of NSM integrated in the system",
-        "variation": null,
         "value_before": 4.0,
-        "value_after": 4.148943,
-        "progression_target": 1
+        "value_after": 4.148943
       },
       {
         "id": "kpi_5",
-        "name": "Acceptance level of planned/implemented measures",
-        "variation": null,
         "value_before": 0.2905,
-        "value_after": 0.329406,
-        "progression_target": 1
+        "value_after": 0.329406
       },
       {
         "id": "kpi_6.1",
-        "name": "Intention level to use NSM car-sharing",
-        "variation": null,
         "value_before": 0.2762,
-        "value_after": 0.288595,
-        "progression_target": 1
+        "value_after": 0.288595
       },
       {
         "id": "kpi_6.2",
-        "name": "Intention level to use NSM micro-mobility",
-        "variation": null,
         "value_before": 0.2762,
-        "value_after": 0.315008,
-        "progression_target": 1
+        "value_after": 0.315008
       },
       {
         "id": "kpi_6.3",
-        "name": "Intention level to use NSM ride-hailing",
-        "variation": null,
         "value_before": 0.4333,
-        "value_after": 0.517858,
-        "progression_target": 1
+        "value_after": 0.517858
       },
       {
         "id": "kpi_7.3",
-        "name": "Actual door-to-door travel time micro-mobility only",
-        "variation": null,
         "value_before": 0.78,
-        "value_after": 0.747084,
-        "progression_target": 0
+        "value_after": 0.747084
       },
       {
         "id": "kpi_7.4",
-        "name": "Actual door-to-door travel time public Transport only",
-        "variation": null,
         "value_before": 1.81,
-        "value_after": 1.730306,
-        "progression_target": 0
+        "value_after": 1.730306
       },
       {
         "id": "kpi_7.6",
-        "name": "Actual door-to-door travel time public transport and micro-mobility",
-        "variation": null,
         "value_before": 1.59,
-        "value_after": 1.5291,
-        "progression_target": 0
+        "value_after": 1.5291
       },
       {
         "id": "kpi_7.7",
-        "name": "Actual door-to-door travel time public transport and ride-hailing or shuttle services",
-        "variation": null,
         "value_before": 1.67,
-        "value_after": 1.623755,
-        "progression_target": 0
+        "value_after": 1.623755
       },
       {
         "id": "kpi_8",
-        "name": "Active mobility infrastructure",
-        "variation": null,
         "value_before": 0.3273,
-        "value_after": 0.362702,
-        "progression_target": 1
+        "value_after": 0.362702
       },
       {
         "id": "kpi_9",
-        "name": "Multimodal integration in stations/stops",
-        "variation": null,
         "value_before": 1.0,
-        "value_after": 1.075862,
-        "progression_target": 1
+        "value_after": 1.075862
       },
       {
         "id": "kpi_10.1.1",
-        "name": "Travel cost ratio public transport #1",
-        "variation": null,
         "value_before": 0.13,
-        "value_after": 0.106176,
-        "progression_target": 0
+        "value_after": 0.106176
       },
       {
         "id": "kpi_10.3.1",
-        "name": "Travel cost ratio micro-mobility #1",
-        "variation": null,
         "value_before": 0.0,
-        "value_after": 0.0,
-        "progression_target": 0
+        "value_after": 0.0
       },
       {
         "id": "kpi_10.3.2",
-        "name": "Travel cost ratio micro-mobility #2",
-        "variation": null,
         "value_before": 2.32,
-        "value_after": 1.911317,
-        "progression_target": 0
+        "value_after": 1.911317
       },
       {
         "id": "kpi_10.4.1",
-        "name": "Travel cost ratio ride-hailing and shuttle services #1",
-        "variation": null,
         "value_before": 1.32,
-        "value_after": 1.105274,
-        "progression_target": 0
+        "value_after": 1.105274
       },
       {
         "id": "kpi_10.4.2",
-        "name": "Travel cost ratio ride-hailing and shuttle services #2",
-        "variation": null,
         "value_before": 1.36,
-        "value_after": 1.114143,
-        "progression_target": 0
+        "value_after": 1.114143
       },
       {
         "id": "kpi_11.1.1",
-        "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
-        "variation": null,
         "value_before": 0.8108108108108109,
-        "value_after": 0.760298,
-        "progression_target": 0
+        "value_after": 0.760298
       },
       {
         "id": "kpi_11.1.2",
-        "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
-        "variation": null,
         "value_before": 2.3736281736281737,
-        "value_after": 2.052757,
-        "progression_target": 0
+        "value_after": 2.052757
       },
       {
         "id": "kpi_11.1.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
-        "variation": null,
         "value_before": 1.766912366912367,
-        "value_after": 1.443946,
-        "progression_target": 0
+        "value_after": 1.443946
       },
       {
         "id": "kpi_11.2.1",
-        "name": "Perceived door-to-door travel time ratio taxi [peak]",
-        "variation": null,
         "value_before": 0.7122839794488557,
-        "value_after": 0.581675,
-        "progression_target": 0
+        "value_after": 0.581675
       },
       {
         "id": "kpi_11.2.2",
-        "name": "Perceived door-to-door travel time ratio public transport [peak]",
-        "variation": null,
         "value_before": 1.6835123773937413,
-        "value_after": 1.559252,
-        "progression_target": 0
+        "value_after": 1.559252
       },
       {
         "id": "kpi_11.2.3",
-        "name": "Perceived door-to-door travel time ratio bicycle [peak]",
-        "variation": null,
         "value_before": 1.0674451191032228,
-        "value_after": 0.900157,
-        "progression_target": 0
+        "value_after": 0.900157
       },
       {
         "id": "kpi_12.1.1",
-        "name": "Perceived safety diff taxi",
-        "variation": null,
         "value_before": -1.3761904761904762,
-        "value_after": -1.430892,
-        "progression_target": 1
+        "value_after": -1.430892
       },
       {
         "id": "kpi_12.1.2",
-        "name": "Perceived safety diff public transport",
-        "variation": null,
         "value_before": -1.5285714285714285,
-        "value_after": -1.763323,
-        "progression_target": 1
+        "value_after": -1.763323
       },
       {
         "id": "kpi_12.1.3",
-        "name": "Perceived safety diff personal bicycle",
-        "variation": null,
         "value_before": -1.4142857142857144,
-        "value_after": -1.489146,
-        "progression_target": 1
+        "value_after": -1.489146
       },
       {
         "id": "kpi_13",
-        "name": "User satisfaction",
-        "variation": null,
         "value_before": 0.2381,
-        "value_after": 0.254237,
-        "progression_target": 1
+        "value_after": 0.254237
       },
       {
         "id": "kpi_14",
-        "name": "Perceived affordability",
-        "variation": null,
         "value_before": 0.1419,
-        "value_after": 0.138442,
-        "progression_target": 0
+        "value_after": 0.138442
       },
       {
         "id": "kpi_16",
-        "name": "Greenhouse emissions",
-        "variation": null,
         "value_before": 0.66,
-        "value_after": 0.601035,
-        "progression_target": 0
+        "value_after": 0.601035
       }
     ],
     "measures": [
-      { "id": "measure_002", "name": "Parking charges" },
-      { "id": "measure_003", "name": "Restricted parking" },
+      {
+        "id": "measure_002",
+        "name": "Parking charges"
+      },
+      {
+        "id": "measure_003",
+        "name": "Restricted parking"
+      },
       {
         "id": "measure_004",
         "name": "Limited traffic zone / Pedestrianisation of streets"
       },
-      { "id": "measure_007", "name": "Mobility hubs (see task T3.2)" },
+      {
+        "id": "measure_007",
+        "name": "Mobility hubs (see task T3.2)"
+      },
       {
         "id": "measure_009",
         "name": "Ticketing integration in MaaS services (see task T3.4)"
@@ -2308,7 +1659,10 @@
         "id": "measure_010",
         "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
       },
-      { "id": "measure_011", "name": "On demand vehicle sharing action plan" },
+      {
+        "id": "measure_011",
+        "name": "On demand vehicle sharing action plan"
+      },
       {
         "id": "measure_015",
         "name": "Introduction of new NSM services (ex. bike-sharing)"
