@@ -4,8 +4,8 @@
     "name": "Level of completion of SUMP measures",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_2",
@@ -44,32 +44,32 @@
     "name": "Acceptance level of planned/implemented measures",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_6.1",
     "name": "Intention level to use NSM car-sharing",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_6.2",
     "name": "Intention level to use NSM micro-mobility",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_6.3",
     "name": "Intention level to use NSM ride-hailing",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_7.1",
@@ -132,8 +132,8 @@
     "name": "Active mobility infrastructure",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_9",
@@ -324,8 +324,8 @@
     "name": "Perceived affordability",
     "progression_target": 0,
     "value_type": "percentage",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_16",
