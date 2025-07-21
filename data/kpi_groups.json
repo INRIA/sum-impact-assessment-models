@@ -1,0 +1,184 @@
+[
+  {
+    "id": "group_1",
+    "name": "Policies (implementation and planning)",
+    "kpi_ids": [
+      "kpi_1",
+      "kpi_2",
+      "kpi_3.1",
+      "kpi_3.2",
+      "kpi_4",
+      "kpi_5",
+      "kpi_6.1",
+      "kpi_6.2",
+      "kpi_6.3"
+    ]
+  },
+  {
+    "id": "group_2",
+    "name": "Transport system (user experience)",
+    "kpi_ids": [
+      "kpi_7.1",
+      "kpi_7.2",
+      "kpi_7.3",
+      "kpi_7.4",
+      "kpi_7.5",
+      "kpi_7.6",
+      "kpi_7.7",
+      "kpi_8",
+      "kpi_9",
+      "kpi_10.1.1",
+      "kpi_10.1.2",
+      "kpi_10.1.3",
+      "kpi_10.2.1",
+      "kpi_10.2.2",
+      "kpi_10.3.1",
+      "kpi_10.3.2",
+      "kpi_10.3.3",
+      "kpi_10.4.1",
+      "kpi_10.4.2",
+      "kpi_11.1.1",
+      "kpi_11.1.2",
+      "kpi_11.1.3",
+      "kpi_11.2.1",
+      "kpi_11.2.2",
+      "kpi_11.2.3",
+      "kpi_12.1.1",
+      "kpi_12.1.2",
+      "kpi_12.1.3",
+      "kpi_12.2.1",
+      "kpi_12.2.2",
+      "kpi_12.2.3",
+      "kpi_13",
+      "kpi_14"
+    ]
+  },
+  {
+    "id": "group_3",
+    "name": "Modal split",
+    "kpi_ids": ["kpi_15"]
+  },
+  {
+    "id": "group_4",
+    "name": "Environment",
+    "kpi_ids": ["kpi_16", "kpi_17", "kpi_18", "kpi_19"]
+  },
+  {
+    "id": "group_5",
+    "name": "Society",
+    "kpi_ids": ["kpi_20", "kpi_21", "kpi_22", "kpi_23"]
+  },
+  {
+    "id": "group_6",
+    "name": "Economy",
+    "kpi_ids": ["kpi_24", "kpi_25", "kpi_26", "kpi_27", "kpi_28", "kpi_29"]
+  },
+  {
+    "id": "group_7",
+    "name": "Short-term Impact",
+    "kpi_ids": [
+      "kpi_6.1",
+      "kpi_6.2",
+      "kpi_6.3",
+      "kpi_12.1.1",
+      "kpi_12.1.2",
+      "kpi_12.1.3",
+      "kpi_12.2.1",
+      "kpi_12.2.2",
+      "kpi_12.2.3",
+      "kpi_13",
+      "kpi_14"
+    ]
+  },
+  {
+    "id": "group_8",
+    "name": "Long-term Impact",
+    "kpi_ids": [
+      "kpi_1",
+      "kpi_2",
+      "kpi_3.1",
+      "kpi_3.2",
+      "kpi_4",
+      "kpi_5",
+      "kpi_8",
+      "kpi_9",
+      "kpi_15",
+      "kpi_16",
+      "kpi_17",
+      "kpi_18",
+      "kpi_19",
+      "kpi_20",
+      "kpi_21",
+      "kpi_22",
+      "kpi_23",
+      "kpi_24",
+      "kpi_25",
+      "kpi_26",
+      "kpi_27",
+      "kpi_28",
+      "kpi_29"
+    ]
+  },
+  {
+    "id": "group_9",
+    "name": "Shared Mobility",
+    "kpi_ids": [
+      "kpi_6.1",
+      "kpi_7.1",
+      "kpi_7.5",
+      "kpi_10.2.1",
+      "kpi_10.2.2",
+      "kpi_10.4.1",
+      "kpi_10.4.2"
+    ]
+  },
+  {
+    "id": "group_10",
+    "name": "Cost & Affordability",
+    "kpi_ids": [
+      "kpi_10.1.1",
+      "kpi_10.1.2",
+      "kpi_10.1.3",
+      "kpi_10.2.1",
+      "kpi_10.2.2",
+      "kpi_10.3.1",
+      "kpi_10.3.2",
+      "kpi_10.3.3",
+      "kpi_10.4.1",
+      "kpi_10.4.2",
+      "kpi_14"
+    ]
+  },
+  {
+    "id": "group_11",
+    "name": "Safety",
+    "kpi_ids": [
+      "kpi_12.1.1",
+      "kpi_12.1.2",
+      "kpi_12.1.3",
+      "kpi_12.2.1",
+      "kpi_12.2.2",
+      "kpi_12.2.3"
+    ]
+  },
+  {
+    "id": "group_12",
+    "name": "Congestion & Efficiency",
+    "kpi_ids": [
+      "kpi_7.1",
+      "kpi_7.2",
+      "kpi_7.3",
+      "kpi_7.4",
+      "kpi_7.5",
+      "kpi_7.6",
+      "kpi_7.7",
+      "kpi_11.1.1",
+      "kpi_11.1.2",
+      "kpi_11.1.3",
+      "kpi_11.2.1",
+      "kpi_11.2.2",
+      "kpi_11.2.3",
+      "kpi_24"
+    ]
+  }
+]

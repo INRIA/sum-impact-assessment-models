@@ -1,14 +1,16 @@
-from ...schemas.core import Measure
+from ...schemas.core import Measure, KPI, KPIGroup
 from ...schemas.impact_analysis import MeasureImpactCoefficient
 
 
 class KPIImpactAnalyzer:
-    def __init__(self, living_labs: list, measures: Measure):
+    def __init__(self, living_labs: list, measures: Measure, kpis: list[KPI], kpi_groups: list[KPIGroup]):
         """
         Initialize with a list of LivingLabs information.
         """
         self.living_labs = living_labs
         self.measures = measures
+        self.kpis = kpis
+        self.kpi_groups = kpi_groups
 
     def run_analysis(self) -> list[MeasureImpactCoefficient]:
         """
