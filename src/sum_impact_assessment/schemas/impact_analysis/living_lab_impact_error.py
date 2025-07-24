@@ -5,7 +5,7 @@ class LivingLabImpactError(LivingLab):
     """
     Extends LivingLab to include estimation squared error (sqe).
     - kpi_group_id (str): KPI Group for which measure impact was estimated.
-    - sqe (float): Mean Squared Error of the estimation.
+    - sqe (float): Squared Error of the estimation.
     """
     kpi_group_id: str 
     sqe: float

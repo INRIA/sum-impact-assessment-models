@@ -21,15 +21,7 @@ class KPIGroup(BaseModel):
     kpis: Optional[List[KPI]] = Field(
         None, description="Optional list of KPI objects belonging this group") 
     
-    # Impact Analysis Results
-    living_labs_analysis: Optional[List[LivingLab]] = Field(
-        None, description="Optional list of LivingLab objects used in the impact analysis for this group") 
-    msqe: Optional[float] = Field(
-        None, description="Optional float of mean squared error of the impact analysis for this group")
-    variation_under_no_measures: Optional[float] = Field(
-        None, description="Optional float of expected variation in KPI group if no measures are implemented from the impact analysis") 
-    measure_coefficients: Optional[List[MeasureImpactCoefficient]] = Field(
-        None, description="Optional list of Measures with predicted impact coefficients from the impact analysis") 
+    
     
 
     

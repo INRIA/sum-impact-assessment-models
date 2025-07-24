@@ -1,4 +1,4 @@
-from ...schemas.impact_analysis import MeasureImpactCoefficient, LivingLabImpactError
+from ...schemas.impact_analysis import MeasureImpactCoefficient, LivingLabImpactError, KPIGroupImpactOutput
 from ...schemas.core import LivingLab, Measure, KPILivingLab, KPIGroup
 import numpy as np
 from sklearn.linear_model import ridge_regression
@@ -41,7 +41,7 @@ class KPIImpactAnalyzer:
 
         return (y / max_variation) * target_range
 
-    def run_analysis_group(self, kpi_group:KPIGroup) -> KPIGroup:
+    def run_analysis_group(self, kpi_group:KPIGroup) -> KPIGroupImpactOutput:
         """
         Run KPI impact analysis on the LivingLabs data.
         Uses Ridge regression to estimate the impact of the implementation of each measure 
@@ -115,6 +115,9 @@ class KPIImpactAnalyzer:
         msqe = np.mean((y - y_pred)**2)  # Standard definition of Mean Squared Error
 
         # Update KPIGroup object with analysis results
+        output_group = KPIGroupImpactOutput(id=kpi_group.id, 
+                                            name=kpi_group.name, 
+                                            kpi_ids=kpi_group.kpi_ids)
         labs_analysis = []
         for lab in feasible_ll:
             index = feasible_ll.index(lab)
@@ -126,9 +129,9 @@ class KPIImpactAnalyzer:
                                             sqe=sqe_per_sample[index])
             labs_analysis.append(temp_lab)
 
-        kpi_group.living_labs_analysis = feasible_ll
-        kpi_group.msqe = msqe
-        kpi_group.variation_under_no_measures = intercept        
+        output_group.living_labs_analysis = feasible_ll
+        output_group.msqe = msqe
+        output_group.variation_under_no_measures = intercept        
         results = []
         for measure in self.measures:
             # TODO If measure is never implemented the coefficient should be None.
@@ -138,11 +141,11 @@ class KPIImpactAnalyzer:
                                               kpi_group_id=kpi_group.id,
                                               coefficient=coef[index])
             results.append(result)
-        kpi_group.measure_coefficients = results
+        output_group.measure_coefficients = results
 
-        return kpi_group
+        return output_group
 
-    def run_analysis(self, list_groups:list[KPIGroup]=None) -> list[KPIGroup]:
+    def run_analysis(self, list_groups:list[KPIGroup]=None) -> list[KPIGroupImpactOutput]:
         '''
         Runs the impact analysis for the KPI groups in 'list_groups'
 
@@ -151,15 +154,15 @@ class KPIImpactAnalyzer:
                                         If not provided, analysis is run for all groups.
 
         Returns:
-        - list of the same KPIGroup objects with updated fields with the analysis results
+        - list of the same KPIGroupImpactOutput objects with updated fields with the analysis results.
         '''
         # If list of groups not provided, select all KPI groups
         if list_groups is None: 
             list_groups = self.kpi_groups 
 
         # Run impact analysis for KPI groups selected
-        for group in self.kpi_groups:
-            self.group = self.run_analysis_group(group) # analysis results stored in each KPIGroup object directly
+        for i in range(len(self.kpi_groups)):
+            self.kpi_groups[i] = self.run_analysis_group(self.kpi_groups[i]) # analysis results stored in each KPIGroup object directly
 
 
 
