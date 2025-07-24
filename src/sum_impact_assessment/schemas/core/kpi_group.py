@@ -1,8 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from .kpi import KPI
-from .living_lab import LivingLab
-from ..impact_analysis.measure_impact_coef import MeasureImpactCoefficient
 
 class KPIGroup(BaseModel):
     """

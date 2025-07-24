@@ -1,8 +1,8 @@
 from pydantic import Field
 from typing import List, Optional
 from ..core import KPIGroup
-from measure_impact_coef import MeasureImpactCoefficient
-from living_lab_impact_error import LivingLabImpactError
+from .measure_impact_coef import MeasureImpactCoefficient
+from .living_lab_impact_error import LivingLabImpactError
 
 class KPIGroupImpactOutput(KPIGroup):
     """
