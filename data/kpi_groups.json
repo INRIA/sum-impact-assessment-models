@@ -1,5 +1,12 @@
 [
   {
+    "id": "group_test",
+    "name": "For debugging with current data (picked KPI commonly computed and with bounds, 2 important requisites)",
+    "kpi_ids": [
+      "kpi_14"
+    ]
+  },
+  {
     "id": "group_1",
     "name": "Policies (implementation and planning)",
     "kpi_ids": [
