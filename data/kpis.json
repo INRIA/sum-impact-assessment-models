@@ -204,8 +204,8 @@
     "name": "Travel cost ratio micro-mobility #3",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.4.1",
