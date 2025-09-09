@@ -12,7 +12,7 @@
     "name": "Community Involvement",
     "progression_target": 0,
     "value_type": "custom_unit",
-    "value_min": null,
+    "value_min": 0,
     "value_max": null
   },
   {
@@ -20,7 +20,7 @@
     "name": "Balance of pull - push planned measures",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
+    "value_min": 0,
     "value_max": null
   },
   {
@@ -28,7 +28,7 @@
     "name": "Balance of pull - push implemented measures",
     "progression_target": 1,
     "value_type": "ratio",
-    "value_min": null,
+    "value_min": 0,
     "value_max": null
   },
   {
@@ -36,7 +36,7 @@
     "name": "Number of NSM integrated in the system",
     "progression_target": 0,
     "value_type": "custom_unit",
-    "value_min": null,
+    "value_min": 0,
     "value_max": null
   },
   {
@@ -76,56 +76,56 @@
     "name": "Actual door-to-door travel time car-sharing only",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_7.2",
     "name": "Actual door-to-door travel time micro-mobility only",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_7.3",
     "name": "Actual door-to-door travel time ride-hailing and shuttle services only",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_7.4",
     "name": "Actual door-to-door travel time public Transport only",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_7.5",
     "name": "Actual door-to-door travel time public transport and car-sharing",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_7.6",
     "name": "Actual door-to-door travel time public transport and micro-mobility",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_7.7",
     "name": "Actual door-to-door travel time public transport and ride-hailing or shuttle services",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_8",
@@ -140,60 +140,68 @@
     "name": "Multimodal integration in stations/stops",
     "progression_target": 0,
     "value_type": "custom_unit",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 1
   },
   {
     "id": "kpi_10.1.1",
     "name": "Travel cost ratio public transport #1",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.1.2",
     "name": "Travel cost ratio public transport #2",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.1.3",
     "name": "Travel cost ratio public transport #3",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.2.1",
     "name": "Travel cost ratio car sharing #1",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.2.2",
     "name": "Travel cost ratio car sharing #2",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.3.1",
     "name": "Travel cost ratio micro-mobility #1",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.3.2",
     "name": "Travel cost ratio micro-mobility #2",
+    "progression_target": 0,
+    "value_type": "ratio",
+    "value_min": 0,
+    "value_max": 5
+  },
+  {
+    "id": "kpi_10.3.3",
+    "name": "Travel cost ratio micro-mobility #3",
     "progression_target": 0,
     "value_type": "ratio",
     "value_min": null,
@@ -204,64 +212,64 @@
     "name": "Travel cost ratio ride-hailing and shuttle services #1",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_10.4.2",
     "name": "Travel cost ratio ride-hailing and shuttle services #2",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 5
   },
   {
     "id": "kpi_11.1.1",
     "name": "Perceived door-to-door travel time ratio taxi [off-peak]",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_11.1.2",
     "name": "Perceived door-to-door travel time ratio public transport [off-peak]",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_11.1.3",
     "name": "Perceived door-to-door travel time ratio bicycle [off - peak]",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_11.2.1",
     "name": "Perceived door-to-door travel time ratio taxi [peak]",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_11.2.2",
     "name": "Perceived door-to-door travel time ratio public transport [peak]",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_11.2.3",
     "name": "Perceived door-to-door travel time ratio bicycle [peak]",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   },
   {
     "id": "kpi_12.1.1",
@@ -332,23 +340,15 @@
     "name": "Greenhouse emissions",
     "progression_target": 0,
     "value_type": "custom_unit",
-    "value_min": null,
-    "value_max": null
-  },
-  {
-    "id": "kpi_10.3.3",
-    "name": "Travel cost ratio micro-mobility #3",
-    "progression_target": 0,
-    "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 2.75
   },
   {
     "id": "kpi_24",
     "name": "Congestion and travel delays",
     "progression_target": 0,
     "value_type": "ratio",
-    "value_min": null,
-    "value_max": null
+    "value_min": 0,
+    "value_max": 3
   }
 ]
