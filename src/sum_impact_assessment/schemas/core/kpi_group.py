@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from .kpi import KPI
 
-
 class KPIGroup(BaseModel):
     """
     KPIGroup schema:
@@ -15,5 +14,12 @@ class KPIGroup(BaseModel):
     name: str = Field(..., description="Human-readable name of the KPI group")
     kpi_ids: List[str] = Field(...,
                                description="List of KPI ids in this group")
+    
+    # NOTE B doesn't use this field 'kpis', because it will need all KPI's for all living labs, in case not needed can delete
     kpis: Optional[List[KPI]] = Field(
-        None, description="Optional list of KPI objects belonging this group")
+        None, description="Optional list of KPI objects belonging this group") 
+    
+    
+    
+
+    
