@@ -5,8 +5,8 @@ from sklearn.linear_model import ridge_regression
 from enum import Enum
 
 class KPIAnalysisParam(Enum):
-    MIN_PERC_MEASURED_KPI_IN_GROUP = 0.8
-    MIN_PERC_FEASIBLE_LIVING_LABS = 0.8
+    MIN_PERC_MEASURED_KPI_IN_GROUP = 0.5
+    MIN_PERC_FEASIBLE_LIVING_LABS = 0.5
     REGULARIZATION_PENALTY = 1.0
 
 class KPIImpactAnalyzer:

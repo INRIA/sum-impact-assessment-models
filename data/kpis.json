@@ -344,6 +344,14 @@
     "value_max": 2.75
   },
   {
+    "id": "kpi_20",
+    "name": "Accessibility ratio",
+    "progression_target": 1,
+    "value_type": "ratio",
+    "value_min": 0,
+    "value_max": 10
+  },
+  {
     "id": "kpi_24",
     "name": "Congestion and travel delays",
     "progression_target": 0,

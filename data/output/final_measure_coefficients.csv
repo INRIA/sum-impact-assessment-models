@@ -1,0 +1,61 @@
+id,name,kpi_group_id,coefficient
+measure_001,Congestion charges,goal_1_improve_accessibility,-0.004990894333474946
+measure_002,Parking charges,goal_1_improve_accessibility,0.008460051332591262
+measure_003,Restricted parking,goal_1_improve_accessibility,-0.0008898800946494481
+measure_004,Limited traffic zone / Pedestrianisation of streets,goal_1_improve_accessibility,-0.007301946303813751
+measure_005,Parking supply management,goal_1_improve_accessibility,0.007937773025479622
+measure_006,Speed limits,goal_1_improve_accessibility,0.0008269474901926823
+measure_007,Mobility hubs (see task T3.2),goal_1_improve_accessibility,-0.0026562660651275106
+measure_008,Scheduling integration in MaaS services (see task T2.3),goal_1_improve_accessibility,0.005016986537979705
+measure_009,Ticketing integration in MaaS services (see task T3.4),goal_1_improve_accessibility,-0.007828439751233535
+measure_010,"Improved NSM infrastructure, e.g. bike lanes & ""park & ride""",goal_1_improve_accessibility,-0.0032841731347295314
+measure_011,On demand vehicle sharing action plan,goal_1_improve_accessibility,0.005593038371035445
+measure_012,Nudging (gamification or rewards),goal_1_improve_accessibility,-0.0009694808548973368
+measure_013,Dynamic pricing of NSM,goal_1_improve_accessibility,0.010159117849473818
+measure_014,Improved information about the availability of shared modes,goal_1_improve_accessibility,0.00019904042059065683
+measure_015,Introduction of new NSM services (ex. bike-sharing),goal_1_improve_accessibility,-0.006332465448916427
+measure_016,"Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",goal_1_improve_accessibility,-0.008350718058345204
+measure_017,Streets retrofitting/introduction of priority lanes,goal_1_improve_accessibility,0.012755719142868665
+measure_018,Dedicated parking spaces for carsharing/micromobility,goal_1_improve_accessibility,0.0008269474901926823
+measure_019,Widening PT geographical area,goal_1_improve_accessibility,0.007937773025479622
+measure_020,Central PT planning and construction program,goal_1_improve_accessibility,0.007937773025479622
+measure_001,Congestion charges,goal_2_improve_safety,-3.867457243661315e-05
+measure_002,Parking charges,goal_2_improve_safety,0.0029946602148557054
+measure_003,Restricted parking,goal_2_improve_safety,3.94458197695506e-05
+measure_004,Limited traffic zone / Pedestrianisation of streets,goal_2_improve_safety,-0.0013681645255067905
+measure_005,Parking supply management,goal_2_improve_safety,0.003648541639708735
+measure_006,Speed limits,goal_2_improve_safety,-0.0008687765833965698
+measure_007,Mobility hubs (see task T3.2),goal_2_improve_safety,-0.0008136956040855762
+measure_008,Scheduling integration in MaaS services (see task T2.3),goal_2_improve_safety,0.00042863737026364163
+measure_009,Ticketing integration in MaaS services (see task T3.4),goal_2_improve_safety,-0.0036962527986601403
+measure_010,"Improved NSM infrastructure, e.g. bike lanes & ""park & ride""",goal_2_improve_safety,-0.0008523701765221772
+measure_011,On demand vehicle sharing action plan,goal_2_improve_safety,0.004518089470438233
+measure_012,Nudging (gamification or rewards),goal_2_improve_safety,0.0008046590175708
+measure_013,Dynamic pricing of NSM,goal_2_improve_safety,0.005837771589660694
+measure_014,Improved information about the availability of shared modes,goal_2_improve_safety,-0.0009074511558331847
+measure_015,Introduction of new NSM services (ex. bike-sharing),goal_2_improve_safety,-0.002172823543077585
+measure_016,"Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",goal_2_improve_safety,-0.003042371373807093
+measure_017,Streets retrofitting/introduction of priority lanes,goal_2_improve_safety,0.0049846301658055606
+measure_018,Dedicated parking spaces for carsharing/micromobility,goal_2_improve_safety,-0.0008687765833965698
+measure_019,Widening PT geographical area,goal_2_improve_safety,0.003648541639708735
+measure_020,Central PT planning and construction program,goal_2_improve_safety,0.003648541639708735
+measure_001,Congestion charges,goal_3_improve_public_transport,0.0025585728528599175
+measure_002,Parking charges,goal_3_improve_public_transport,0.0038909689722795445
+measure_003,Restricted parking,goal_3_improve_public_transport,0.0006865771965360897
+measure_004,Limited traffic zone / Pedestrianisation of streets,goal_3_improve_public_transport,-0.0040978275570086155
+measure_005,Parking supply management,goal_3_improve_public_transport,0.0017442362297708687
+measure_006,Speed limits,goal_3_improve_public_transport,-0.0019515955028254971
+measure_007,Mobility hubs (see task T3.2),goal_3_improve_public_transport,0.003037717218398932
+measure_008,Scheduling integration in MaaS services (see task T2.3),goal_3_improve_public_transport,0.005250528649724977
+measure_009,Ticketing integration in MaaS services (see task T3.4),goal_3_improve_public_transport,-0.001647893262616728
+measure_010,"Improved NSM infrastructure, e.g. bike lanes & ""park & ride""",goal_3_improve_public_transport,0.0017429353220983113
+measure_011,On demand vehicle sharing action plan,goal_3_improve_public_transport,0.003087627032831834
+measure_012,Nudging (gamification or rewards),goal_3_improve_public_transport,0.002206762394216361
+measure_013,Dynamic pricing of NSM,goal_3_improve_public_transport,0.01174335700591965
+measure_014,Improved information about the availability of shared modes,goal_3_improve_public_transport,-0.003246377399126114
+measure_015,Introduction of new NSM services (ex. bike-sharing),goal_3_improve_public_transport,-0.006304589951224973
+measure_016,"Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",goal_3_improve_public_transport,-0.003794626005125404
+measure_017,Streets retrofitting/introduction of priority lanes,goal_3_improve_public_transport,0.010241142278621959
+measure_018,Dedicated parking spaces for carsharing/micromobility,goal_3_improve_public_transport,-0.0019515955028254971
+measure_019,Widening PT geographical area,goal_3_improve_public_transport,0.0017442362297708687
+measure_020,Central PT planning and construction program,goal_3_improve_public_transport,0.0017442362297708687
