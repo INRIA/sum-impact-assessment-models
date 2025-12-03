@@ -10,6 +10,13 @@ pdoc = "*"
 numpy = "*"
 scikit-learn = "*"
 pandas = "*"
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+sqlalchemy = "*"
+pymysql = "*"
+python-dotenv = "*"
+pydantic-settings = "*"
+cryptography = "*"
 
 [dev-packages]
 pytest = "*"

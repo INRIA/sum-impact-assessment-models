@@ -100,3 +100,78 @@ python3 build_docs.py
 
 **The documentation will be at `./docs` folder.**
 
+## Run the API Server
+
+The project includes a lightweight FastAPI-based API to trigger data analysis jobs and retrieve KPI data from MySQL database.
+
+### 1. Configure environment variables
+
+Copy the example environment file and configure your database credentials:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your database configuration:
+
+```bash
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+DB_NAME=sum_odp
+
+# API Configuration
+API_HOST=0.0.0.0
+API_PORT=8000
+```
+
+### 2. Install API dependencies
+
+If not already done, install the API dependencies:
+
+```bash
+pipenv install
+```
+
+### 3. Start the API server
+
+Run the API server using the provided script:
+
+```bash
+python run_api.py
+```
+
+Or using pipenv:
+
+```bash
+pipenv run python run_api.py
+```
+
+The API will start on `http://localhost:8000`
+
+### 4. Access API documentation
+
+Once the server is running, you can access:
+
+- **Interactive API docs (Swagger UI):** http://localhost:8000/docs
+- **Alternative API docs (ReDoc):** http://localhost:8000/redoc
+
+### 5. Available API endpoints
+
+- `GET /health` - Health check endpoint to verify the API is running
+- `GET /kpis` - Retrieve all KPI definitions from the database
+
+### Example API requests
+
+**Health check:**
+```bash
+curl http://localhost:8000/health
+```
+
+**Get all KPIs:**
+```bash
+curl http://localhost:8000/kpis
+```
+

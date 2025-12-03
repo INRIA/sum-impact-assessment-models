@@ -57,6 +57,7 @@ coverage.xml
 # dotenv
 *.env
 .env.*
+!.env.example
 
 # Temporary files
 *.tmp
