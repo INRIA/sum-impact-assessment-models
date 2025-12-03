@@ -1,0 +1,41 @@
+[
+  {
+    "id": "kpi_1",
+    "name": "Air Quality Index",
+    "progression_target": 0,
+    "value_type": "percentage",
+    "value_min": 0,
+    "value_max": 1,
+    "living_lab_id": "lab_test",
+    "value_before": 0.8,
+    "value_after": 0.6,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_2",
+    "name": "Public Transport Usage",
+    "progression_target": 1,
+    "value_type": "percentage",
+    "value_min": 0,
+    "value_max": 1,
+    "living_lab_id": "lab_test",
+    "value_before": 0.5,
+    "value_after": 0.7,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_3",
+    "name": "Traffic Congestion",
+    "progression_target": 0,
+    "value_type": "ratio",
+    "value_min": 0,
+    "value_max": 10,
+    "living_lab_id": "lab_test",
+    "value_before": 5.0,
+    "value_after": 3.5,
+    "abs_variation": null,
+    "variation": null
+  }
+]

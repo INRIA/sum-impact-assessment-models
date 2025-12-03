@@ -1,0 +1,80 @@
+[
+  {
+    "id": "kpi_zero_before",
+    "name": "Zero Value Before",
+    "progression_target": 1,
+    "value_type": "percentage",
+    "value_min": 0,
+    "value_max": 1,
+    "living_lab_id": "lab_test",
+    "value_before": 0,
+    "value_after": 0.5,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_min_boundary",
+    "name": "At Minimum Boundary",
+    "progression_target": 1,
+    "value_type": "score",
+    "value_min": 0,
+    "value_max": 100,
+    "living_lab_id": "lab_test",
+    "value_before": 0,
+    "value_after": 10,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_max_boundary",
+    "name": "At Maximum Boundary",
+    "progression_target": 0,
+    "value_type": "score",
+    "value_min": 0,
+    "value_max": 100,
+    "living_lab_id": "lab_test",
+    "value_before": 100,
+    "value_after": 90,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_negative_change_target_increase",
+    "name": "Negative Change with Target Increase",
+    "progression_target": 1,
+    "value_type": "percentage",
+    "value_min": 0,
+    "value_max": 1,
+    "living_lab_id": "lab_test",
+    "value_before": 0.8,
+    "value_after": 0.6,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_positive_change_target_decrease",
+    "name": "Positive Change with Target Decrease",
+    "progression_target": 0,
+    "value_type": "percentage",
+    "value_min": 0,
+    "value_max": 1,
+    "living_lab_id": "lab_test",
+    "value_before": 0.6,
+    "value_after": 0.8,
+    "abs_variation": null,
+    "variation": null
+  },
+  {
+    "id": "kpi_no_change",
+    "name": "No Change",
+    "progression_target": 1,
+    "value_type": "percentage",
+    "value_min": 0,
+    "value_max": 1,
+    "living_lab_id": "lab_test",
+    "value_before": 0.5,
+    "value_after": 0.5,
+    "abs_variation": null,
+    "variation": null
+  }
+]

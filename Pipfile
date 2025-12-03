@@ -7,8 +7,11 @@ name = "pypi"
 build = "*"
 pydantic = "*"
 pdoc = "*"
+numpy = "*"
+scikit-learn = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.13"

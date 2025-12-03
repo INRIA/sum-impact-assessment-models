@@ -20,7 +20,7 @@ The model requires the following information :
 
 ## Local installation for development
 
-Ensure you have Python installed (recommended: Python 3.8+).
+Ensure you have Python installed (recommended: Python 3.13+).
 
 1. Clone the repository
 2. Create an environment
@@ -42,34 +42,49 @@ Check the [Python packaging user guide](https://packaging.python.org/en/latest/t
 
 On Debian protected environment, create a virtual enviornment first :
 
+#### Environment with python natively
 ```bash
 python3 -m venv env && source env/bin/activate && pip install pipenv
+pip install pipenv
 ```
 
 Install library pipenv to handle the environment and the dependencies.
 
+#### Environment with pipenv
+Install `pipenv`, then create and activate environment. Finally install dependencies. 
+
 ```bash
 pip install pipenv
+pipenv lock 
+pipenv install --dev
 ```
 
 ## Build and publish the package
 
-### 1. Install dependencies and build package 
+### 1. Install dependencies
 Create environment and install pipenv, then install dependencies. 
 Finally, build the package. 
 
 ```bash
-python3 -m venv env && source env/bin/activate && pip install pipenv && pipenv install --dev
+pip install pipenv
+pipenv lock
+pipenv install --dev
+```
+
+#### 1.1. Run tests 
+```bash
+pipenv run pytest
+```
+
+#### 1.2. Build package 
+```bash
 # Build the wheel
 python3 -m build
 
 # Generate the docs
 python3 build_docs.py
 ```
-
 **The compiled wheel package .whl file will be at `./dist` folder.**
-
-**The documentation will be at `./docs` folder.**
 
 
 ```bash
@@ -77,36 +92,11 @@ python3 build_docs.py
 rm -rf build dist *.egg-info
 ```
 
-## Local installation for development
-
-Ensure you have Python installed (recommended: Python 3.8+).
-
-1. Clone the repository
-2. Create an environment
-3. Install the necessary packages
-4. Create experiments and run the models
-5. Analyze the results
-
-### 1. Clone the repository
-
-Clone the repository using the following command:
-
+#### 1.3. Build the doc files 
 ```bash
-git clone https://github.com/INRIA/sum-impact-assessment-models
+# Generate the docs
+python3 build_docs.py
 ```
 
-### 2. Create an environment
+**The documentation will be at `./docs` folder.**
 
-Check the [Python packaging user guide](https://packaging.python.org/en/latest/tutorials/managing-dependencies/) for more information on how to manage dependencies in Python.
-
-On Debian protected environment, create a virtual enviornment first :
-
-```bash
-python3 -m venv env && source env/bin/activate && pip install pipenv
-```
-
-Install library pipenv to handle the environment and the dependencies.
-
-```bash
-pip install pipenv
-```
