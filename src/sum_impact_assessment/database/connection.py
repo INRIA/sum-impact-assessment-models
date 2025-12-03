@@ -6,8 +6,21 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from contextlib import contextmanager
 from typing import Generator
 from ..config.settings import settings
+from ..utils.logger import get_logger
+
+# Initialize logger
+logger = get_logger(__name__)
 
 # Create SQLAlchemy engine
+logger.info(
+    "Creating database engine",
+    extra={
+        "db_host": settings.DB_HOST,
+        "db_port": settings.DB_PORT,
+        "db_name": settings.DB_NAME
+    }
+)
+
 engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,  # Verify connections before using them
@@ -16,7 +29,6 @@ engine = create_engine(
 )
 
 # Create session factory
-print("Creating SessionLocal with database URL:", settings.database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for ORM models

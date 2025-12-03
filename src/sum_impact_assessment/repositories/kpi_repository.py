@@ -4,6 +4,10 @@ Repository for KPI data access.
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from typing import List, Dict, Any
+from ..utils.logger import get_logger
+
+# Initialize logger
+logger = get_logger(__name__)
 
 
 class KPIRepository:
@@ -30,9 +34,14 @@ class KPIRepository:
         """
         try:
             self.session.execute(text("SELECT 1"))
+            logger.debug("Database connection check successful")
             return True
         except Exception as e:
-            print(f"Database connection error: {e}")
+            logger.error(
+                "Database connection check failed",
+                extra={"error": str(e), "error_type": type(e).__name__},
+                exc_info=True
+            )
             return False
     
     def get_all_kpis(self) -> List[Dict[str, Any]]:
@@ -42,14 +51,27 @@ class KPIRepository:
         Returns:
             List of KPI definitions as dictionaries.
         """
-        query = text("SELECT * FROM kpidefinitions")
-        result = self.session.execute(query)
-        
-        # Convert rows to dictionaries
-        columns = result.keys()
-        kpis = [dict(zip(columns, row)) for row in result.fetchall()]
-        
-        return kpis
+        try:
+            logger.debug("Fetching all KPIs from database")
+            query = text("SELECT * FROM kpidefinitions")
+            result = self.session.execute(query)
+            
+            # Convert rows to dictionaries
+            columns = result.keys()
+            kpis = [dict(zip(columns, row)) for row in result.fetchall()]
+            
+            logger.debug(
+                "Successfully fetched KPIs",
+                extra={"kpi_count": len(kpis)}
+            )
+            return kpis
+        except Exception as e:
+            logger.error(
+                "Failed to fetch KPIs from database",
+                extra={"error": str(e), "error_type": type(e).__name__},
+                exc_info=True
+            )
+            raise
     
     def get_kpi_by_id(self, kpi_id: str) -> Dict[str, Any] | None:
         """

@@ -17,6 +17,7 @@ pymysql = "*"
 python-dotenv = "*"
 pydantic-settings = "*"
 cryptography = "*"
+python-json-logger = "*"
 
 [dev-packages]
 pytest = "*"
