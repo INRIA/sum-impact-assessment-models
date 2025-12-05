@@ -11,9 +11,9 @@ from src.sum_impact_assessment.api.main import app
 
 if __name__ == "__main__":
     uvicorn.run(
-        app,
+        "__main__:app",
         host=settings.API_HOST,
         port=settings.API_PORT,
-        reload=settings.DEBUG,  # Enable auto-reload in debug mode
-        log_level="info"
+        reload=settings.ENV == "development",
+        log_level=settings.LOG_LEVEL.lower()
     )

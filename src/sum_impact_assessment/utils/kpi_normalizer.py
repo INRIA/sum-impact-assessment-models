@@ -1,5 +1,5 @@
 from typing import List
-from ..schemas.core import KPILivingLab
+from ..schemas.core import KPILivingLabResult
 
 
 class KPINormalizer:
@@ -7,7 +7,7 @@ class KPINormalizer:
     Normalizes KPI data by calculating the variation for each KPI.
     """
 
-    def __init__(self, kpis: List[KPILivingLab]):
+    def __init__(self, kpis: List[KPILivingLabResult]):
         self.kpis = kpis
 
     def normalizeKPIs(self):

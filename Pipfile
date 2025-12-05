@@ -22,6 +22,7 @@ python-json-logger = "*"
 [dev-packages]
 pytest = "*"
 ipykernel = "*"
+httpx = "*"
 
 [requires]
 python_version = "3.13"

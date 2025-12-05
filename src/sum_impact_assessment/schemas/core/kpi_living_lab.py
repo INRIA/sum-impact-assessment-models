@@ -3,21 +3,17 @@ from typing import Optional
 from .kpi import KPI
 
 
-class KPILivingLab(KPI):
-    """
-    KPI schema:
-    - living_lab_id: identifier for the related living lab
-    - value_before: value before intervention
-    - value_after: value after intervention
-    - abs_variation: calculated absolute variation between before and after values
-    - variation: calculated variation (e.g. percent change)
-    """
+class KPILivingLabResult(KPI):
     living_lab_id: str = Field(...,
                                description="Identifier for the related living lab")
+    transport_mode_id: Optional[str] = Field(
+        None, description="Identifier for the transport mode, only for Modal Split KPIS")
+    transport_mode_name: Optional[str] = Field(
+        None, description="Name of the transport mode, only for Modal Split KPIS")
     value_before: Optional[float] = Field(None, description="Value before")
     value_after: Optional[float] = Field(None, description="Value after")
     abs_variation: Optional[float] = Field(
-        None, description="Computed absolute variation (float)")
+        None, description="Computed absolute variation between before and after values (float)")
     variation: Optional[float] = Field(
         None, description="Computed variation (float)")
 
@@ -30,10 +26,8 @@ class KPILivingLab(KPI):
         """
 
         if (self.value_before is None) or (self.value_after is None):
-            raise ValueError("No value after or before for variation calculation.")
-        
+            raise ValueError(
+                "No value after or before for variation calculation.")
+
         abs_variation = (self.value_after - self.value_before)
         self.abs_variation = abs_variation if self.progression_target == 1 else -abs_variation
-
-
-

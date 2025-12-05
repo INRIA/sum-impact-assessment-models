@@ -5,10 +5,10 @@ import json
 import pytest
 from pathlib import Path
 from sum_impact_assessment.utils import KPINormalizer
-from sum_impact_assessment.schemas.core import KPILivingLab
+from sum_impact_assessment.schemas.core import KPILivingLabResult
 
 
-def load_kpis_from_fixture(filename: str) -> list[KPILivingLab]:
+def load_kpis_from_fixture(filename: str) -> list[KPILivingLabResult]:
     """
     Load KPI test data from JSON fixture file.
     
@@ -16,12 +16,12 @@ def load_kpis_from_fixture(filename: str) -> list[KPILivingLab]:
         filename: Name of the JSON file in tests/fixtures/
         
     Returns:
-        List of KPILivingLab instances
+        List of KPILivingLabResult instances
     """
     fixture_path = Path(__file__).parent.parent / "fixtures" / filename
     with open(fixture_path, 'r') as f:
         data = json.load(f)
-    return [KPILivingLab(**kpi_data) for kpi_data in data]
+    return [KPILivingLabResult(**kpi_data) for kpi_data in data]
 
 
 class TestKPINormalizerInitialization:
@@ -41,7 +41,7 @@ class TestKPINormalizerInitialization:
         kpis = load_kpis_from_fixture("normal_kpis.json")
         normalizer = KPINormalizer(kpis=kpis)
         assert len(normalizer.kpis) == 3
-        assert all(isinstance(kpi, KPILivingLab) for kpi in normalizer.kpis)
+        assert all(isinstance(kpi, KPILivingLabResult) for kpi in normalizer.kpis)
 
 
 class TestKPINormalizerNormalizeKPIs:

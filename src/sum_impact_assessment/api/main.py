@@ -4,9 +4,10 @@ FastAPI application instance and configuration.
 import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import kpis
+from .routes import kpis, jobs
 from ..config.settings import settings
 from ..utils.logger import get_logger
+from ..database.connection import Base, engine
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -73,6 +74,7 @@ async def log_requests(request: Request, call_next):
 
 # Include routers
 app.include_router(kpis.router, tags=["KPIs"])
+app.include_router(jobs.router, tags=["Jobs"])
 
 
 @app.on_event("startup")
@@ -80,6 +82,11 @@ async def startup_event():
     """
     Application startup event handler.
     """
+    # Create database tables if they don't exist
+    logger.info("Creating database tables if they don't exist")
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
+    
     logger.info(
         "API server starting",
         extra={

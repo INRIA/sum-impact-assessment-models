@@ -25,7 +25,7 @@ engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,  # Verify connections before using them
     pool_recycle=3600,   # Recycle connections after 1 hour
-    echo=settings.DEBUG  # Log SQL queries in debug mode
+    echo=settings.LOG_LEVEL == "DEBUG"  # Log SQL statements in debug mode
 )
 
 # Create session factory
@@ -39,7 +39,7 @@ def get_db() -> Generator[Session, None, None]:
     """
     Dependency function to get database session.
     Use with FastAPI Depends().
-    
+
     Yields:
         Database session that automatically closes after use.
     """
@@ -55,7 +55,7 @@ def get_db_session() -> Generator[Session, None, None]:
     """
     Context manager for database sessions.
     Use in non-FastAPI contexts.
-    
+
     Example:
         with get_db_session() as db:
             # Use db session here

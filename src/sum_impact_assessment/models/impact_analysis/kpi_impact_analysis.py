@@ -1,5 +1,5 @@
 from ...schemas.impact_analysis import MeasureImpactCoefficient, LivingLabImpactError, KPIGroupImpactOutput
-from ...schemas.core import LivingLab, Measure, KPILivingLab, KPIGroup
+from ...schemas.core import LivingLab, Measure, KPILivingLabResult, KPIGroup
 import numpy as np
 from sklearn.linear_model import ridge_regression
 from enum import Enum
@@ -10,7 +10,7 @@ class KPIAnalysisParam(Enum):
     REGULARIZATION_PENALTY = 1.0
 
 class KPIImpactAnalyzer:
-    def __init__(self, living_labs: list[LivingLab], measures: list[Measure], kpis: list[KPILivingLab], kpi_groups: list[KPIGroup]):
+    def __init__(self, living_labs: list[LivingLab], measures: list[Measure], kpis: list[KPILivingLabResult], kpi_groups: list[KPIGroup]):
         """
         Initialize with a list of LivingLabs information.
         """

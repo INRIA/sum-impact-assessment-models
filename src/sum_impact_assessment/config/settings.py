@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     """
     Application settings loaded from environment variables.
     """
+    ENV: str = "development"
     # Database configuration
     DB_HOST: str = "localhost"
     DB_PORT: int = 3306
@@ -22,7 +23,8 @@ class Settings(BaseSettings):
     API_VERSION: str = "0.1.0"
     
     # Application configuration
-    DEBUG: bool = False
+    LOG_LEVEL: str = "INFO"
+    LOG_FORMAT: str = "json"
     
     model_config = SettingsConfigDict(
         env_file=".env",

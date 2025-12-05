@@ -1,11 +1,11 @@
 import json
-from ..schemas.core import LivingLab, Measure, KPI, KPILivingLab, KPIGroup
+from ..schemas.core import LivingLab, Measure, KPI, KPILivingLabResult, KPIGroup
 
 
 def load_living_labs_from_file(file_path: str, kpi_definitions: list[KPI]) -> list[LivingLab]:
     """
     Load a list of LivingLab instances from a given JSON file path.
-    For each lab, convert its kpis to KPILivingLab, extending the definition from kpi_definitions.
+    For each lab, convert its kpis to KPILivingLabResult, extending the definition from kpi_definitions.
     """
     with open(file_path, "r") as f:
         data = json.load(f)
@@ -23,10 +23,10 @@ def load_living_labs_from_file(file_path: str, kpi_definitions: list[KPI]) -> li
             if kpi_def:
                 merged_data = {**kpi_def.model_dump(), **kpi_data,
                                'living_lab_id': living_lab_id}
-                kpis.append(KPILivingLab(**merged_data))
+                kpis.append(KPILivingLabResult(**merged_data))
             else:
                 # If no definition, just use the lab data
-                kpis.append(KPILivingLab(**kpi_data))
+                kpis.append(KPILivingLabResult(**kpi_data))
         lab["kpis"] = kpis
         labs.append(LivingLab(**lab))
     return labs
