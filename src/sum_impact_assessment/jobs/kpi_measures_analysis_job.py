@@ -107,6 +107,19 @@ class KpiMeasuresAnalysisJob:
             kpis, measures, kpi_groups, living_labs = KpiMeasuresAnalysisJob._get_data_and_transform(
                 db)
 
+            # Serialize and save input data snapshot
+            input_data_snapshot = {
+                "kpis": [kpi.model_dump() for kpi in kpis],
+                "measures": [measure.model_dump() for measure in measures],
+                "kpi_groups": [group.model_dump() for group in kpi_groups],
+                "living_labs": [lab.model_dump() for lab in living_labs],
+                "timestamp": datetime.utcnow().isoformat()
+            }
+
+            job_repo.update_job_data(
+                job_id=job_id, input_data=input_data_snapshot)
+            logger.info("Input data snapshot saved")
+
             # Step 3: Instantiate KPIImpactAnalyzer
             analyzer = KPIImpactAnalyzer(
                 living_labs=living_labs,
@@ -117,36 +130,66 @@ class KpiMeasuresAnalysisJob:
 
             # Step 4: Run the analysis
             logger.info("Running impact analysis")
-            # results = analyzer.run_analysis()
-            results = DataFrame()
-            analyzed_groups_names = ''
+
+            # Track successful results and errors separately
+            successful_results = []
+            error_results = []
+
             for group in kpi_groups:
                 try:
                     logger.debug(
                         f"Analyzing KPI group: {group.name} (ID: {group.id})")
                     group_results = analyzer.run_analysis_group(group)
-                    df = DataFrame([coef.model_dump()
-                                   for coef in group_results.measure_coefficients])
 
-                    # add df to final_df
-                    results = concat([results, df], ignore_index=True)
-                    analyzed_groups_names += f"{group.name}, "
+                    # Store full KPIGroupImpactOutput
+                    successful_results.append({
+                        "group_id": group.id,
+                        "group_name": group.name,
+                        "results": group_results.model_dump()
+                    })
+
                 except Exception as e:
+                    error_message = str(e)
                     logger.warning(
-                        f"Failed to analyze KPI group {group.id}: {e}")
+                        f"Failed to analyze KPI group {group.id}: {error_message}")
+
+                    # Store error information
+                    error_results.append({
+                        "group_id": group.id,
+                        "group_name": group.name,
+                        "error": error_message
+                    })
                     continue
+
+            # Serialize and save output data snapshot
+            output_data_snapshot = {
+                "success": successful_results,
+                "errors": error_results,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            job_repo.update_job_data(
+                job_id=job_id, output_data=output_data_snapshot)
+            logger.info("Output data snapshot saved")
 
             # # Step 5: Log results
             logger.info(
                 "Analysis completed successfully",
                 extra={
-                    "groups_analyzed": results.size
+                    "groups_analyzed": len(successful_results),
+                    "groups_failed": len(error_results)
                 }
             )
 
             # Update status to SUCCESS
-            groups_names = ', '.join([group.name for group in kpi_groups])
-            success_message = f"Analysis completed successfully for {results.size}/{len(kpi_groups)} KPI groups {groups_names}. Groupes analyzed : ({analyzed_groups_names})"
+            success_count = len(successful_results)
+            total_count = len(kpi_groups)
+            analyzed_groups = ', '.join(
+                [r['group_name'] for r in successful_results])
+
+            success_message = (
+                f"Analysis completed for {success_count}/{total_count} KPI groups. "
+                f"Analyzed: ({analyzed_groups})"
+            )
             job_repo.update_job_status(
                 job_id=job_id,
                 status=JobStatusEnum.SUCCESS,
@@ -163,6 +206,16 @@ class KpiMeasuresAnalysisJob:
                 error_message,
                 extra={"job_id": job_id},
                 exc_info=True
+            )
+
+            # Save error output data
+            job_repo.update_job_data(
+                job_id=job_id,
+                output_data={
+                    "success": [],
+                    "errors": [{"error": error_message, "fatal": True}],
+                    "timestamp": datetime.utcnow().isoformat()
+                }
             )
 
             job_repo.update_job_status(
