@@ -1,0 +1,4 @@
+name,weight,direction,Q,S,P,F
+Improve Accessibility,0.33,max,0.0005,0.003,0.01,t5
+Improve Safety,0.33,max,0.0005,0.003,0.01,t5
+Improve Public Transport,0.34,max,0.0005,0.003,0.01,t5

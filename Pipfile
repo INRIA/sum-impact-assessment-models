@@ -18,6 +18,7 @@ python-dotenv = "*"
 pydantic-settings = "*"
 cryptography = "*"
 python-json-logger = "*"
+pydecision = "*"
 
 [dev-packages]
 pytest = "*"
