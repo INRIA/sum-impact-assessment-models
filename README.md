@@ -55,7 +55,7 @@ Install `pipenv`, then create and activate environment. Finally install dependen
 
 ```bash
 pip install pipenv
-pipenv lock 
+pipenv shell
 pipenv install --dev
 ```
 
@@ -67,7 +67,7 @@ Finally, build the package.
 
 ```bash
 pip install pipenv
-pipenv lock
+pipenv shell
 pipenv install --dev
 ```
 

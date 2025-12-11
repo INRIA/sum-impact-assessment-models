@@ -14,8 +14,6 @@ class KPILivingLabResult(KPI):
     value_after: Optional[float] = Field(None, description="Value after")
     abs_variation: Optional[float] = Field(
         None, description="Computed absolute variation between before and after values (float)")
-    variation: Optional[float] = Field(
-        None, description="Computed variation (float)")
 
     def update_absolute_variation(self):
         """
