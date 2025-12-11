@@ -14,6 +14,8 @@ class KPILivingLabResult(KPI):
     value_after: Optional[float] = Field(None, description="Value after")
     abs_variation: Optional[float] = Field(
         None, description="Computed absolute variation between before and after values (float)")
+    ratio_variation: Optional[float] = Field(
+        None, description="Computed ratio variation between before and after values (float)")
 
     def update_absolute_variation(self):
         """
@@ -29,3 +31,22 @@ class KPILivingLabResult(KPI):
 
         abs_variation = (self.value_after - self.value_before)
         self.abs_variation = abs_variation if self.progression_target == 1 else -abs_variation
+
+    def update_ratio_variation(self):
+        """
+        Updates each KPI's 'ratio_variation' field based on value_before and value_after.
+        Ratio variation is calculated as ratio change in KPI value. The sign is adjusted according to progression_target:
+        - progression_target == 1 (increase desired): positive if value Increases
+        - progression_target == 0 (decrease desired): positive if value Decreases
+        """
+
+        if (self.value_before is None) or (self.value_after is None):
+            raise ValueError(
+                "No value after or before for variation calculation.")
+
+        if self.value_before == 0:
+            raise ValueError(
+                "Value before is zero, cannot compute percentage variation.")
+
+        self.update_absolute_variation()
+        self.ratio_variation = self.abs_variation / self.value_before

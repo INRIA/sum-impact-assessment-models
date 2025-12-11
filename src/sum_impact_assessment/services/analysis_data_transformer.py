@@ -118,7 +118,7 @@ class AnalysisDataTransformer:
             raw_group = next(
                 (g for g in raw_groups if g.get('id') == group_id), None)
             kpi_ids = [str(g.get('kpidefinition_id'))
-                       for g in raw_groups]
+                       for g in raw_groups if g.get('id') == group_id]
             kpis = [{'id': str(g.get('kpidefinition_id')),
                      'name': g.get('kpidefinition_name'),
                      'progression_target': g.get('kpidefinition_progression_target'),
@@ -126,7 +126,7 @@ class AnalysisDataTransformer:
                      'value_max': g.get('kpidefinition_max_value'),
                      'value_type': g.get('kpidefinition_metric'),
                      }
-                    for g in raw_groups]
+                    for g in raw_groups if g.get('id') == group_id]
 
             if not raw_group:
                 continue

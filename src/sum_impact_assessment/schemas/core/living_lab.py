@@ -18,6 +18,11 @@ class LivingLab(BaseModel):
     kpis: List[KPILivingLabResult]
     measures: List[Measure]
 
+    def __init__(self, **data):
+        super().__init__(**data)
+        for kpi in self.kpis:
+            kpi.update_ratio_variation()
+
     @classmethod
     def from_json_file(cls, file_path: str):
         """
