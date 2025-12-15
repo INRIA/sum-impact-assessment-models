@@ -21,7 +21,8 @@ class LivingLab(BaseModel):
     def __init__(self, **data):
         super().__init__(**data)
         for kpi in self.kpis:
-            kpi.update_ratio_variation()
+            if (kpi.value_before is not None and kpi.value_before > 0 and kpi.value_after is not None and kpi.value_after > 0):
+                kpi.update_ratio_variation()
 
     @classmethod
     def from_json_file(cls, file_path: str):
