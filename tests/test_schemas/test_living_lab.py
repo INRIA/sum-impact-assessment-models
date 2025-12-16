@@ -232,6 +232,91 @@ class TestLivingLabAutomaticVariationCalculation:
         assert kpi.abs_variation == pytest.approx(0.2)
         assert kpi.ratio_variation == pytest.approx(0.2 / 0.6)
 
+    def test_variations_with_zero_before_value(self):
+        """Test KPI with zero value_before handles variations correctly."""
+        kpis = [
+            KPILivingLabResult(
+                id="kpi_zero_before",
+                name="Zero Before KPI",
+                progression_target=1,
+                value_type=KPIValueType.percentage,
+                living_lab_id="lab_001",
+                value_before=0.0,
+                value_after=0.5
+            )
+        ]
+
+        living_lab = LivingLab(
+            id="lab_001",
+            name="Test Lab",
+            kpis=kpis,
+            measures=[]
+        )
+
+        kpi = living_lab.kpis[0]
+        assert kpi.abs_variation == pytest.approx(0.5)
+        assert kpi.ratio_variation == 1.0  # Treated as 100% increase
+
+    def test_variations_with_None_values(self):
+        """Test KPI with None values for before/after, variation is None."""
+        kpis = [
+            KPILivingLabResult(
+                id="kpi_none_values",
+                name="None Values KPI",
+                progression_target=1,
+                value_type=KPIValueType.percentage,
+                living_lab_id="lab_001",
+                value_before=None,
+                value_after=0.5
+            )
+        ]
+
+        living_lab = LivingLab(
+            id="lab_001",
+            name="Test Lab",
+            kpis=kpis,
+            measures=[]
+        )
+        kpi = living_lab.kpis[0]
+        assert kpi.abs_variation is None
+        assert kpi.ratio_variation is None
+
+    def test_variations_with_one_correct_variation_and_None_values(self):
+        """Test KPI with one None value and one valid value, variation is None."""
+        kpis = [
+            KPILivingLabResult(
+                id="kpi_one_none",
+                name="One None Value KPI",
+                progression_target=1,
+                value_type=KPIValueType.percentage,
+                living_lab_id="lab_001",
+                value_before=0.5,
+                value_after=None
+            ),
+            KPILivingLabResult(
+                id="kpi_valid",
+                name="Valid KPI",
+                progression_target=1,
+                value_type=KPIValueType.percentage,
+                living_lab_id="lab_001",
+                value_before=0.4,
+                value_after=0.6
+            )
+        ]
+
+        living_lab = LivingLab(
+            id="lab_001",
+            name="Test Lab",
+            kpis=kpis,
+            measures=[]
+        )
+        kpi1 = living_lab.kpis[0]
+        kpi2 = living_lab.kpis[1]
+        assert kpi1.abs_variation is None
+        assert kpi1.ratio_variation is None
+        assert kpi2.abs_variation == pytest.approx(0.2)
+        assert kpi2.ratio_variation == pytest.approx(0.5)
+
 
 class TestLivingLabDataIntegrity:
     """Test data integrity after initialization."""

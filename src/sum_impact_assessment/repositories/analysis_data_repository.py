@@ -81,6 +81,8 @@ class AnalysisDataRepository:
                 c.name,
                 kc.kpidefinition_id,
                 k.name as kpidefinition_name,
+                k.parent_kpi_id,
+                kp.name as parent_kpi_name,
                 k.progression_target as kpidefinition_progression_target,
                 k.min_value as kpidefinition_min_value,
                 k.max_value as kpidefinition_max_value,
@@ -88,6 +90,7 @@ class AnalysisDataRepository:
             FROM categories c
             INNER JOIN kpidefinitions_category kc ON c.id = kc.category_id
             INNER JOIN kpidefinitions k ON kc.kpidefinition_id = k.id
+            LEFT JOIN kpidefinitions kp on k.parent_kpi_id  = kp.id
             WHERE c.`type` = :category_type
         """)
         result = self.session.execute(query, {'category_type': category_type})
@@ -167,6 +170,8 @@ class AnalysisDataRepository:
                 after.value as value_after,
                 after.date as date_after,
                 k.name,
+                k.parent_kpi_id,
+                kp.name as parent_kpi_name,
                 k.progression_target,
                 k.min_value,
                 k.max_value,
@@ -180,6 +185,7 @@ class AnalysisDataRepository:
             INNER JOIN kpidefinitions k
                 ON b4.kpidefinition_id = k.id
             LEFT JOIN transport_mode tm ON tm.id = b4.transport_mode_id
+            LEFT JOIN kpidefinitions kp on k.parent_kpi_id  = kp.id
             INNER JOIN (
                 SELECT 
                     living_lab_id,

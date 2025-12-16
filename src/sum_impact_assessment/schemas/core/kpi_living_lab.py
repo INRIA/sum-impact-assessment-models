@@ -44,9 +44,12 @@ class KPILivingLabResult(KPI):
             raise ValueError(
                 "No value after or before for variation calculation.")
 
-        if self.value_before == 0:
-            raise ValueError(
-                "Value before is zero, cannot compute percentage variation.")
-
         self.update_absolute_variation()
-        self.ratio_variation = self.abs_variation / self.value_before
+        if self.value_before == 0:
+            if self.value_after == 0:
+                self.ratio_variation = 0.0  # No change
+            else:
+                # Treat as 100% change in the appropriate direction
+                self.ratio_variation = 1.0 if self.abs_variation > 0 else -1.0
+        else:
+            self.ratio_variation = self.abs_variation / self.value_before

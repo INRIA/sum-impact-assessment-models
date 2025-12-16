@@ -127,6 +127,8 @@ class AnalysisDataTransformer:
                      'value_min': g.get('kpidefinition_min_value'),
                      'value_max': g.get('kpidefinition_max_value'),
                      'value_type': g.get('kpidefinition_metric'),
+                     'parent_kpi_id': str(g.get('parent_kpi_id')) if g.get('parent_kpi_id') is not None else None,
+                     'parent_kpi_name': g.get('parent_kpi_name') if g.get('parent_kpi_name') is not None else None,
                      }
                     for g in raw_groups if g.get('id') == group_id]
 
@@ -213,6 +215,8 @@ class AnalysisDataTransformer:
                 # kpi definition fields
                 'id': kpi_id,
                 'name': raw_kpi_result.get('name'),
+                'parent_kpi_id': str(raw_kpi_result.get('kpi_parent_id')) if raw_kpi_result.get('kpi_parent_id') is not None else None,
+                'parent_kpi_name': raw_kpi_result.get('parent_kpi_name') if raw_kpi_result.get('parent_kpi_name') is not None else None,
                 'progression_target': raw_kpi_result.get('progression_target', None),
                 'value_type': raw_kpi_result.get('metric', None),
                 'value_min': raw_kpi_result.get('min_value', None),
