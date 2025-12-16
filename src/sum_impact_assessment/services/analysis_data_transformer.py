@@ -47,6 +47,8 @@ class AnalysisDataTransformer:
                 'value_type': raw_kpi.get('metric'),
                 'value_min': raw_kpi.get('min_value'),
                 'value_max': raw_kpi.get('max_value'),
+                'parent_kpi_id': str(raw_kpi.get('parent_kpi_id')) if raw_kpi.get('parent_kpi_id') is not None else None,
+                'parent_kpi_name': raw_kpi.get('parent_kpi_name') if raw_kpi.get('parent_kpi_name') is not None else None,
             }
 
             try:

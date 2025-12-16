@@ -23,3 +23,7 @@ class KPI(BaseModel):
         None, description="Optional minimum value for the KPI")
     value_max: Optional[float] = Field(
         None, description="Optional maximum value for the KPI")
+    parent_kpi_id: Optional[str] = Field(
+        None, description="Identifier for the parent KPI, if any")
+    parent_kpi_name: Optional[str] = Field(
+        None, description="Name of the parent KPI, if any")

@@ -33,7 +33,12 @@ class AnalysisDataRepository:
         """
         logger.debug("Fetching KPI definitions from database")
 
-        query = text("SELECT * FROM kpidefinitions k")
+        query = text("""SELECT 
+                    k.id, k.parent_kpi_id, k.kpi_number, k.`type`, k.name, k.description, k.metric,
+                    k.metric_description, k.disclaimer, k.progression_target, k.min_value, k.max_value, 
+                    k.created_at, k.updated_at, kp.name as parent_kpi_name
+                    FROM kpidefinitions k 
+                    LEFT JOIN kpidefinitions kp on k.parent_kpi_id  = kp.id""")
         result = self.session.execute(query)
 
         columns = result.keys()
