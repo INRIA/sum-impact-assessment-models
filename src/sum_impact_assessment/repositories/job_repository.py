@@ -3,7 +3,7 @@ Repository for job run database operations.
 """
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from ..database.models.job import JobRun
 from ..schemas.job import JobStatusEnum
 from ..utils.logger import get_logger
@@ -160,7 +160,7 @@ class JobRepository:
         self.session.commit()
         self.session.refresh(job_run)
 
-        logger.info(
+        logger.debug(
             f"Job run data updated successfully",
             extra={
                 "job_run_id": job_id,
@@ -170,3 +170,67 @@ class JobRepository:
         )
 
         return job_run
+
+    def get_job_runs(
+        self,
+        job_name: Optional[str] = None,
+        status: Optional[str] = None,
+        created_at_from: Optional[datetime] = None,
+        created_at_to: Optional[datetime] = None
+    ) -> List[JobRun]:
+        """
+        Retrieve job runs with optional filters.
+
+        Args:
+            job_name: Filter by job name (exact match)
+            status: Filter by status (exact match)
+            created_at_from: Filter by creation date (inclusive start)
+            created_at_to: Filter by creation date (inclusive end)
+
+        Returns:
+            List of JobRun instances matching the filters, ordered by created_at DESC
+        """
+        logger.debug(
+            f"Retrieving job runs with filters",
+            extra={
+                "job_name": job_name,
+                "status": status,
+                "created_at_from": created_at_from,
+                "created_at_to": created_at_to
+            }
+        )
+
+        query = self.session.query(JobRun)
+
+        # Apply filters dynamically
+        if job_name is not None:
+            query = query.filter(JobRun.job_name == job_name)
+
+        if status is not None:
+            query = query.filter(JobRun.status == status)
+
+        if created_at_from is not None:
+            query = query.filter(JobRun.created_at >= created_at_from)
+
+        if created_at_to is not None:
+            query = query.filter(JobRun.created_at <= created_at_to)
+
+        # Order by created_at DESC (most recent first)
+        query = query.order_by(JobRun.created_at.desc())
+
+        results = query.all()
+
+        logger.debug(
+            f"Retrieved {len(results)} job run(s)",
+            extra={
+                "count": len(results),
+                "filters_applied": {
+                    "job_name": job_name,
+                    "status": status,
+                    "created_at_from": created_at_from,
+                    "created_at_to": created_at_to
+                }
+            }
+        )
+
+        return results
