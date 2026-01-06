@@ -5,11 +5,10 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from ..repositories.job_repository import JobRepository
 from ..repositories.analysis_data_repository import AnalysisDataRepository
-from ..services.analysis_data_transformer import AnalysisDataTransformer
+from .analysis_data_transformer import AnalysisDataTransformer
 from ..models.impact_analysis.kpi_impact_analysis import KPIImpactAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..utils.logger import get_logger
-from pandas import DataFrame, concat
 
 # Initialize logger
 logger = get_logger(__name__)

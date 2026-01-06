@@ -2,7 +2,7 @@
 Job registry and base infrastructure for background job execution.
 """
 from typing import Dict, Type
-from .kpi_measures_analysis_job import KpiMeasuresAnalysisJob
+from ..services.kpi_measures_analysis_job import KpiMeasuresAnalysisJob
 from ..schemas.job import JobNameEnum
 
 # Job registry mapping job names to job classes

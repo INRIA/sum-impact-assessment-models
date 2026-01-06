@@ -4,7 +4,7 @@ Unit tests for KpiMeasuresAnalysisJob.
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime
-from src.sum_impact_assessment.jobs.kpi_measures_analysis_job import KpiMeasuresAnalysisJob
+from src.sum_impact_assessment.services.kpi_measures_analysis_job import KpiMeasuresAnalysisJob
 from src.sum_impact_assessment.schemas.job import JobStatusEnum
 from src.sum_impact_assessment.schemas.impact_analysis import KPIGroupImpactOutput, MeasureImpactCoefficient
 
@@ -12,9 +12,9 @@ from src.sum_impact_assessment.schemas.impact_analysis import KPIGroupImpactOutp
 class TestKpiMeasuresAnalysisJob:
     """Test suite for KpiMeasuresAnalysisJob."""
 
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.KPIImpactAnalyzer")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_runs_successfully(
         self,
         mock_job_repo_class,
@@ -76,8 +76,8 @@ class TestKpiMeasuresAnalysisJob:
         # run analysis was not called since no kpi groups
         mock_analyzer.run_analysis_group.assert_not_called()
 
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_handles_database_error(
         self,
         mock_job_repo_class,
@@ -115,9 +115,9 @@ class TestKpiMeasuresAnalysisJob:
         assert "Database connection error" in second_call[1]["message"]
         assert "completed_at" in second_call[1]
 
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.KPIImpactAnalyzer")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_saves_input_output_data_structure(
         self,
         mock_job_repo_class,
@@ -360,9 +360,9 @@ class TestKpiMeasuresAnalysisJob:
         assert final_status_call[1]['status'] == JobStatusEnum.SUCCESS
         assert 'Analysis completed for 1/1 KPI groups' in final_status_call[1]['message']
 
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.KPIImpactAnalyzer")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.jobs.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_handles_partial_failures(
         self,
         mock_job_repo_class,

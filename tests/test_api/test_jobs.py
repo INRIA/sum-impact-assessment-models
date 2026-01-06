@@ -43,7 +43,7 @@ class TestJobsAPI:
         mock_get_job_class.return_value = mock_job_class
 
         # Make request
-        response = client.post("/jobs/kpi_measures_analysis")
+        response = client.post("/jobs/runs/kpi_measures_analysis")
 
         # Assertions
         assert response.status_code == status.HTTP_201_CREATED
@@ -68,7 +68,7 @@ class TestJobsAPI:
         mock_get_job_class.side_effect = KeyError("Job not found")
 
         # Make request
-        response = client.post("/jobs/kpi_measures_analysis")
+        response = client.post("/jobs/runs/kpi_measures_analysis")
 
         # Assertions
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -80,7 +80,7 @@ class TestJobsAPI:
     def test_trigger_job_invalid_job_name(self):
         """Test triggering a job with invalid job name returns 422."""
         # Make request with invalid job name
-        response = client.post("/jobs/invalid_job_name")
+        response = client.post("/jobs/runs/invalid_job_name")
 
         # Assertions
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -100,7 +100,7 @@ class TestJobsAPI:
         mock_job_repo_class.return_value = mock_repo_instance
 
         # Make request
-        response = client.post("/jobs/kpi_measures_analysis")
+        response = client.post("/jobs/runs/kpi_measures_analysis")
 
         # Assertions
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
