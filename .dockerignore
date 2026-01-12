@@ -1,0 +1,92 @@
+# Version control
+.git
+.gitignore
+.github
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.manifest
+*.spec
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv
+pipenv/
+
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Development and analysis files
+*.ipynb
+.ipynb_checkpoints/
+notebooks/
+demo_*.ipynb
+
+# Documentation
+docs/
+build_docs.py
+specs/
+*.md
+!README.md
+
+# Tests
+tests/
+pytest.ini
+.pytest_cache/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+
+# Data and outputs
+data/output/
+*.csv
+*.json
+!kpis.json
+!measures.json
+!living_labs_data.json
+!kpi_groups.json
+!kpi_groups_mcda_goals.json
+
+# Build and package files
+*.whl
+*.tar.gz
+
+# Other
+*.log
+.pipenv/
+Pipfile
+Pipfile.lock
+LICENSE
+imact-analysis-queries/

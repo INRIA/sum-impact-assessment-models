@@ -1,3 +1,7 @@
+# IMPORTANT: After installing new packages with 'pipenv install <package>',
+# regenerate requirements.txt for Docker builds by running:
+# pipenv requirements > requirements.txt
+
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true

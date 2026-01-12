@@ -175,3 +175,134 @@ curl http://localhost:8000/health
 curl http://localhost:8000/kpis
 ```
 
+## Build and Push Docker Image
+
+The project includes CI/CD automation to build and publish Docker images to GitLab Container Registry.
+
+### Version Management
+
+The API version is managed through semantic versioning in `src/sum_impact_assessment/__version__.py`:
+
+```python
+__version__ = "0.0.0"  # MAJOR.MINOR.PATCH
+```
+
+**To release a new version:**
+
+1. Update the version number in `src/sum_impact_assessment/__version__.py`
+2. Commit the version change
+3. Trigger the Docker build workflow (see below)
+
+Follow [semantic versioning](https://semver.org/) guidelines:
+- **MAJOR**: Breaking changes
+- **MINOR**: New features, backward compatible
+- **PATCH**: Bug fixes, backward compatible
+
+### Requirements Management
+
+The project uses `pipenv` for dependency management but generates `requirements.txt` for Docker builds.
+
+**After installing new packages:**
+
+```bash
+# Install a new package
+pipenv install <package-name>
+
+# Regenerate requirements.txt for Docker
+pipenv requirements > requirements.txt
+
+# Commit both Pipfile.lock and requirements.txt
+git add Pipfile.lock requirements.txt
+git commit -m "Add <package-name> dependency"
+```
+
+> **Important:** Always regenerate `requirements.txt` after modifying dependencies to keep Docker builds in sync.
+
+### Manual Docker Build (Local)
+
+Build and test the Docker image locally before pushing to registry:
+
+```bash
+# Build the image
+docker build -t sum-impact-api:local .
+
+# Run the container
+docker run -p 8000:8000 \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PORT=3306 \
+  -e DB_USER=your_user \
+  -e DB_PASSWORD=your_password \
+  -e DB_NAME=sum_odp \
+  sum-impact-api:local
+
+# Test the health endpoint
+curl http://localhost:8000/health
+```
+
+### CI/CD Workflow (GitHub Actions)
+
+The project uses GitHub Actions to automatically build and push Docker images to GitLab Container Registry.
+
+**Workflow file:** `.github/workflows/docker-build.yml`
+
+**Prerequisites:**
+
+Configure the following secrets and variables in your GitHub repository:
+
+**Secrets (Settings → Secrets and variables → Actions → Secrets):**
+- `GITLAB_REGISTRY` - GitLab Container Registry URL (e.g., `registry.gitlab.com`)
+- `GITLAB_USER` - GitLab username or deploy token username
+- `GITLAB_PASSWORD` - GitLab access token or deploy token password
+
+**Variables (Settings → Secrets and variables → Actions → Variables):**
+- `GITLAB_PROJECT_PATH` - GitLab project path (e.g., `inria/sum-odp`)
+
+**Trigger the workflow:**
+
+1. Go to **Actions** tab in GitHub repository
+2. Select **"Build and Push Docker image to GitLab Registry"**
+3. Click **"Run workflow"**
+4. Select branch and click **"Run workflow"**
+
+**Workflow steps:**
+
+1. **Test** - Runs full test suite with pytest
+2. **Version** - Extracts version from `__version__.py`
+3. **Build** - Builds multi-stage Docker image and pushes with two tags:
+   - `<registry>/<project>/<image>:<version>` (e.g., `registry.gitlab.com/inria/sum-odp/inocs-sum-odp-api:0.0.0`)
+   - `<registry>/<project>/<image>:latest`
+
+**Pull the image from GitLab:**
+
+```bash
+# Login to GitLab Container Registry
+docker login registry.gitlab.com
+
+# Pull specific version
+docker pull registry.gitlab.com/inria/sum-odp/inocs-sum-odp-api:0.0.0
+
+# Pull latest
+docker pull registry.gitlab.com/inria/sum-odp/inocs-sum-odp-api:latest
+```
+
+### Docker Image Details
+
+**Base image:** `python:3.13-slim`
+
+**Features:**
+- Multi-stage build for optimized image size
+- Non-root user (`appuser`) for security
+- Health check on `/health` endpoint
+- Exposed port: `8000`
+- Automatic dependency installation from `requirements.txt`
+
+**Environment variables:**
+
+All configuration is done via environment variables. See `.env.example` for available options.
+
+**Image tags:**
+
+- `<version>` - Immutable version tag (e.g., `0.0.0`, `1.2.3`)
+- `latest` - Always points to the most recent build
+
+

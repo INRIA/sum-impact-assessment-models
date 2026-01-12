@@ -2,6 +2,7 @@
 Application configuration settings.
 """
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from ..__version__ import __version__
 
 
 class Settings(BaseSettings):
@@ -15,23 +16,23 @@ class Settings(BaseSettings):
     DB_USER: str = "root"
     DB_PASSWORD: str = ""
     DB_NAME: str = "sum_odp"
-    
+
     # API configuration
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
     API_TITLE: str = "SUM Impact Assessment API"
-    API_VERSION: str = "0.1.0"
-    
+    API_VERSION: str = __version__
+
     # Application configuration
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
-    
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True
     )
-    
+
     @property
     def database_url(self) -> str:
         """
