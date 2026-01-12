@@ -28,16 +28,16 @@ def check_non_production_environment():
     Raises:
         HTTPException: 403 Forbidden if ENV is 'production'
     """
-    if settings.ENV.lower() == "production":
-        logger.warning(
-            "Attempted to access simulation endpoint in production environment",
-            extra={"env": settings.ENV}
-        )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Simulation endpoints are not available in production environment"
-        )
-    return True
+    if settings.ENV.lower() != "production" and settings.DB_NAME != "sumodp":
+        return True
+    logger.warning(
+        "Attempted to access simulation endpoint in production environment",
+        extra={"env": settings.ENV}
+    )
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Simulation endpoints are not available in production environment"
+    )
 
 
 class SimulateKPIResultsRequest(BaseModel):
@@ -238,6 +238,7 @@ def get_environment_status():
 
     return {
         "environment": settings.ENV,
+        "db_name": settings.DB_NAME,
         "simulation_endpoints_enabled": not is_production,
         "message": "Simulation endpoints disabled" if is_production else "Simulation endpoints enabled"
     }
