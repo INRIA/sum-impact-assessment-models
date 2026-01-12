@@ -1,13 +1,13 @@
 """
 Job management API routes.
 """
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, status as api_status, Query
+from fastapi import APIRouter, Body, Depends, HTTPException, BackgroundTasks, status as api_status, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 from ...database.connection import get_db, get_db_session
 from ...repositories.job_repository import JobRepository
-from ...schemas.job import JobNameEnum, JobRunResponse
+from ...schemas.job import JobNameEnum, JobRunResponse, TriggerJobRequest
 from ...jobs import get_job_class
 from ...utils.logger import get_logger
 
@@ -18,19 +18,21 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/jobs")
 
 
-def execute_job_in_background(job_name: JobNameEnum, job_id: str):
+def execute_job_in_background(job_name: JobNameEnum, job_id: str, params: Optional[dict] = None):
     """
     Execute a job in the background.
 
     Args:
         job_name: The name of the job to execute
         job_id: The UUID of the job run to track
+        params: Optional parameters for the job
     """
     logger.info(
         f"Background task started for job",
         extra={
             "job_name": job_name.value,
-            "job_id": job_id
+            "job_id": job_id,
+            "params": params
         }
     )
 
@@ -39,7 +41,7 @@ def execute_job_in_background(job_name: JobNameEnum, job_id: str):
         try:
             # Get the job class and execute
             job_class = get_job_class(job_name)
-            job_class.run(job_id=job_id, db=db)
+            job_class.run(job_id=job_id, db=db, params=params)
         except Exception as e:
             logger.error(
                 f"Background job execution failed",
@@ -56,6 +58,65 @@ def execute_job_in_background(job_name: JobNameEnum, job_id: str):
 def trigger_job(
     job_name: JobNameEnum,
     background_tasks: BackgroundTasks,
+    request: Optional[TriggerJobRequest] = Body(
+        None,
+        openapi_examples={
+            "no_params": {
+                "summary": "No parameters",
+                "description": "Run job with default settings",
+                "value": None
+            },
+            "kpi_group_filter": {
+                "summary": "Filter by KPI group",
+                "description": "Run MCDA analysis for specific KPI group only",
+                "value": {
+                    "params": {
+                        "kpi_group_id": "MCDA_GOALS"
+                    }
+                }
+            },
+            "mcda_regulatory_perspective": {
+                "summary": "MCDA Analysis for regulatory perspective",
+                "description": "Run MCDA analysis with regulatory stakeholder weights",
+                "value": {
+                    "params": {
+                        "kpi_group_id": "MCDA_GOALS",
+                        "perspective": "regulatory"
+                    }
+                }
+            },
+            "mcda_pto_perspective": {
+                "summary": "MCDA Analysis for PTO perspective",
+                "description": "Run MCDA analysis with PTO stakeholder weights",
+                "value": {
+                    "params": {
+                        "kpi_group_id": "MCDA_GOALS",
+                        "perspective": "pto"
+                    }
+                }
+            },
+            "mcda_citizens_users_perspective": {
+                "summary": "MCDA Analysis for citizens/users perspective",
+                "description": "Run MCDA analysis with citizens/users stakeholder weights",
+                "value": {
+                    "params": {
+                        "kpi_group_id": "MCDA_GOALS",
+                        "perspective": "citizens_users"
+                    }
+                }
+            },
+            "mcda_nsm_providers_perspective": {
+                "summary": "MCDA Analysis for NSM providers perspective",
+                "description": "Run MCDA analysis with NSM providers stakeholder weights",
+                "value": {
+                    "params": {
+                        "kpi_group_id": "MCDA_GOALS",
+                        "perspective": "nsm_providers"
+                    }
+                }
+            }
+        }
+    ),
     db: Session = Depends(get_db)
 ):
     """
@@ -67,6 +128,7 @@ def trigger_job(
     Args:
         job_name: Name of the job to trigger (must be a valid JobNameEnum value)
         background_tasks: FastAPI background tasks manager
+        request: Optional request body with job parameters
         db: Database session (injected)
 
     Returns:
@@ -76,8 +138,9 @@ def trigger_job(
         HTTPException 404: If the job name is not found in the registry
         HTTPException 500: If there's a database error
     """
+    params = request.params if request else None
     logger.info(f"Job trigger request received",
-                extra={"job_name": job_name.value})
+                extra={"job_name": job_name.value, "params": params})
 
     try:
         # Verify the job exists in the registry
@@ -91,13 +154,21 @@ def trigger_job(
             )
 
         # Create a new job run with PENDING status
+        # For MCDA analysis, append perspective to job name if provided
         job_repo = JobRepository(db)
-        job_run = job_repo.create_job_run(job_name=job_name.value)
+        actual_job_name = job_name.value
+
+        if job_name == JobNameEnum.MCDA_ANALYSIS and params and "perspective" in params:
+            perspective = params["perspective"]
+            actual_job_name = f"{job_name.value}_{perspective}"
+            logger.info(f"MCDA job with perspective: {perspective}")
+
+        job_run = job_repo.create_job_run(job_name=actual_job_name)
 
         logger.info(
             f"Job run created",
             extra={
-                "job_name": job_name.value,
+                "job_name": actual_job_name,
                 "job_id": job_run.id,
                 "status": job_run.status
             }
@@ -105,7 +176,7 @@ def trigger_job(
 
         # Schedule the job for background execution
         background_tasks.add_task(
-            execute_job_in_background, job_name, job_run.id)
+            execute_job_in_background, job_name, job_run.id, params)
 
         logger.info(
             f"Job scheduled for background execution",

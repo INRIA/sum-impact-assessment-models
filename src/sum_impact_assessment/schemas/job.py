@@ -3,7 +3,7 @@ Pydantic schemas for job management.
 """
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict
 from enum import Enum
 
 
@@ -12,6 +12,7 @@ class JobNameEnum(str, Enum):
     Enumeration of valid job names.
     """
     KPI_MEASURES_ANALYSIS = "kpi_measures_analysis"
+    MCDA_ANALYSIS = "mcda_analysis"
 
 
 class JobStatusEnum(str, Enum):
@@ -22,6 +23,26 @@ class JobStatusEnum(str, Enum):
     STARTED = "STARTED"
     SUCCESS = "SUCCESS"
     FAILURE = "FAILURE"
+
+
+class TriggerJobRequest(BaseModel):
+    """
+    Request schema for triggering a job with optional parameters.
+    """
+    params: Optional[Dict] = Field(
+        None,
+        description="Optional job-specific parameters. For mcda_analysis: {'kpi_group_id': 'MCDA_GOALS'}"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "params": {
+                    "kpi_group_id": "MCDA_GOALS",
+                    "perspective": "regulatory"
+                }
+            }
+        }
 
 
 class JobRunResponse(BaseModel):

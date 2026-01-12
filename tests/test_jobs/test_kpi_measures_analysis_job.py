@@ -13,7 +13,7 @@ class TestKpiMeasuresAnalysisJob:
     """Test suite for KpiMeasuresAnalysisJob."""
 
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_runs_successfully(
         self,
@@ -76,7 +76,7 @@ class TestKpiMeasuresAnalysisJob:
         # run analysis was not called since no kpi groups
         mock_analyzer.run_analysis_group.assert_not_called()
 
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_handles_database_error(
         self,
@@ -116,7 +116,7 @@ class TestKpiMeasuresAnalysisJob:
         assert "completed_at" in second_call[1]
 
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_saves_input_output_data_structure(
         self,
@@ -361,7 +361,7 @@ class TestKpiMeasuresAnalysisJob:
         assert 'Analysis completed for 1/1 KPI groups' in final_status_call[1]['message']
 
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataRepository")
+    @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
     def test_job_handles_partial_failures(
         self,

@@ -1,0 +1,22 @@
+{
+  "regulatory": {
+    "Improve Safety": 0.4,
+    "Improve Public Transport": 0.3,
+    "Improve Accessibility": 0.3
+  },
+  "pto": {
+    "Improve Safety": 0.3,
+    "Improve Public Transport": 0.4,
+    "Improve Accessibility": 0.3
+  },
+  "nsm_providers": {
+    "Improve Safety": 0.4,
+    "Improve Public Transport": 0.3,
+    "Improve Accessibility": 0.3
+  },
+  "citizens_users": {
+    "Improve Safety": 0.3,
+    "Improve Public Transport": 0.3,
+    "Improve Accessibility": 0.4
+  }
+}
