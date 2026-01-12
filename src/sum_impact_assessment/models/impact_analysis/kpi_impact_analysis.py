@@ -20,6 +20,88 @@ class KPIImpactAnalyzer:
         self.measures = measures
         self.kpis = kpis
         self.kpi_groups = kpi_groups
+    
+    # Auxiliary functions to run the impact analysis
+    def delete_measures_never_implemented(self):
+        """
+        Remove measures that are never implemented in any living lab.
+        """
+        ids_measures_not_implemented = {m.id for m in self.measures}
+        for l in range(len(self.living_labs)):
+            lab = self.living_labs[l]
+            ids_measures_not_implemented = ids_measures_not_implemented.difference({m.id for m in lab.measures})
+
+        self.measures = [m for m in self.measures if m.id not in ids_measures_not_implemented]
+   
+    def compute_X_y_input(self, kpi_group: KPIGroup) -> tuple[np.array, np.array, list[LivingLab], KPIGroup]:
+        '''
+        Compute the data matrix X and target vector y for the KPI impact analysis.
+
+        Parameters:
+        - kpi_group (KPIGroup): group of KPIs that we are using for analysis
+
+        Returns:
+        - X (numpy array): data matrix with shape (n_living_labs, n_measures)
+        - y (numpy array): target vector with shape (n_living_labs,)
+        - feasible_ll (list[LivingLab]): list of living labs used in the analysis
+        - kpi_group (KPIGroup): the same KPI group passed as input
+        '''
+        # Initialise data matrix X and target vector y
+        n_living_labs = len(self.living_labs)
+        X_rows = []  # Rows of data matrix X
+        y_rows = []  # Rows of target vector y
+        feasible_ll = []
+
+        # Compute data matrix X and target vector y
+        for l in range(n_living_labs):
+            lab = self.living_labs[l]
+            
+            # Check if living lab is feasible (has enough KPI information)
+            measured_kpis_in_lab = [
+                kpi for kpi in lab.kpis if kpi.id in kpi_group.kpi_ids
+                ]
+            
+            if len(measured_kpis_in_lab)/len(kpi_group.kpi_ids) >= KPIAnalysisParam.MIN_PERC_MEASURED_KPI_IN_GROUP.value:
+                # Add living lab to list of feasible leaving labs
+                feasible_ll.append(lab)
+
+                # Create data rows with 1s for implemented measures
+                new_row = [1 if m.id in {
+                    lm.id for lm in lab.measures} else 0 for m in self.measures]
+                X_rows.append(new_row)
+
+                for kpi in measured_kpis_in_lab:
+                    kpi.update_absolute_variation()
+                variation = sum(
+                    kpi.abs_variation for kpi in measured_kpis_in_lab
+                    )
+                y_rows.append(variation)
+        
+        # Convert to X and y to numpy arrays
+        X = np.array(X_rows, dtype=int)
+        y = np.array(y_rows, dtype=float)
+        
+        return X, y, feasible_ll, kpi_group
+    
+    def compute_max_variation(self, kpi_group: KPIGroup) -> float:
+        '''
+        Compute the theoretical maximum variation for the given KPI group.
+
+        Parameters:
+        - kpi_group (KPIGroup): group of KPIs that we are using for analysis
+
+        Returns:
+        - max_variation (float): theoretical maximum variation
+        '''
+        # Compute theoretical maximum variation (from difference between max and min values of KPIs in group)
+        seen_ids = set()
+        max_variation = 0.0
+        for kpi in self.kpis:
+            if ((kpi.id in kpi_group.kpi_ids) and (kpi.id not in seen_ids)):
+                seen_ids.add(kpi.id)
+                max_variation += kpi.value_max - kpi.value_min
+
+        return max_variation
 
     def normalize_variation(self, y: np.array, max_variation: float, target_range=1.0):
         '''
@@ -43,7 +125,65 @@ class KPIImpactAnalyzer:
                 "Expected normalization range 'target_range' > 0.")
 
         return (y / max_variation) * target_range
+    
+    def run_ridge_regression(self, X: np.array, y: np.array, 
+                             alpha:float=KPIAnalysisParam.REGULARIZATION_PENALTY.value, 
+                             return_intercept:bool = False):
+        # Run Ridge Regression
+        coef, intercept = ridge_regression(X, y, alpha, return_intercept)
 
+        # Compute Mean Squared Error (MSE)
+        y_pred = X @ coef + intercept  # Compute predicted y using the estimated coefficients
+        sqe_per_sample = (y - y_pred)**2  # Squared error per living lab
+        # Standard definition of Mean Squared Error
+        msqe = np.mean((y - y_pred)**2)
+
+        return coef, intercept, msqe, sqe_per_sample
+
+    def add_living_lab_results(self, output_group:KPIGroupImpactOutput, kpi_group:KPIGroup, 
+                               feasible_ll:list[LivingLab], sqe_per_sample:np.array
+                            ) -> KPIGroupImpactOutput:
+        """
+        Add the LivingLabImpactError result to the KPIGroupImpactOutput object.
+        """
+        labs_analysis = []
+        for lab in feasible_ll:
+            index = feasible_ll.index(lab)
+            temp_lab = LivingLabImpactError(id=lab.id,
+                                            name=lab.name,
+                                            kpis=lab.kpis,
+                                            measures=lab.measures,
+                                            kpi_group_id=kpi_group.id,
+                                            sqe=sqe_per_sample[index])
+            labs_analysis.append(temp_lab)
+
+        output_group.living_labs_analysis = labs_analysis
+
+        return output_group
+
+    def add_measure_results(self, output_group:KPIGroupImpactOutput, 
+                               kpi_group:KPIGroup,
+                               coef:np.array
+                            ) -> KPIGroupImpactOutput:
+        """
+        Add the MeasureImpactCoefficient results to the KPIGroupImpactOutput object.
+        """
+        results = []
+        for measure in self.measures:
+            index = self.measures.index(measure)
+            result = MeasureImpactCoefficient(id=measure.id,
+                                              name=measure.name,
+                                              kpi_group_id=kpi_group.id,
+                                              coefficient=coef[index])
+            results.append(result)
+
+        # sort results by coefficient descending
+        results.sort(key=lambda x: x.coefficient,  reverse=True)
+        output_group.measure_coefficients = results
+
+        return output_group
+
+    # Main function to run the impact analysis
     def run_analysis_group(self, kpi_group: KPIGroup) -> KPIGroupImpactOutput:
         """
         Run KPI impact analysis on the LivingLabs data.
@@ -61,99 +201,34 @@ class KPIImpactAnalyzer:
             > the list of measures with updated impact coeffients `MeasureImpactCoefficient` obtained from the analysis.
         """
 
+        # Remove any measures that are not implemented in any living lab
+        self.delete_measures_never_implemented() # The list of implemented measures is updated in self.measures
+
         # Initialise data matrix X and target vector y
-        n_living_labs = len(self.living_labs)
-        X_rows = []  # Rows of data matrix X
-        y_rows = []  # Rows of target vector y
-        feasible_ll = []
-
-        # Compute data matrix X and target vector y
-        for l in range(n_living_labs):
-            lab = self.living_labs[l]
-            # Check if living lab is feasible (has enough KPI information)
-            measured_kpis_in_lab = [
-                kpi for kpi in lab.kpis if kpi.id in kpi_group.kpi_ids]
-            if len(measured_kpis_in_lab)/len(kpi_group.kpi_ids) >= KPIAnalysisParam.MIN_PERC_MEASURED_KPI_IN_GROUP.value:
-                # Add living lab to list of feasible leaving labs
-                feasible_ll.append(lab)
-
-                # Create data rows with 1s for implemented measures
-                new_row = [1 if m.id in {
-                    lm.id for lm in lab.measures} else 0 for m in self.measures]
-                X_rows.append(new_row)
-
-                for kpi in measured_kpis_in_lab:
-                    kpi.update_absolute_variation()
-                variation = sum(
-                    kpi.abs_variation for kpi in measured_kpis_in_lab)
-                y_rows.append(variation)
+        X, y, feasible_ll, kpi_group = self.compute_X_y_input(kpi_group)
 
         # Check that there are enough livings labs for the analysis
-        if len(feasible_ll)/n_living_labs < KPIAnalysisParam.MIN_PERC_FEASIBLE_LIVING_LABS.value:
+        if len(feasible_ll)/len(self.living_labs) < KPIAnalysisParam.MIN_PERC_FEASIBLE_LIVING_LABS.value:
             raise ValueError(
                 "Not enough living labs have measured these KPIs to ensure analysis relevance.")
 
-        # Convert to X and y to numpy arrays
-        X = np.array(X_rows, dtype=int)
-        y = np.array(y_rows, dtype=float)
-
-        # Remove any measures that are not implemented in any living lab
-        # TODO (also keep track of list of implemented measures)
-
-        # Compute theoretical maximum variation (from difference between max and min values of KPIs in group)
-        seen_ids = set()
-        max_variation = 0.0
-        for kpi in self.kpis:
-            if ((kpi.id in kpi_group.kpi_ids) and (kpi.id not in seen_ids)):
-                seen_ids.add(kpi.id)
-                max_variation += kpi.value_max - kpi.value_min
-
         # Normalise target vector y
+        max_variation = self.compute_max_variation(kpi_group)
         y = self.normalize_variation(y=y, max_variation=max_variation)
 
-        # Run Ridge Regression
-        coef, intercept = ridge_regression(X, y,
-                                           alpha=KPIAnalysisParam.REGULARIZATION_PENALTY.value,
-                                           return_intercept=True)
+        # Run Ridge Regression & compute Mean Squared Error (MSE)
+        coef, intercept, msqe, sqe_per_sample = self.run_ridge_regression(X, y)
 
-        # Compute Mean Squared Error (MSE)
-        y_pred = X @ coef + intercept  # Compute predicted y using the estimated coefficients
-        sqe_per_sample = (y - y_pred)**2  # Squared error per living lab
-        # Standard definition of Mean Squared Error
-        msqe = np.mean((y - y_pred)**2)
 
         # Update KPIGroup object with analysis results
         output_group = KPIGroupImpactOutput(id=kpi_group.id,
                                             name=kpi_group.name,
                                             kpi_ids=kpi_group.kpi_ids)
-        labs_analysis = []
-        for lab in feasible_ll:
-            index = feasible_ll.index(lab)
-            temp_lab = LivingLabImpactError(id=lab.id,
-                                            name=lab.name,
-                                            kpis=lab.kpis,
-                                            measures=lab.measures,
-                                            kpi_group_id=kpi_group.id,
-                                            sqe=sqe_per_sample[index])
-            labs_analysis.append(temp_lab)
-
-        output_group.living_labs_analysis = feasible_ll
+        
+        output_group = self.add_living_lab_results(output_group, kpi_group, feasible_ll, sqe_per_sample)
         output_group.msqe = msqe
         output_group.variation_under_no_measures = intercept
-        results = []
-        for measure in self.measures:
-            # TODO If measure is never implemented the coefficient should be None.
-            # TODO Adjust when not all measures considered
-            index = self.measures.index(measure)
-            result = MeasureImpactCoefficient(id=measure.id,
-                                              name=measure.name,
-                                              kpi_group_id=kpi_group.id,
-                                              coefficient=coef[index])
-            results.append(result)
-
-        # sort results by coefficient descending
-        results.sort(key=lambda x: x.coefficient,  reverse=True)
-        output_group.measure_coefficients = results
+        output_group = self.add_measure_results(output_group, kpi_group, coef)
 
         return output_group
 
