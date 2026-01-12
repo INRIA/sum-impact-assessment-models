@@ -188,7 +188,9 @@ class KpiMeasuresAnalysisJob:
             except Exception as e:
                 error_message = str(e)
                 logger.warning(
-                    f"Failed to analyze KPI group {group.id}: {error_message}")
+                    f"Failed to analyze KPI group {group.id}: {error_message}",
+                    exc_info=True
+                )
 
                 # Store error information
                 error_results.append({
