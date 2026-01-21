@@ -34,7 +34,8 @@ class KpiMeasuresAnalysisJob:
         Args:
             job_id: UUID of the job run to track
             db: Database session for updating job status and fetching data
-            params: Optional job parameters (unused for this job type)
+            params: Optional job parameters. Supported keys:
+                - kpi_group_type: Filter to specific KPI group (e.g., "MCDA_GOALS")
         """
         job_repo = JobRepository(db)
 
@@ -48,7 +49,7 @@ class KpiMeasuresAnalysisJob:
             )
 
             # Run KPI impact analysis using shared function
-            kpi_group_filter = params.get("kpi_group_id") if params else None
+            kpi_group_filter = params.get("kpi_group_type") if params else None
             logger.info("Running impact analysis")
 
             input_data_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(

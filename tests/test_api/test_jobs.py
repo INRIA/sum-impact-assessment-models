@@ -133,7 +133,7 @@ class TestJobsAPI:
         # Make request with params
         response = client.post(
             "/jobs/runs/mcda_analysis",
-            json={"params": {"kpi_group_id": "MCDA_GOALS"}}
+            json={"params": {"kpi_group_type": "MCDA_GOALS"}}
         )
 
         # Assertions

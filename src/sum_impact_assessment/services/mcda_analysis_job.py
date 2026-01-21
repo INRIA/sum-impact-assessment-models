@@ -38,7 +38,7 @@ class MCDAAnalysisJob:
             job_id: UUID of the job run to track
             db: Database session for updating job status and fetching data
             params: Optional job parameters. Supported keys:
-                    - kpi_group_id: Filter to specific KPI group (e.g., "MCDA_GOALS")
+                    - kpi_group_type: Filter to specific KPI group (e.g., "MCDA_GOALS")
                     - perspective: Stakeholder perspective for goal weighting (e.g., "regulatory", "pto")
         """
         job_repo = JobRepository(db)
@@ -53,7 +53,7 @@ class MCDAAnalysisJob:
             )
 
             # Extract optional parameters
-            kpi_group_filter = params.get("kpi_group_id") if params else None
+            kpi_group_filter = params.get("kpi_group_type") if params else None
             perspective = params.get("perspective") if params else None
             logger.debug(
                 f"MCDA analysis parameters",

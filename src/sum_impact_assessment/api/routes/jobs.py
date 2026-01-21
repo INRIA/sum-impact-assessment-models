@@ -71,7 +71,7 @@ def trigger_job(
                 "description": "Run MCDA analysis for specific KPI group only",
                 "value": {
                     "params": {
-                        "kpi_group_id": "MCDA_GOALS"
+                        "kpi_group_type": "MCDA_GOALS"
                     }
                 }
             },
@@ -80,7 +80,7 @@ def trigger_job(
                 "description": "Run MCDA analysis with regulatory stakeholder weights",
                 "value": {
                     "params": {
-                        "kpi_group_id": "MCDA_GOALS",
+                        "kpi_group_type": "MCDA_GOALS",
                         "perspective": "regulatory"
                     }
                 }
@@ -90,7 +90,7 @@ def trigger_job(
                 "description": "Run MCDA analysis with PTO stakeholder weights",
                 "value": {
                     "params": {
-                        "kpi_group_id": "MCDA_GOALS",
+                        "kpi_group_type": "MCDA_GOALS",
                         "perspective": "pto"
                     }
                 }
@@ -100,7 +100,7 @@ def trigger_job(
                 "description": "Run MCDA analysis with citizens/users stakeholder weights",
                 "value": {
                     "params": {
-                        "kpi_group_id": "MCDA_GOALS",
+                        "kpi_group_type": "MCDA_GOALS",
                         "perspective": "citizens_users"
                     }
                 }
@@ -110,7 +110,7 @@ def trigger_job(
                 "description": "Run MCDA analysis with NSM providers stakeholder weights",
                 "value": {
                     "params": {
-                        "kpi_group_id": "MCDA_GOALS",
+                        "kpi_group_type": "MCDA_GOALS",
                         "perspective": "nsm_providers"
                     }
                 }

@@ -31,14 +31,14 @@ class TriggerJobRequest(BaseModel):
     """
     params: Optional[Dict] = Field(
         None,
-        description="Optional job-specific parameters. For mcda_analysis: {'kpi_group_id': 'MCDA_GOALS'}"
+        description="Optional job-specific parameters. For mcda_analysis: {'kpi_group_type': 'MCDA_GOALS'}"
     )
 
     class Config:
         json_schema_extra = {
             "example": {
                 "params": {
-                    "kpi_group_id": "MCDA_GOALS",
+                    "kpi_group_type": "MCDA_GOALS",
                     "perspective": "regulatory"
                 }
             }
