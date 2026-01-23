@@ -103,7 +103,7 @@ class KPIImpactAnalyzer:
 
         return max_variation
 
-    def normalize_variation(self, y: np.array, max_variation: float, target_range=1.0):
+    def normalize_variation(self, y: np.array, max_variation: float, target_range=10.0):
         '''
         Normalize a variation y to [-target_range, target_range] symmetrically,
         preserving zero and sign. Uses M = max(upper, -lower) for scaling.
@@ -121,8 +121,7 @@ class KPIImpactAnalyzer:
             raise ValueError("Expected 'max_variation' > 0 for normalization.")
 
         if (target_range <= 0):
-            raise ValueError(
-                "Expected normalization range 'target_range' > 0.")
+            raise ValueError("Expected normalization range 'target_range' > 0.")
 
         return (y / max_variation) * target_range
     
@@ -189,6 +188,7 @@ class KPIImpactAnalyzer:
         Run KPI impact analysis on the LivingLabs data.
         Uses Ridge regression to estimate the impact of the implementation of each measure 
         in the group of KPIs selected.
+        ASSUMPTION: There are enough living labs who have measured these KPIs to ensure analysis relevance (i.e. KPIAnalysisParam.MIN_PERC_FEASIBLE_LIVING_LABS)
 
         Parameters:
         - kpi_group (KPIGroup): group of KPIs that we are running this analysis for
@@ -199,6 +199,7 @@ class KPIImpactAnalyzer:
             > the mean square error of the estimation,
             > the espected variation if no measures were implemented (aka intercept term),
             > the list of measures with updated impact coeffients `MeasureImpactCoefficient` obtained from the analysis.
+
         """
 
         # Remove any measures that are not implemented in any living lab
@@ -206,11 +207,6 @@ class KPIImpactAnalyzer:
 
         # Initialise data matrix X and target vector y
         X, y, feasible_ll, kpi_group = self.compute_X_y_input(kpi_group)
-
-        # Check that there are enough livings labs for the analysis
-        if len(feasible_ll)/len(self.living_labs) < KPIAnalysisParam.MIN_PERC_FEASIBLE_LIVING_LABS.value:
-            raise ValueError(
-                "Not enough living labs have measured these KPIs to ensure analysis relevance.")
 
         # Normalise target vector y
         max_variation = self.compute_max_variation(kpi_group)
