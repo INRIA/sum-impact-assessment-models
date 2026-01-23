@@ -244,6 +244,15 @@ class KPIImpactAnalyzer:
             list_groups = self.kpi_groups
 
         # Run impact analysis for KPI groups selected
-        for i in range(len(self.kpi_groups)):
+        for group in list_groups:
+            try:
+                # match list_groups entry with index in kpi_groups
+                idx = self.kpi_groups.index(group)
+                # analysis results stored in each KPIGroup object directly
+                self.kpi_groups[idx] = self.run_analysis_group(group)
+            except ValueError:
+                self.kpi_groups.append(self.run_analysis_group(group))
+
+        #for i in range(len(self.kpi_groups)):
             # analysis results stored in each KPIGroup object directly
-            self.kpi_groups[i] = self.run_analysis_group(self.kpi_groups[i])
+        #    self.kpi_groups[i] = self.run_analysis_group(self.kpi_groups[i])
