@@ -97,7 +97,7 @@ class KPIImpactAnalyzer:
         seen_ids = set()
         max_variation = 0.0
         for kpi in self.kpis:
-            if ((kpi.id in kpi_group.kpi_ids) and (kpi.id not in seen_ids)):
+            if ((kpi.id in kpi_group.kpi_ids) and (kpi.id not in seen_ids) and kpi.value_min is not None and kpi.value_max is not None):
                 seen_ids.add(kpi.id)
                 max_variation += kpi.value_max - kpi.value_min
 

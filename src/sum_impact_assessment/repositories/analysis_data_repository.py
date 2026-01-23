@@ -81,8 +81,10 @@ class AnalysisDataRepository:
                 c.name,
                 kc.kpidefinition_id,
                 k.name as kpidefinition_name,
+                k.kpi_number as kpidefinition_kpi_number,
                 k.parent_kpi_id,
                 kp.name as parent_kpi_name,
+                kp.kpi_number as parent_kpi_number,
                 k.progression_target as kpidefinition_progression_target,
                 k.min_value as kpidefinition_min_value,
                 k.max_value as kpidefinition_max_value,
@@ -92,6 +94,7 @@ class AnalysisDataRepository:
             INNER JOIN kpidefinitions k ON kc.kpidefinition_id = k.id
             LEFT JOIN kpidefinitions kp on k.parent_kpi_id  = kp.id
             WHERE c.`type` = :category_type
+            AND k.id IN (SELECT kr.kpidefinition_id  from kpiresults kr)
         """)
         result = self.session.execute(query, {'category_type': category_type})
 

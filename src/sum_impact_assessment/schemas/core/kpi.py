@@ -15,6 +15,8 @@ class KPI(BaseModel):
     """
     id: str
     name: str
+    kpi_number: Optional[str] = Field(
+        None, description="KPI number identifier")
     progression_target: int = Field(
         ..., description="0: expected to go down, 1: expected to go up")
     value_type: KPIValueType = Field(
@@ -27,3 +29,5 @@ class KPI(BaseModel):
         None, description="Identifier for the parent KPI, if any")
     parent_kpi_name: Optional[str] = Field(
         None, description="Name of the parent KPI, if any")
+    parent_kpi_number: Optional[str] = Field(
+        None, description="KPI number of the parent KPI, if any")

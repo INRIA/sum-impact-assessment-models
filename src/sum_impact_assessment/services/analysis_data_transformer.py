@@ -123,12 +123,14 @@ class AnalysisDataTransformer:
                        for g in raw_groups if g.get('id') == group_id]
             kpis = [{'id': str(g.get('kpidefinition_id')),
                      'name': g.get('kpidefinition_name'),
+                     'kpi_number': g.get('kpidefinition_kpi_number'),
                      'progression_target': g.get('kpidefinition_progression_target'),
                      'value_min': g.get('kpidefinition_min_value'),
                      'value_max': g.get('kpidefinition_max_value'),
                      'value_type': g.get('kpidefinition_metric'),
                      'parent_kpi_id': str(g.get('parent_kpi_id')) if g.get('parent_kpi_id') is not None else None,
                      'parent_kpi_name': g.get('parent_kpi_name') if g.get('parent_kpi_name') is not None else None,
+                     'parent_kpi_number': g.get('parent_kpi_number') if g.get('parent_kpi_number') is not None else None
                      }
                     for g in raw_groups if g.get('id') == group_id]
 

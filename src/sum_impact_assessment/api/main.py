@@ -90,7 +90,7 @@ async def startup_event():
     logger.info("Database tables created successfully")
 
     logger.info(
-        "API server starting",
+        "API server starting at {}:{}".format(settings.API_HOST, settings.API_PORT),
         extra={
             "event": "startup",
             "api_title": settings.API_TITLE,
