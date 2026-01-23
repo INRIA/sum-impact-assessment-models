@@ -61,17 +61,12 @@ def trigger_job(
     request: Optional[TriggerJobRequest] = Body(
         None,
         openapi_examples={
-            "no_params": {
-                "summary": "No parameters",
-                "description": "Run job with default settings",
-                "value": None
-            },
             "kpi_group_filter": {
-                "summary": "Filter by KPI group",
-                "description": "Run MCDA analysis for specific KPI group only",
+                "summary": "Impact analysis for SIEF KPIs",
+                "description": "Run impact analysis filtering only SIEF KPIs",
                 "value": {
                     "params": {
-                        "kpi_group_type": "MCDA_GOALS"
+                        "kpi_group_type": "KPI_SIEF"
                     }
                 }
             },
