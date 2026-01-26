@@ -15,10 +15,10 @@ class Goal(BaseModel):
         name: Unique identifier for the goal
         weight: Importance weight (must sum to 1 across all goals)
         direction: 'max' for benefit criteria, 'min' for cost criteria
-        Q: Indifference threshold
-        S: Preference threshold
-        P: Veto threshold
-        F: Preference function type (t1–t7)
+        Q: Indifference threshold (only when necessary), default to min value to disabled the effect (only used for preference functions t5, t6 and t7)
+        S: Preference threshold (only used for preference functions t6 and t7), default to 0.0
+        P: Veto threshold (max - min value)
+        F: Preference function type (t1–t7), for SUM we use t3 or t5 (when Q is defined) for continuous data
     """
     name: str = Field(..., description="Unique goal identifier")
     weight: float = Field(..., gt=0, le=1,

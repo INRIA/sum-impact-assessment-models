@@ -30,6 +30,183 @@ class MCDAAnalysisJob:
     """
 
     @staticmethod
+    def _get_weight_by_goal(goal_name: str, goal_weights: Optional[Dict[str, float]], default_weight: float) -> float:
+        """
+        Retrieve weight for a specific goal by name.
+
+        Args:
+            goal_name: Name of the goal (kpi group)
+            goal_weights: Dictionary mapping goal names to weights (perspective-based)
+            default_weight: Fallback weight if goal not found in weights
+
+        Returns:
+            Weight value for the goal
+        """
+        if goal_weights and goal_name in goal_weights:
+            return goal_weights[goal_name]
+        else:
+            if goal_weights:
+                logger.warning(
+                    f"Goal '{goal_name}' not found in perspective weights. "
+                    f"Using default weight: {default_weight:.3f}"
+                )
+            return default_weight
+
+    @staticmethod
+    def _build_goal_values_by_measure(measure: Measure, kpi_impact_results: list) -> Dict[str, float]:
+        """
+        Build coefficient values for a measure (alternative) across all goals.
+
+        Args:
+            measure: The measure to get coefficients for
+            kpi_impact_results: List of KPI impact analysis results by group
+
+        Returns:
+            Dictionary mapping goal names to coefficient values
+        """
+        values = {}
+        for result in kpi_impact_results:
+            goal_name = result['group_name']
+            # Find coefficient for this measure in this group
+            measure_coefs = result['results']['measure_coefficients']
+            coefficient = next(
+                (mcoef['coefficient']
+                 for mcoef in measure_coefs if mcoef['id'] == measure.id),
+                0.0
+            )
+            values[goal_name] = coefficient
+        return values
+
+    @staticmethod
+    def _get_min_max_values_per_goal(goal_name: str, alternatives: list[Alternative]) -> tuple[Optional[float], Optional[float]]:
+        """
+        Calculate minimum and maximum values for a specific goal across all alternatives.
+
+        Args:
+            goal_name: Name of the goal to get min/max values for
+            alternatives: List of Alternative objects with values for each goal
+
+        Returns:
+            Tuple of (min_value, max_value) for the goal, or (None, None) if no values found
+        """
+        min_value = None
+        max_value = None
+        for alt in alternatives:
+            alt_goal_value = alt.values.get(goal_name)
+            if alt_goal_value is not None:
+                if (min_value is None) or (alt_goal_value < min_value):
+                    min_value = alt_goal_value
+                if (max_value is None) or (alt_goal_value > max_value):
+                    max_value = alt_goal_value
+        return min_value, max_value
+
+    @staticmethod
+    def build_alternatives(measures: list[Measure], kpi_impact_results: list) -> list[Alternative]:
+        """
+        Build Alternative objects from measures and KPI impact results.
+
+        Each alternative represents a measure with coefficient values for each goal.
+
+        Args:
+            measures: List of Measure objects
+            kpi_impact_results: List of KPI impact analysis results by group
+
+        Returns:
+            List of Alternative objects with goal values populated
+        """
+        alternatives = []
+        for measure in measures:
+            # Get all coefficients for this measure across all goals
+            values = MCDAAnalysisJob._build_goal_values_by_measure(
+                measure, kpi_impact_results)
+
+            alt = Alternative(
+                name=measure.name or f"Measure {measure.id}",
+                values=values
+            )
+            alternatives.append(alt)
+
+        logger.info(f"Created {len(alternatives)} alternatives from measures")
+        return alternatives
+
+    @staticmethod
+    def build_goals(kpi_impact_results: list, alternatives: list[Alternative], goal_weights: Optional[Dict[str, float]] = None) -> list[Goal]:
+        """
+        Build Goal objects from KPI impact results with appropriate weights and thresholds.
+
+        Args:
+            kpi_impact_results: List of KPI impact analysis results by group
+            alternatives: List of Alternative objects (needed to calculate min/max thresholds)
+            goal_weights: Optional dictionary mapping goal names to weights (perspective-based)
+
+        Returns:
+            List of Goal objects with weights and PROMETHEE thresholds configured
+        """
+        # Default to equal weights if no perspective provided
+        default_weight = 1.0 / len(kpi_impact_results)
+        goals = []
+
+        for result in kpi_impact_results:
+            group_name = result['group_name']
+
+            # Get weight for this goal using helper function
+            weight = MCDAAnalysisJob._get_weight_by_goal(
+                group_name, goal_weights, default_weight)
+
+            # Get min and max values for this goal across all alternatives
+            min_value, max_value = MCDAAnalysisJob._get_min_max_values_per_goal(
+                group_name, alternatives)
+
+            # Validate required values
+            if weight is None:
+                logger.warning(
+                    f"Skipping goal '{group_name}' due to missing weight")
+                continue
+            if (min_value is None) or (max_value is None):
+                logger.warning(
+                    f"Skipping goal '{group_name}' due to missing min/max values min='{min_value}', max='{max_value}'")
+                continue
+
+            goal = Goal(
+                name=group_name,
+                weight=weight,
+                direction="max",  # Higher coefficient = better impact
+                Q=min_value,  # default to min value (disabled effect)
+                S=0,  # default to 0 (not used here)
+                P=max_value - min_value,  # max - min value
+                F='t3'  # V-shape for continuous data
+            )
+            goals.append(goal)
+
+        logger.info(f"Created {len(goals)} goals from KPI groups")
+        return goals
+
+    @staticmethod
+    def get_goal_weights(perspective: Optional[str]) -> Optional[Dict[str, float]]:
+        """
+        Get goal weights for a specific perspective.
+
+        Args:
+            perspective: Stakeholder perspective name (e.g., "regulatory", "pto"), or None
+
+        Returns:
+            Dictionary mapping goal names to weights, or None if no perspective or loading fails
+        """
+        if perspective:
+            try:
+                goal_weights = get_goal_weights_for_perspective(perspective)
+                logger.info(
+                    f"Using goal weights for perspective: {perspective}")
+                return goal_weights
+            except ValueError as e:
+                logger.warning(
+                    f"Failed to load perspective weights: {e}. Using equal weights.")
+                return None
+        else:
+            logger.info("No perspective specified, using equal weights")
+            return None
+
+    @staticmethod
     def run(job_id: str, db: Session, params: Optional[Dict] = None) -> None:
         """
         Execute the MCDA analysis job.
@@ -92,75 +269,15 @@ class MCDAAnalysisJob:
 
             # Build Goals from KPI groups with perspective-based weights
             # Load weights from perspective if provided, otherwise use equal weights
-            if perspective:
-                try:
-                    goal_weights = get_goal_weights_for_perspective(
-                        perspective)
-                    logger.info(
-                        f"Using goal weights for perspective: {perspective}")
-                except ValueError as e:
-                    logger.warning(
-                        f"Failed to load perspective weights: {e}. Using equal weights.")
-                    goal_weights = None
-            else:
-                goal_weights = None
-                logger.info("No perspective specified, using equal weights")
-
-            # Default to equal weights if no perspective provided
-            default_weight = 1.0 / len(kpi_impact_results)
-
-            goals = []
-            for result in kpi_impact_results:
-                group_name = result['group_name']
-
-                # Get weight from perspective or use default
-                if goal_weights and group_name in goal_weights:
-                    weight = goal_weights[group_name]
-                else:
-                    weight = default_weight
-                    if goal_weights:
-                        logger.warning(
-                            f"Goal '{group_name}' not found in perspective weights. "
-                            f"Using default weight: {weight:.3f}"
-                        )
-
-                goal = Goal(
-                    name=group_name,
-                    weight=weight,
-                    direction="max",  # Higher coefficient = better impact
-                    Q=0.0005,
-                    S=0.003,
-                    P=0.01,
-                    F='t5'  # V-shape with indifference
-                )
-                goals.append(goal)
-
-            logger.info(f"Created {len(goals)} goals from KPI groups")
+            goal_weights = MCDAAnalysisJob.get_goal_weights(perspective)
 
             # Build Alternatives from measures
-            # Each alternative's values are the coefficients for each goal
-            alternatives = []
-            for measure in measures:
-                values = {}
-                for result in kpi_impact_results:
-                    goal_name = result['group_name']
-                    # Find coefficient for this measure in this group
-                    measure_coefs = result['results']['measure_coefficients']
-                    coefficient = next(
-                        (mcoef['coefficient']
-                         for mcoef in measure_coefs if mcoef['id'] == measure.id),
-                        0.0
-                    )
-                    values[goal_name] = coefficient
+            alternatives = MCDAAnalysisJob.build_alternatives(
+                measures, kpi_impact_results)
 
-                alt = Alternative(
-                    name=measure.name or f"Measure {measure.id}",
-                    values=values
-                )
-                alternatives.append(alt)
-
-            logger.info(
-                f"Created {len(alternatives)} alternatives from measures")
+            # Build Goals from KPI groups with perspective-based weights
+            goals = MCDAAnalysisJob.build_goals(
+                kpi_impact_results, alternatives, goal_weights)
 
             # PHASE 4: Run PROMETHEE-GAIA analysis
             logger.debug("Phase 4: Running PROMETHEE-GAIA analysis")
@@ -172,7 +289,6 @@ class MCDAAnalysisJob:
             # save MCDA input data snapshot, added to previous input_data_snapshot
             mcda_input_data_snapshot = {
                 "perspective": perspective,
-                "goal_weights": {goal.name: goal.weight for goal in goals},
                 "goals": [goal.model_dump() for goal in goals],
                 "alternatives": [alt.model_dump() for alt in alternatives],
                 "timestamp": datetime.utcnow().isoformat()

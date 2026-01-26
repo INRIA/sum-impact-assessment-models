@@ -50,14 +50,14 @@ class AnalysisDataRepository:
 
     def get_measures(self) -> List[Dict[str, Any]]:
         """
-        Get all measures (projects) from the database.
+        Get all measures (projects) from the database. Only those linked to living labs.
 
         Returns:
             List of dictionaries containing measure data
         """
         logger.debug("Fetching measures from database")
 
-        query = text("SELECT * FROM projects p")
+        query = text("SELECT * FROM projects p WHERE p.id IN (SELECT DISTINCT project_id FROM living_lab_projects_implementation llpi)")
         result = self.session.execute(query)
 
         columns = result.keys()
