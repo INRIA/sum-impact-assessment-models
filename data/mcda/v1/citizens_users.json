@@ -1,0 +1,165 @@
+{
+  "job_id": "8fbc63db-44ec-4db7-b297-347165afd86f",
+  "input": {
+    "goals": [
+      {
+        "F": "t3",
+        "P": 1.39485,
+        "Q": 0,
+        "S": 0,
+        "name": "Improve Safety",
+        "weight": 0.3,
+        "direction": "max"
+      },
+      {
+        "F": "t3",
+        "P": 1.34551,
+        "Q": 0,
+        "S": 0,
+        "name": "Improve Public Transport",
+        "weight": 0.3,
+        "direction": "max"
+      },
+      {
+        "F": "t3",
+        "P": 1.5903900000000002,
+        "Q": 0,
+        "S": 0,
+        "name": "Improve Accessibility",
+        "weight": 0.4,
+        "direction": "max"
+      }
+    ],
+    "timestamp": "2026-02-02T13:19:13.444971",
+    "perspective": "citizens_users",
+    "alternatives": [
+      {
+        "name": "Parking charges",
+        "values": {
+          "Improve Safety": -0.26479,
+          "Improve Accessibility": -0.42711,
+          "Improve Public Transport": 0.86159
+        }
+      },
+      {
+        "name": "Restricted parking",
+        "values": {
+          "Improve Safety": -0.46416,
+          "Improve Accessibility": -0.23379,
+          "Improve Public Transport": -0.2094
+        }
+      },
+      {
+        "name": "Mobility hubs",
+        "values": {
+          "Improve Safety": -1.22856,
+          "Improve Accessibility": 1.16328,
+          "Improve Public Transport": -0.05483
+        }
+      },
+      {
+        "name": "Ticketing integration in MaaS services",
+        "values": {
+          "Improve Safety": -0.04565,
+          "Improve Accessibility": -0.00262,
+          "Improve Public Transport": 0.54877
+        }
+      },
+      {
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "values": {
+          "Improve Safety": -1.4405,
+          "Improve Accessibility": -0.24546,
+          "Improve Public Transport": 1.13611
+        }
+      }
+    ],
+    "kpi_group_filter": "MCDA_GOALS"
+  },
+  "output": {
+    "timestamp": "2026-02-02T13:19:13.529246",
+    "mcda_results": {
+      "ranking": ["a4", "a1", "a3", "a5", "a2"],
+      "net_flows": {
+        "a1": 0.07662197674540461,
+        "a2": -0.21469030534827568,
+        "a3": 0.06210557110867654,
+        "a4": 0.18180718770537427,
+        "a5": -0.10584443021117972
+      },
+      "gaia_method": "pca",
+      "gaia_quality": 91.22719948584002,
+      "gaia_criteria": [
+        {
+          "x": -0.4107145393733551,
+          "y": 0.7749043066084499,
+          "key": "c1"
+        },
+        {
+          "x": -0.5414547889370052,
+          "y": -0.6312637499889664,
+          "key": "c2"
+        },
+        {
+          "x": 0.733580451405649,
+          "y": -0.03208416353194843,
+          "key": "c3"
+        }
+      ],
+      "negative_flows": {
+        "a1": 0.1773531650777882,
+        "a2": 0.32117783302368386,
+        "a3": 0.3076379826861897,
+        "a4": 0.12348483233944454,
+        "a5": 0.30669117052107964
+      },
+      "positive_flows": {
+        "a1": 0.2539751418231928,
+        "a2": 0.1064875276754082,
+        "a3": 0.36974355379486623,
+        "a4": 0.3052920200448188,
+        "a5": 0.2008467403098999
+      },
+      "criteria_labels": {
+        "c1": "Improve Safety",
+        "c2": "Improve Public Transport",
+        "c3": "Improve Accessibility"
+      },
+      "gaia_alternatives": [
+        {
+          "x": -1.3543793482903208,
+          "y": 0.13237738203075028,
+          "key": "a1"
+        },
+        {
+          "x": 0.16333338284260335,
+          "y": 1.1457700699326268,
+          "key": "a2"
+        },
+        {
+          "x": 2.3655523998229797,
+          "y": -0.2024308601104303,
+          "key": "a3"
+        },
+        {
+          "x": -0.6473102075099565,
+          "y": 0.8001252646172556,
+          "key": "a4"
+        },
+        {
+          "x": -0.5271962268653052,
+          "y": -1.8758418564702015,
+          "key": "a5"
+        }
+      ],
+      "alternative_labels": {
+        "a1": "Parking charges",
+        "a2": "Restricted parking",
+        "a3": "Mobility hubs",
+        "a4": "Ticketing integration in MaaS services",
+        "a5": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+      },
+      "gaia_decision_stick": [0.007781382069151521, 0.030258501573065685]
+    }
+  }
+}
