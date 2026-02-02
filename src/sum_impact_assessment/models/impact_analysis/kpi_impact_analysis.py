@@ -173,7 +173,7 @@ class KPIImpactAnalyzer:
             result = MeasureImpactCoefficient(id=measure.id,
                                               name=measure.name,
                                               kpi_group_id=kpi_group.id,
-                                              coefficient=coef[index])
+                                              coefficient=round(coef[index], 5))
             results.append(result)
 
         # sort results by coefficient descending
@@ -210,7 +210,7 @@ class KPIImpactAnalyzer:
 
         # Normalise target vector y
         max_variation = self.compute_max_variation(kpi_group)
-        y = self.normalize_variation(y=y, max_variation=max_variation)
+        y = self.normalize_variation(y=y, max_variation=max_variation, target_range=100.0)
 
         # Run Ridge Regression & compute Mean Squared Error (MSE)
         coef, intercept, msqe, sqe_per_sample = self.run_ridge_regression(X, y)
