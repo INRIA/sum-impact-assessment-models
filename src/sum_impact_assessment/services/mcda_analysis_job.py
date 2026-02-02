@@ -171,7 +171,7 @@ class MCDAAnalysisJob:
                 name=group_name,
                 weight=weight,
                 direction="max",  # Higher coefficient = better impact
-                Q=min_value,  # default to min value (disabled effect)
+                Q=0,  # default to min value (disabled effect)
                 S=0,  # default to 0 (not used here)
                 P=max_value - min_value,  # max - min value
                 F='t3'  # V-shape for continuous data

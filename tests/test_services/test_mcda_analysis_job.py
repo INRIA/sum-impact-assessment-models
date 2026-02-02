@@ -301,7 +301,7 @@ class TestBuildGoals:
         assert len(result) == 2
         assert result[0].name == "Sustainability"
         assert result[0].weight == 0.6
-        assert result[0].Q == 0.5  # min value
+        assert result[0].Q == 0  # min value, changed to 0 after MCDA review
         # max - min (0.8 - 0.5), using approximate comparison
         assert abs(result[0].P - 0.3) < 0.001
         assert result[1].name == "Safety"
@@ -384,7 +384,7 @@ class TestBuildGoals:
         goal = result[0]
         assert goal.name == "Sustainability"
         assert goal.direction == "max"
-        assert goal.Q == 0.2
+        assert goal.Q == 0
         assert goal.S == 0
         assert goal.P == 0.7  # 0.9 - 0.2
         assert goal.F == 't3'
