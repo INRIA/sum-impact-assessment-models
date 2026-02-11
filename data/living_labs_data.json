@@ -217,59 +217,73 @@
     "measures": [
       {
         "id": "measure_002",
-        "name": "Parking charges"
+        "name": "Parking charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_003",
-        "name": "Restricted parking"
+        "name": "Restricted parking",
+        "times_implemented": "1"
       },
       {
         "id": "measure_005",
-        "name": "Parking supply management"
+        "name": "Parking supply management",
+        "times_implemented": "1"
       },
       {
         "id": "measure_006",
-        "name": "Speed limits"
+        "name": "Speed limits",
+        "times_implemented": "1"
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_008",
-        "name": "Scheduling integration in MaaS services (see task T2.3)"
+        "name": "Scheduling integration in MaaS services (see task T2.3)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_011",
-        "name": "On demand vehicle sharing action plan"
+        "name": "On demand vehicle sharing action plan",
+        "times_implemented": "1"
       },
       {
         "id": "measure_013",
-        "name": "Dynamic pricing of NSM"
+        "name": "Dynamic pricing of NSM",
+        "times_implemented": "1"
       },
       {
         "id": "measure_014",
-        "name": "Improved information about the availability of shared modes"
+        "name": "Improved information about the availability of shared modes",
+        "times_implemented": "1"
       },
       {
         "id": "measure_017",
-        "name": "Streets retrofitting/introduction of priority lanes"
+        "name": "Streets retrofitting/introduction of priority lanes",
+        "times_implemented": "1"
       },
       {
         "id": "measure_018",
-        "name": "Dedicated parking spaces for carsharing/micromobility"
+        "name": "Dedicated parking spaces for carsharing/micromobility",
+        "times_implemented": "1"
       },
       {
         "id": "measure_019",
-        "name": "Widening PT geographical area"
+        "name": "Widening PT geographical area",
+        "times_implemented": "1"
       },
       {
         "id": "measure_020",
-        "name": "Central PT planning and construction program"
+        "name": "Central PT planning and construction program",
+        "times_implemented": "1"
       }
     ]
   },
@@ -421,43 +435,53 @@
     "measures": [
       {
         "id": "measure_001",
-        "name": "Congestion charges"
+        "name": "Congestion charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": "1"
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_008",
-        "name": "Scheduling integration in MaaS services (see task T2.3)"
+        "name": "Scheduling integration in MaaS services (see task T2.3)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_012",
-        "name": "Nudging (gamification or rewards)"
+        "name": "Nudging (gamification or rewards)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_013",
-        "name": "Dynamic pricing of NSM"
+        "name": "Dynamic pricing of NSM",
+        "times_implemented": "1"
       },
       {
         "id": "measure_016",
-        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)"
+        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_017",
-        "name": "Streets retrofitting/introduction of priority lanes"
+        "name": "Streets retrofitting/introduction of priority lanes",
+        "times_implemented": "1"
       }
     ]
   },
@@ -614,55 +638,68 @@
     "measures": [
       {
         "id": "measure_003",
-        "name": "Restricted parking"
+        "name": "Restricted parking",
+        "times_implemented": "1"
       },
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": "1"
       },
       {
         "id": "measure_005",
-        "name": "Parking supply management"
+        "name": "Parking supply management",
+        "times_implemented": "1"
       },
       {
         "id": "measure_006",
-        "name": "Speed limits"
+        "name": "Speed limits",
+        "times_implemented": "1"
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_011",
-        "name": "On demand vehicle sharing action plan"
+        "name": "On demand vehicle sharing action plan",
+        "times_implemented": "1"
       },
       {
         "id": "measure_014",
-        "name": "Improved information about the availability of shared modes"
+        "name": "Improved information about the availability of shared modes",
+        "times_implemented": "1"
       },
       {
         "id": "measure_015",
-        "name": "Introduction of new NSM services (ex. bike-sharing)"
+        "name": "Introduction of new NSM services (ex. bike-sharing)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_016",
-        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)"
+        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_018",
-        "name": "Dedicated parking spaces for carsharing/micromobility"
+        "name": "Dedicated parking spaces for carsharing/micromobility",
+        "times_implemented": "1"
       },
       {
         "id": "measure_019",
-        "name": "Widening PT geographical area"
+        "name": "Widening PT geographical area",
+        "times_implemented": "1"
       },
       {
         "id": "measure_020",
-        "name": "Central PT planning and construction program"
+        "name": "Central PT planning and construction program",
+        "times_implemented": "1"
       }
     ]
   },
@@ -848,31 +885,38 @@
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_008",
-        "name": "Scheduling integration in MaaS services (see task T2.3)"
+        "name": "Scheduling integration in MaaS services (see task T2.3)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_015",
-        "name": "Introduction of new NSM services (ex. bike-sharing)"
+        "name": "Introduction of new NSM services (ex. bike-sharing)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_016",
-        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)"
+        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_017",
-        "name": "Streets retrofitting/introduction of priority lanes"
+        "name": "Streets retrofitting/introduction of priority lanes",
+        "times_implemented": "1"
       }
     ]
   },
@@ -1034,39 +1078,48 @@
     "measures": [
       {
         "id": "measure_002",
-        "name": "Parking charges"
+        "name": "Parking charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_003",
-        "name": "Restricted parking"
+        "name": "Restricted parking",
+        "times_implemented": "1"
       },
       {
         "id": "measure_006",
-        "name": "Speed limits"
+        "name": "Speed limits",
+        "times_implemented": "1"
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_008",
-        "name": "Scheduling integration in MaaS services (see task T2.3)"
+        "name": "Scheduling integration in MaaS services (see task T2.3)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_014",
-        "name": "Improved information about the availability of shared modes"
+        "name": "Improved information about the availability of shared modes",
+        "times_implemented": "1"
       },
       {
         "id": "measure_018",
-        "name": "Dedicated parking spaces for carsharing/micromobility"
+        "name": "Dedicated parking spaces for carsharing/micromobility",
+        "times_implemented": "1"
       }
     ]
   },
@@ -1233,39 +1286,48 @@
     "measures": [
       {
         "id": "measure_001",
-        "name": "Congestion charges"
+        "name": "Congestion charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_002",
-        "name": "Parking charges"
+        "name": "Parking charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": "1"
       },
       {
         "id": "measure_008",
-        "name": "Scheduling integration in MaaS services (see task T2.3)"
+        "name": "Scheduling integration in MaaS services (see task T2.3)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_011",
-        "name": "On demand vehicle sharing action plan"
+        "name": "On demand vehicle sharing action plan",
+        "times_implemented": "1"
       },
       {
         "id": "measure_014",
-        "name": "Improved information about the availability of shared modes"
+        "name": "Improved information about the availability of shared modes",
+        "times_implemented": "1"
       },
       {
         "id": "measure_015",
-        "name": "Introduction of new NSM services (ex. bike-sharing)"
+        "name": "Introduction of new NSM services (ex. bike-sharing)",
+        "times_implemented": "1"
       }
     ]
   },
@@ -1276,47 +1338,58 @@
     "measures": [
       {
         "id": "measure_001",
-        "name": "Congestion charges"
+        "name": "Congestion charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_002",
-        "name": "Parking charges"
+        "name": "Parking charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_003",
-        "name": "Restricted parking"
+        "name": "Restricted parking",
+        "times_implemented": "1"
       },
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": "1"
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_008",
-        "name": "Scheduling integration in MaaS services (see task T2.3)"
+        "name": "Scheduling integration in MaaS services (see task T2.3)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_013",
-        "name": "Dynamic pricing of NSM"
+        "name": "Dynamic pricing of NSM",
+        "times_implemented": "1"
       },
       {
         "id": "measure_015",
-        "name": "Introduction of new NSM services (ex. bike-sharing)"
+        "name": "Introduction of new NSM services (ex. bike-sharing)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_016",
-        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)"
+        "name": "Introduction of new PT infrastructures/lines (ex. e-buses, LRT)",
+        "times_implemented": "1"
       }
     ]
   },
@@ -1453,19 +1526,23 @@
     "measures": [
       {
         "id": "measure_002",
-        "name": "Parking charges"
+        "name": "Parking charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_012",
-        "name": "Nudging (gamification or rewards)"
+        "name": "Nudging (gamification or rewards)",
+        "times_implemented": "1"
       }
     ]
   },
@@ -1637,35 +1714,43 @@
     "measures": [
       {
         "id": "measure_002",
-        "name": "Parking charges"
+        "name": "Parking charges",
+        "times_implemented": "1"
       },
       {
         "id": "measure_003",
-        "name": "Restricted parking"
+        "name": "Restricted parking",
+        "times_implemented": "1"
       },
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": "1"
       },
       {
         "id": "measure_007",
-        "name": "Mobility hubs (see task T3.2)"
+        "name": "Mobility hubs (see task T3.2)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_009",
-        "name": "Ticketing integration in MaaS services (see task T3.4)"
+        "name": "Ticketing integration in MaaS services (see task T3.4)",
+        "times_implemented": "1"
       },
       {
         "id": "measure_010",
-        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\""
+        "name": "Improved NSM infrastructure, e.g. bike lanes & \"park & ride\"",
+        "times_implemented": "1"
       },
       {
         "id": "measure_011",
-        "name": "On demand vehicle sharing action plan"
+        "name": "On demand vehicle sharing action plan",
+        "times_implemented": "1"
       },
       {
         "id": "measure_015",
-        "name": "Introduction of new NSM services (ex. bike-sharing)"
+        "name": "Introduction of new NSM services (ex. bike-sharing)",
+        "times_implemented": "1"
       }
     ]
   }
