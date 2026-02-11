@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
 class Measure(BaseModel):
     """
@@ -9,4 +10,5 @@ class Measure(BaseModel):
     """
     id: str
     name: str
-    times_implemented: int
+    times_implemented: Optional[int] = Field(
+        None, description="Number of times measure is implemented in Living Lab")
