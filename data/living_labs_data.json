@@ -881,7 +881,8 @@
     "measures": [
       {
         "id": "measure_004",
-        "name": "Limited traffic zone / Pedestrianisation of streets"
+        "name": "Limited traffic zone / Pedestrianisation of streets",
+        "times_implemented": 1
       },
       {
         "id": "measure_007",
