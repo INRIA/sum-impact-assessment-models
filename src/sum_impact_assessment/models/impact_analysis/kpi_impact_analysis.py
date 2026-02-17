@@ -130,7 +130,8 @@ class KPIImpactAnalyzer:
                              alpha:float=KPIAnalysisParam.REGULARIZATION_PENALTY.value, 
                              return_intercept:bool = True):
         # Run Ridge Regression
-        coef, intercept = ridge_regression(X, y, alpha=alpha, return_intercept=return_intercept)
+        coef, intercept = ridge_regression(X, y, alpha=alpha, return_intercept=return_intercept,
+                                           solver='lsqr')
 
         # Compute Mean Squared Error (MSE)
         y_pred = X @ coef + intercept  # Compute predicted y using the estimated coefficients
