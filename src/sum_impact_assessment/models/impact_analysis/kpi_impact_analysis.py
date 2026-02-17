@@ -65,9 +65,10 @@ class KPIImpactAnalyzer:
                 # Add living lab to list of feasible leaving labs
                 feasible_ll.append(lab)
 
-                # Create data rows with 1s for implemented measures
-                new_row = [1 if m.id in {
-                    lm.id for lm in lab.measures} else 0 for m in self.measures]
+                # Create data rows with 'times_implemented' value for implemented measures (or groups of measures)
+                #new_row = [1 if m.id in {lm.id for lm in lab.measures} else 0 for m in self.measures]
+                lm_lookup = {lm.id: lm.times_implemented for lm in lab.measures} # Build a lookup dictionary once
+                new_row = [lm_lookup.get(m.id, 0) for m in self.measures] # Use the dictionary to generate new_row
                 X_rows.append(new_row)
 
                 for kpi in measured_kpis_in_lab:
@@ -214,7 +215,6 @@ class KPIImpactAnalyzer:
 
         # Run Ridge Regression & compute Mean Squared Error (MSE)
         coef, intercept, msqe, sqe_per_sample = self.run_ridge_regression(X, y)
-
 
         # Update KPIGroup object with analysis results
         output_group = KPIGroupImpactOutput(id=kpi_group.id,
