@@ -200,8 +200,8 @@ class AnalysisDataTransformer:
                 }
 
             lab_measures_map[lab_id]['measures'].append(
-                Measure(id=measure_id, name=measure_name)
-            )
+                Measure(id=measure_id, name=measure_name, times_implemented=1
+                        ))
 
         # Group KPI results by living lab
         lab_kpis_result_map = {}
