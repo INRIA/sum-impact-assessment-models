@@ -5,4 +5,4 @@ Update this version number before building and pushing Docker images.
 Follow semantic versioning: MAJOR.MINOR.PATCH
 """
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
