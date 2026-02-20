@@ -70,8 +70,35 @@ def trigger_job(
                     }
                 }
             },
+            "mcda_qualitative_regulatory_perspective": {
+                "summary": "Qualitative MCDA Analysis for regulatory perspective",
+                "description": "Run MCDA analysis with regulatory stakeholder weights, from qualitative data from expert surveys",
+                "value": {
+                    "params": {
+                        "perspective": "regulatory"
+                    }
+                }
+            },
+            "mcda_qualitative_pto_perspective": {
+                "summary": "Qualitative MCDA Analysis for PTO perspective",
+                "description": "Run MCDA analysis with PTO stakeholder weights, from qualitative data from expert surveys",
+                "value": {
+                    "params": {
+                        "perspective": "pto"
+                    }
+                }
+            },
+            "mcda_qualitative_nsm_providers_perspective": {
+                "summary": "Qualitative MCDA Analysis for NSM providers perspective",
+                "description": "Run MCDA analysis with NSM providers stakeholder weights, from qualitative data from expert surveys",
+                "value": {
+                    "params": {
+                        "perspective": "nsm_providers"
+                    }
+                }
+            },
             "mcda_quantitative_regulatory_perspective": {
-                "summary": "MCDA Analysis for regulatory perspective",
+                "summary": "Quantitative MCDA Analysis for regulatory perspective",
                 "description": "Run MCDA analysis with regulatory stakeholder weights, from quantitative data form KPI/measures impact analysis",
                 "value": {
                     "params": {
@@ -81,7 +108,7 @@ def trigger_job(
                 }
             },
             "mcda_quantitative_pto_perspective": {
-                "summary": "MCDA Analysis for PTO perspective",
+                "summary": "Quantitative MCDA Analysis for PTO perspective",
                 "description": "Run MCDA analysis with PTO stakeholder weights, from quantitative data form KPI/measures impact analysis",
                 "value": {
                     "params": {
@@ -91,7 +118,7 @@ def trigger_job(
                 }
             },
             "mcda_quantitative_nsm_providers_perspective": {
-                "summary": "MCDA Analysis for NSM providers perspective",
+                "summary": "Quantitative MCDA Analysis for NSM providers perspective",
                 "description": "Run MCDA analysis with NSM providers stakeholder weights, from quantitative data form KPI/measures impact analysis",
                 "value": {
                     "params": {
@@ -143,7 +170,8 @@ def trigger_job(
         job_repo = JobRepository(db)
         actual_job_name = job_name.value
 
-        if job_name == JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE and params and "perspective" in params:
+        if (job_name == JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE or job_name == JobNameEnum.MCDA_ANALYSIS_QUALITATIVE) \
+                and params and "perspective" in params:
             perspective = params["perspective"]
             actual_job_name = f"{job_name.value}_{perspective}"
             logger.info(f"MCDA job with perspective: {perspective}")

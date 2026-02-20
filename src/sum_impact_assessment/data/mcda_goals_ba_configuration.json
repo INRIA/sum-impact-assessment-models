@@ -7,34 +7,34 @@
     },
     "weights": {
       "nsm_providers": {
-        "Improve Accessibility": 0.12,
-        "Improve Mobility Service": 0.16,
-        "Improve Multimodality": 0.13,
-        "Noise Hinderance": 0.06,
-        "Improve Public Transport": 0.12,
-        "Reduction of Congestion": 0.15,
-        "Reduction of Emission": 0.14,
-        "Improve Safety": 0.11
+        "Improve Accessibility": 0.118204003,
+        "Improve Mobility Service": 0.164257155,
+        "Improve Multimodality": 0.131881625,
+        "Noise Hinderance": 0.063675546,
+        "Improve Public Transport": 0.119422265,
+        "Reduction of Congestion": 0.145589093,
+        "Reduction of Emission": 0.144952956,
+        "Improve Safety": 0.112017357
       },
       "pto": {
-        "Improve Accessibility": 0.11,
-        "Improve Mobility Service": 0.13,
-        "Improve Multimodality": 0.14,
-        "Noise Hinderance": 0.08,
-        "Improve Public Transport": 0.16,
-        "Reduction of Congestion": 0.13,
-        "Reduction of Emission": 0.13,
-        "Improve Safety": 0.12
+        "Improve Accessibility": 0.114677545,
+        "Improve Mobility Service": 0.13491111,
+        "Improve Multimodality": 0.140999811,
+        "Noise Hinderance": 0.075197179,
+        "Improve Public Transport": 0.159867736,
+        "Reduction of Congestion": 0.12975634,
+        "Reduction of Emission": 0.127578298,
+        "Improve Safety": 0.117011982
       },
       "regulatory": {
-        "Improve Accessibility": 0.15,
-        "Improve Mobility Service": 0.14,
-        "Improve Multimodality": 0.12,
-        "Noise Hinderance": 0.07,
-        "Improve Public Transport": 0.16,
-        "Reduction of Congestion": 0.12,
-        "Reduction of Emission": 0.12,
-        "Improve Safety": 0.12
+        "Improve Accessibility": 0.146747967,
+        "Improve Mobility Service": 0.143144298,
+        "Improve Multimodality": 0.117543175,
+        "Noise Hinderance": 0.074956122,
+        "Improve Public Transport": 0.162734706,
+        "Reduction of Congestion": 0.122695883,
+        "Reduction of Emission": 0.115356371,
+        "Improve Safety": 0.116821478
       }
     }
   },
@@ -155,3 +155,4 @@
     }
   }
 }
+

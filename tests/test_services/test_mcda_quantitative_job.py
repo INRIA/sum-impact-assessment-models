@@ -397,14 +397,14 @@ class TestGetGoalWeights:
         """Test that weights are returned for a valid perspective."""
         perspective = "regulatory"
         expected_weights = {
-            "Improve Accessibility": 0.15,
-            "Improve Mobility Service": 0.14,
-            "Improve Multimodality": 0.12,
-            "Noise Hinderance": 0.07,
-            "Improve Public Transport": 0.16,
-            "Reduction of Congestion": 0.12,
-            "Reduction of Emission": 0.12,
-            "Improve Safety": 0.12
+            "Improve Accessibility": 0.146747967,
+            "Improve Mobility Service": 0.143144298,
+            "Improve Multimodality": 0.117543175,
+            "Noise Hinderance": 0.074956122,
+            "Improve Public Transport": 0.162734706,
+            "Reduction of Congestion": 0.122695883,
+            "Reduction of Emission": 0.115356371,
+            "Improve Safety": 0.116821478
         }
 
         result = McdaQuantitativeJob.get_goal_weights(perspective)
