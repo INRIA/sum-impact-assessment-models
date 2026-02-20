@@ -3,13 +3,13 @@ Job registry and base infrastructure for background job execution.
 """
 from typing import Dict, Type
 from ..services.kpi_measures_analysis_job import KpiMeasuresAnalysisJob
-from ..services.mcda_analysis_job import MCDAAnalysisJob
+from ..services.mcda_quantitative_job import McdaQuantitativeJob
 from ..schemas.job import JobNameEnum
 
 # Job registry mapping job names to job classes
 JOB_REGISTRY: Dict[JobNameEnum, Type] = {
     JobNameEnum.KPI_MEASURES_ANALYSIS: KpiMeasuresAnalysisJob,
-    JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE: MCDAAnalysisJob
+    JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE: McdaQuantitativeJob
 }
 
 

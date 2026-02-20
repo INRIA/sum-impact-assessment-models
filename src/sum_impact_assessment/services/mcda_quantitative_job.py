@@ -17,7 +17,7 @@ from ..utils.data_loaders import get_goal_weights_for_perspective
 logger = get_logger(__name__)
 
 
-class MCDAAnalysisJob:
+class McdaQuantitativeJob:
     """
     Job that executes KPI impact analysis followed by PROMETHEE-GAIA MCDA.
 
@@ -117,7 +117,7 @@ class MCDAAnalysisJob:
         alternatives = []
         for measure in measures:
             # Get all coefficients for this measure across all goals
-            values = MCDAAnalysisJob._build_goal_values_by_measure(
+            values = McdaQuantitativeJob._build_goal_values_by_measure(
                 measure, kpi_impact_results)
 
             alt = Alternative(
@@ -150,11 +150,11 @@ class MCDAAnalysisJob:
             group_name = result['group_name']
 
             # Get weight for this goal using helper function
-            weight = MCDAAnalysisJob._get_weight_by_goal(
+            weight = McdaQuantitativeJob._get_weight_by_goal(
                 group_name, goal_weights, default_weight)
 
             # Get min and max values for this goal across all alternatives
-            min_value, max_value = MCDAAnalysisJob._get_min_max_values_per_goal(
+            min_value, max_value = McdaQuantitativeJob._get_min_max_values_per_goal(
                 group_name, alternatives)
 
             # Validate required values
@@ -269,14 +269,14 @@ class MCDAAnalysisJob:
 
             # Build Goals from KPI groups with perspective-based weights
             # Load weights from perspective if provided, otherwise use equal weights
-            goal_weights = MCDAAnalysisJob.get_goal_weights(perspective)
+            goal_weights = McdaQuantitativeJob.get_goal_weights(perspective)
 
             # Build Alternatives from measures
-            alternatives = MCDAAnalysisJob.build_alternatives(
+            alternatives = McdaQuantitativeJob.build_alternatives(
                 measures, kpi_impact_results)
 
             # Build Goals from KPI groups with perspective-based weights
-            goals = MCDAAnalysisJob.build_goals(
+            goals = McdaQuantitativeJob.build_goals(
                 kpi_impact_results, alternatives, goal_weights)
 
             # PHASE 4: Run PROMETHEE-GAIA analysis
@@ -354,7 +354,7 @@ class MCDAAnalysisJob:
 
         except Exception as e:
             # Update status to FAILURE
-            error_message = f"MCDAAnalysisJob failed: {str(e)}"
+            error_message = f"McdaQuantitativeJob failed: {str(e)}"
             logger.error(
                 error_message,
                 extra={"job_id": job_id},

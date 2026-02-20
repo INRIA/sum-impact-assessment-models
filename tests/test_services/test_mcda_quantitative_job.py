@@ -1,9 +1,9 @@
 """
-Unit tests for MCDAAnalysisJob helper methods.
+Unit tests for McdaQuantitativeJob helper methods.
 """
 import pytest
 from unittest.mock import patch, Mock
-from src.sum_impact_assessment.services.mcda_analysis_job import MCDAAnalysisJob
+from sum_impact_assessment.services.mcda_quantitative_job import McdaQuantitativeJob
 from src.sum_impact_assessment.schemas.core import Measure
 from src.sum_impact_assessment.schemas.mcda import Alternative, Goal
 
@@ -18,7 +18,7 @@ class TestGetWeightByGoal:
                         "Safety": 0.3, "Efficiency": 0.3}
         default_weight = 0.25
 
-        result = MCDAAnalysisJob._get_weight_by_goal(
+        result = McdaQuantitativeJob._get_weight_by_goal(
             goal_name, goal_weights, default_weight)
 
         assert result == 0.4
@@ -30,7 +30,7 @@ class TestGetWeightByGoal:
                         "Safety": 0.3, "Efficiency": 0.3}
         default_weight = 0.25
 
-        result = MCDAAnalysisJob._get_weight_by_goal(
+        result = McdaQuantitativeJob._get_weight_by_goal(
             goal_name, goal_weights, default_weight)
 
         assert result == 0.25
@@ -41,7 +41,7 @@ class TestGetWeightByGoal:
         goal_weights = None
         default_weight = 0.33
 
-        result = MCDAAnalysisJob._get_weight_by_goal(
+        result = McdaQuantitativeJob._get_weight_by_goal(
             goal_name, goal_weights, default_weight)
 
         assert result == 0.33
@@ -52,7 +52,7 @@ class TestGetWeightByGoal:
         goal_weights = {}
         default_weight = 0.5
 
-        result = MCDAAnalysisJob._get_weight_by_goal(
+        result = McdaQuantitativeJob._get_weight_by_goal(
             goal_name, goal_weights, default_weight)
 
         assert result == 0.5
@@ -76,7 +76,7 @@ class TestBuildGoalValuesByMeasure:
             }
         ]
 
-        result = MCDAAnalysisJob._build_goal_values_by_measure(
+        result = McdaQuantitativeJob._build_goal_values_by_measure(
             measure, kpi_impact_results)
 
         assert result == {'Sustainability': 0.75}
@@ -105,7 +105,7 @@ class TestBuildGoalValuesByMeasure:
             }
         ]
 
-        result = MCDAAnalysisJob._build_goal_values_by_measure(
+        result = McdaQuantitativeJob._build_goal_values_by_measure(
             measure, kpi_impact_results)
 
         assert result == {'Sustainability': 0.50, 'Safety': 0.80}
@@ -125,7 +125,7 @@ class TestBuildGoalValuesByMeasure:
             }
         ]
 
-        result = MCDAAnalysisJob._build_goal_values_by_measure(
+        result = McdaQuantitativeJob._build_goal_values_by_measure(
             measure, kpi_impact_results)
 
         assert result == {'Sustainability': 0.0}
@@ -135,7 +135,7 @@ class TestBuildGoalValuesByMeasure:
         measure = Measure(id="M1", name="Measure 1")
         kpi_impact_results = []
 
-        result = MCDAAnalysisJob._build_goal_values_by_measure(
+        result = McdaQuantitativeJob._build_goal_values_by_measure(
             measure, kpi_impact_results)
 
         assert result == {}
@@ -156,7 +156,7 @@ class TestGetMinMaxValuesPerGoal:
                         "Sustainability": 0.2, "Safety": 0.9})
         ]
 
-        min_val, max_val = MCDAAnalysisJob._get_min_max_values_per_goal(
+        min_val, max_val = McdaQuantitativeJob._get_min_max_values_per_goal(
             goal_name, alternatives)
 
         assert min_val == 0.2
@@ -170,7 +170,7 @@ class TestGetMinMaxValuesPerGoal:
             Alternative(name="Alt2", values={"Sustainability": 0.8})
         ]
 
-        min_val, max_val = MCDAAnalysisJob._get_min_max_values_per_goal(
+        min_val, max_val = McdaQuantitativeJob._get_min_max_values_per_goal(
             goal_name, alternatives)
 
         assert min_val is None
@@ -181,7 +181,7 @@ class TestGetMinMaxValuesPerGoal:
         goal_name = "Sustainability"
         alternatives = []
 
-        min_val, max_val = MCDAAnalysisJob._get_min_max_values_per_goal(
+        min_val, max_val = McdaQuantitativeJob._get_min_max_values_per_goal(
             goal_name, alternatives)
 
         assert min_val is None
@@ -194,7 +194,7 @@ class TestGetMinMaxValuesPerGoal:
             Alternative(name="Alt1", values={"Sustainability": 0.7})
         ]
 
-        min_val, max_val = MCDAAnalysisJob._get_min_max_values_per_goal(
+        min_val, max_val = McdaQuantitativeJob._get_min_max_values_per_goal(
             goal_name, alternatives)
 
         assert min_val == 0.7
@@ -210,7 +210,7 @@ class TestGetMinMaxValuesPerGoal:
             Alternative(name="Alt3", values={"Sustainability": 0.9})
         ]
 
-        min_val, max_val = MCDAAnalysisJob._get_min_max_values_per_goal(
+        min_val, max_val = McdaQuantitativeJob._get_min_max_values_per_goal(
             goal_name, alternatives)
 
         assert min_val == 0.5
@@ -247,7 +247,7 @@ class TestBuildAlternatives:
             }
         ]
 
-        result = MCDAAnalysisJob.build_alternatives(
+        result = McdaQuantitativeJob.build_alternatives(
             measures, kpi_impact_results)
 
         assert len(result) == 2
@@ -266,7 +266,7 @@ class TestBuildAlternatives:
             }
         ]
 
-        result = MCDAAnalysisJob.build_alternatives(
+        result = McdaQuantitativeJob.build_alternatives(
             measures, kpi_impact_results)
 
         assert result == []
@@ -295,7 +295,7 @@ class TestBuildGoals:
         ]
         goal_weights = {"Sustainability": 0.6, "Safety": 0.4}
 
-        result = MCDAAnalysisJob.build_goals(
+        result = McdaQuantitativeJob.build_goals(
             kpi_impact_results, alternatives, goal_weights)
 
         assert len(result) == 2
@@ -330,7 +330,7 @@ class TestBuildGoals:
                         "Sustainability": 0.8, "Safety": 0.6, "Efficiency": 0.9})
         ]
 
-        result = MCDAAnalysisJob.build_goals(
+        result = McdaQuantitativeJob.build_goals(
             kpi_impact_results, alternatives, None)
 
         assert len(result) == 3
@@ -357,7 +357,7 @@ class TestBuildGoals:
             # Note: Safety values are missing
         ]
 
-        result = MCDAAnalysisJob.build_goals(
+        result = McdaQuantitativeJob.build_goals(
             kpi_impact_results, alternatives, None)
 
         # Only Sustainability should be included
@@ -377,7 +377,7 @@ class TestBuildGoals:
             Alternative(name="Alt2", values={"Sustainability": 0.9})
         ]
 
-        result = MCDAAnalysisJob.build_goals(
+        result = McdaQuantitativeJob.build_goals(
             kpi_impact_results, alternatives, None)
 
         assert len(result) == 1
@@ -393,38 +393,40 @@ class TestBuildGoals:
 class TestGetGoalWeights:
     """Test suite for get_goal_weights static method."""
 
-    @patch('src.sum_impact_assessment.services.mcda_analysis_job.get_goal_weights_for_perspective')
-    def test_returns_weights_for_valid_perspective(self, mock_get_weights):
+    def test_returns_weights_for_valid_perspective(self):
         """Test that weights are returned for a valid perspective."""
         perspective = "regulatory"
-        expected_weights = {"Sustainability": 0.5,
-                            "Safety": 0.3, "Efficiency": 0.2}
-        mock_get_weights.return_value = expected_weights
+        expected_weights = {
+            "Improve Accessibility": 0.15,
+            "Improve Mobility Service": 0.14,
+            "Improve Multimodality": 0.12,
+            "Noise Hinderance": 0.07,
+            "Improve Public Transport": 0.16,
+            "Reduction of Congestion": 0.12,
+            "Reduction of Emission": 0.12,
+            "Improve Safety": 0.12
+        }
 
-        result = MCDAAnalysisJob.get_goal_weights(perspective)
+        result = McdaQuantitativeJob.get_goal_weights(perspective)
 
         assert result == expected_weights
-        mock_get_weights.assert_called_once_with(perspective)
 
-    @patch('src.sum_impact_assessment.services.mcda_analysis_job.get_goal_weights_for_perspective')
-    def test_returns_none_when_perspective_loading_fails(self, mock_get_weights):
+    def test_returns_none_when_perspective_loading_fails(self):
         """Test that None is returned when loading perspective fails."""
-        perspective = "invalid"
-        mock_get_weights.side_effect = ValueError("Perspective not found")
+        perspective = "invalid_perspective_name"
 
-        result = MCDAAnalysisJob.get_goal_weights(perspective)
+        result = McdaQuantitativeJob.get_goal_weights(perspective)
 
         assert result is None
-        mock_get_weights.assert_called_once_with(perspective)
 
     def test_returns_none_when_perspective_is_none(self):
         """Test that None is returned when perspective is None."""
-        result = MCDAAnalysisJob.get_goal_weights(None)
+        result = McdaQuantitativeJob.get_goal_weights(None)
 
         assert result is None
 
     def test_returns_none_when_perspective_is_empty_string(self):
         """Test that None is returned when perspective is empty string."""
-        result = MCDAAnalysisJob.get_goal_weights("")
+        result = McdaQuantitativeJob.get_goal_weights("")
 
         assert result is None

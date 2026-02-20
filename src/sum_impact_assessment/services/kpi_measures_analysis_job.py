@@ -136,7 +136,7 @@ class KpiMeasuresAnalysisJob:
         Run KPI impact analysis and return results.
 
         This function retrieves data, runs the analysis, and returns results.
-        It can be used by both KpiMeasuresAnalysisJob and MCDAAnalysisJob.
+        It can be used by both KpiMeasuresAnalysisJob and McdaQuantitativeJob.
 
         Args:
             db: Database session for fetching data
