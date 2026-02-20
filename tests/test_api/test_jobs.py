@@ -113,7 +113,7 @@ class TestJobsAPI:
         # Setup mock job run
         mock_job_run = JobRun(
             id="test-job-id-456",
-            job_name="mcda_analysis",
+            job_name="mcda_analysis_quantitative",
             status=JobStatusEnum.PENDING,
             message=None,
             created_at=datetime(2025, 12, 4, 10, 0, 0),
@@ -132,7 +132,7 @@ class TestJobsAPI:
 
         # Make request with params
         response = client.post(
-            "/jobs/runs/mcda_analysis",
+            "/jobs/runs/mcda_analysis_quantitative",
             json={"params": {"kpi_group_type": "MCDA_GOALS"}}
         )
 
@@ -140,7 +140,7 @@ class TestJobsAPI:
         assert response.status_code == status.HTTP_201_CREATED
         response_data = response.json()
         assert response_data["id"] == "test-job-id-456"
-        assert response_data["job_name"] == "mcda_analysis"
+        assert response_data["job_name"] == "mcda_analysis_quantitative"
         assert response_data["status"] == JobStatusEnum.PENDING
 
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
@@ -150,7 +150,7 @@ class TestJobsAPI:
         # Setup mock job run
         mock_job_run = JobRun(
             id="mcda-job-id-999",
-            job_name="mcda_analysis",
+            job_name="mcda_analysis_quantitative",
             status=JobStatusEnum.PENDING,
             message=None,
             created_at=datetime(2025, 12, 4, 10, 0, 0),
@@ -168,17 +168,17 @@ class TestJobsAPI:
         mock_get_job_class.return_value = mock_job_class
 
         # Make request
-        response = client.post("/jobs/runs/mcda_analysis")
+        response = client.post("/jobs/runs/mcda_analysis_quantitative")
 
         # Assertions
         assert response.status_code == status.HTTP_201_CREATED
         response_data = response.json()
-        assert response_data["job_name"] == "mcda_analysis"
+        assert response_data["job_name"] == "mcda_analysis_quantitative"
         assert response_data["status"] == JobStatusEnum.PENDING
 
         # Verify repository was called with correct job name
         mock_repo_instance.create_job_run.assert_called_once_with(
-            job_name=JobNameEnum.MCDA_ANALYSIS)
+            job_name=JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE)
 
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
     @patch("src.sum_impact_assessment.api.routes.jobs.get_job_class")
@@ -187,7 +187,7 @@ class TestJobsAPI:
         # Setup mock job run with perspective in name
         mock_job_run = JobRun(
             id="mcda-job-perspective-123",
-            job_name="mcda_analysis_regulatory",
+            job_name="mcda_analysis_quantitative_regulatory",
             status=JobStatusEnum.PENDING,
             message=None,
             created_at=datetime(2025, 12, 4, 10, 0, 0),
@@ -206,7 +206,7 @@ class TestJobsAPI:
 
         # Make request with perspective parameter
         response = client.post(
-            "/jobs/runs/mcda_analysis",
+            "/jobs/runs/mcda_analysis_quantitative",
             json={"params": {"perspective": "regulatory"}}
         )
 
@@ -214,9 +214,9 @@ class TestJobsAPI:
         assert response.status_code == status.HTTP_201_CREATED
         response_data = response.json()
         assert response_data["id"] == "mcda-job-perspective-123"
-        assert response_data["job_name"] == "mcda_analysis_regulatory"
+        assert response_data["job_name"] == "mcda_analysis_quantitative_regulatory"
         assert response_data["status"] == JobStatusEnum.PENDING
 
         # Verify repository was called with perspective-suffixed job name
         mock_repo_instance.create_job_run.assert_called_once_with(
-            job_name="mcda_analysis_regulatory")
+            job_name="mcda_analysis_quantitative_regulatory")

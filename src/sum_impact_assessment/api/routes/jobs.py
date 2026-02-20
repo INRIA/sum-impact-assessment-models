@@ -61,7 +61,7 @@ def trigger_job(
     request: Optional[TriggerJobRequest] = Body(
         None,
         openapi_examples={
-            "kpi_group_filter": {
+            "impact_analysis_sief": {
                 "summary": "Impact analysis for SIEF KPIs",
                 "description": "Run impact analysis filtering only SIEF KPIs",
                 "value": {
@@ -70,9 +70,9 @@ def trigger_job(
                     }
                 }
             },
-            "mcda_regulatory_perspective": {
+            "mcda_quantitative_regulatory_perspective": {
                 "summary": "MCDA Analysis for regulatory perspective",
-                "description": "Run MCDA analysis with regulatory stakeholder weights",
+                "description": "Run MCDA analysis with regulatory stakeholder weights, from quantitative data form KPI/measures impact analysis",
                 "value": {
                     "params": {
                         "kpi_group_type": "MCDA_GOALS",
@@ -80,9 +80,9 @@ def trigger_job(
                     }
                 }
             },
-            "mcda_pto_perspective": {
+            "mcda_quantitative_pto_perspective": {
                 "summary": "MCDA Analysis for PTO perspective",
-                "description": "Run MCDA analysis with PTO stakeholder weights",
+                "description": "Run MCDA analysis with PTO stakeholder weights, from quantitative data form KPI/measures impact analysis",
                 "value": {
                     "params": {
                         "kpi_group_type": "MCDA_GOALS",
@@ -90,19 +90,9 @@ def trigger_job(
                     }
                 }
             },
-            "mcda_citizens_users_perspective": {
-                "summary": "MCDA Analysis for citizens/users perspective",
-                "description": "Run MCDA analysis with citizens/users stakeholder weights",
-                "value": {
-                    "params": {
-                        "kpi_group_type": "MCDA_GOALS",
-                        "perspective": "citizens_users"
-                    }
-                }
-            },
-            "mcda_nsm_providers_perspective": {
+            "mcda_quantitative_nsm_providers_perspective": {
                 "summary": "MCDA Analysis for NSM providers perspective",
-                "description": "Run MCDA analysis with NSM providers stakeholder weights",
+                "description": "Run MCDA analysis with NSM providers stakeholder weights, from quantitative data form KPI/measures impact analysis",
                 "value": {
                     "params": {
                         "kpi_group_type": "MCDA_GOALS",
@@ -153,7 +143,7 @@ def trigger_job(
         job_repo = JobRepository(db)
         actual_job_name = job_name.value
 
-        if job_name == JobNameEnum.MCDA_ANALYSIS and params and "perspective" in params:
+        if job_name == JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE and params and "perspective" in params:
             perspective = params["perspective"]
             actual_job_name = f"{job_name.value}_{perspective}"
             logger.info(f"MCDA job with perspective: {perspective}")

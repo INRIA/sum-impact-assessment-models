@@ -1,0 +1,157 @@
+{
+  "perspectives": {
+    "labels": {
+      "nsm_providers": "NSM Providers",
+      "pto": "Public Transport Operators",
+      "regulatory": "Regulatory Authorities"
+    },
+    "weights": {
+      "nsm_providers": {
+        "Improve Accessibility": 0.12,
+        "Improve Mobility Service": 0.16,
+        "Improve Multimodality": 0.13,
+        "Noise Hinderance": 0.06,
+        "Improve Public Transport": 0.12,
+        "Reduction of Congestion": 0.15,
+        "Reduction of Emission": 0.14,
+        "Improve Safety": 0.11
+      },
+      "pto": {
+        "Improve Accessibility": 0.11,
+        "Improve Mobility Service": 0.13,
+        "Improve Multimodality": 0.14,
+        "Noise Hinderance": 0.08,
+        "Improve Public Transport": 0.16,
+        "Reduction of Congestion": 0.13,
+        "Reduction of Emission": 0.13,
+        "Improve Safety": 0.12
+      },
+      "regulatory": {
+        "Improve Accessibility": 0.15,
+        "Improve Mobility Service": 0.14,
+        "Improve Multimodality": 0.12,
+        "Noise Hinderance": 0.07,
+        "Improve Public Transport": 0.16,
+        "Reduction of Congestion": 0.12,
+        "Reduction of Emission": 0.12,
+        "Improve Safety": 0.12
+      }
+    }
+  },
+  "business_activities": {
+    "labels": {
+      "BA1": "Integrated Mobility Service Platform (MaaS)",
+      "BA2": "Demand-Responsive and On-Demand Mobility",
+      "BA3": "Mobility Hub Development",
+      "BA4": "Active Mobility Promotion",
+      "BA5": "Incentive-Based Programs",
+      "BA6": "NSM Integration into Mobility Ecosystem",
+      "BA7": "Public Engagement and Awareness Initiatives",
+      "BA8": "Enhanced Data Collection and Analysis",
+      "BA9": "Electric and Low-Emission Infrastructure Expansion",
+      "BA10": "PT Scheduling and Frequency Optimization"
+    },
+    "goals_score": {
+      "BA1": {
+        "Improve Accessibility": 3.83,
+        "Improve Mobility Service": 4.16,
+        "Improve Multimodality": 4.22,
+        "Noise Hinderance": 3.14,
+        "Improve Public Transport": 4.23,
+        "Reduction of Congestion": 3.6,
+        "Reduction of Emission": 3.53,
+        "Improve Safety": 2.98
+      },
+      "BA2": {
+        "Improve Accessibility": 3.94,
+        "Improve Mobility Service": 4.05,
+        "Improve Multimodality": 3.99,
+        "Noise Hinderance": 3.1,
+        "Improve Public Transport": 4.17,
+        "Reduction of Congestion": 3.53,
+        "Reduction of Emission": 3.1,
+        "Improve Safety": 3.42
+      },
+      "BA3": {
+        "Improve Accessibility": 3.94,
+        "Improve Mobility Service": 4.12,
+        "Improve Multimodality": 4.18,
+        "Noise Hinderance": 2.98,
+        "Improve Public Transport": 3.96,
+        "Reduction of Congestion": 3.47,
+        "Reduction of Emission": 2.71,
+        "Improve Safety": 3.44
+      },
+      "BA4": {
+        "Improve Accessibility": 3.92,
+        "Improve Mobility Service": 4.06,
+        "Improve Multimodality": 3.96,
+        "Noise Hinderance": 3.31,
+        "Improve Public Transport": 4.14,
+        "Reduction of Congestion": 3.7,
+        "Reduction of Emission": 3.97,
+        "Improve Safety": 3.59
+      },
+      "BA5": {
+        "Improve Accessibility": 3.85,
+        "Improve Mobility Service": 4.09,
+        "Improve Multimodality": 3.97,
+        "Noise Hinderance": 3.18,
+        "Improve Public Transport": 4.1,
+        "Reduction of Congestion": 3.6,
+        "Reduction of Emission": 3.78,
+        "Improve Safety": 3.34
+      },
+      "BA6": {
+        "Improve Accessibility": 3.86,
+        "Improve Mobility Service": 4.15,
+        "Improve Multimodality": 4.06,
+        "Noise Hinderance": 3.19,
+        "Improve Public Transport": 4.23,
+        "Reduction of Congestion": 3.59,
+        "Reduction of Emission": 3.54,
+        "Improve Safety": 3.42
+      },
+      "BA7": {
+        "Improve Accessibility": 3.91,
+        "Improve Mobility Service": 4.13,
+        "Improve Multimodality": 4.01,
+        "Noise Hinderance": 3.11,
+        "Improve Public Transport": 4.28,
+        "Reduction of Congestion": 3.74,
+        "Reduction of Emission": 3.77,
+        "Improve Safety": 3.36
+      },
+      "BA8": {
+        "Improve Accessibility": 3.83,
+        "Improve Mobility Service": 4.03,
+        "Improve Multimodality": 3.95,
+        "Noise Hinderance": 3.06,
+        "Improve Public Transport": 3.99,
+        "Reduction of Congestion": 3.57,
+        "Reduction of Emission": 3.38,
+        "Improve Safety": 3.23
+      },
+      "BA9": {
+        "Improve Accessibility": 3.98,
+        "Improve Mobility Service": 4.16,
+        "Improve Multimodality": 4.0,
+        "Noise Hinderance": 3.45,
+        "Improve Public Transport": 4.23,
+        "Reduction of Congestion": 3.9,
+        "Reduction of Emission": 4.61,
+        "Improve Safety": 3.68
+      },
+      "BA10": {
+        "Improve Accessibility": 3.92,
+        "Improve Mobility Service": 4.17,
+        "Improve Multimodality": 4.07,
+        "Noise Hinderance": 3.39,
+        "Improve Public Transport": 4.31,
+        "Reduction of Congestion": 3.84,
+        "Reduction of Emission": 4.29,
+        "Improve Safety": 3.31
+      }
+    }
+  }
+}

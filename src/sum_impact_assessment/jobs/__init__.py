@@ -9,7 +9,7 @@ from ..schemas.job import JobNameEnum
 # Job registry mapping job names to job classes
 JOB_REGISTRY: Dict[JobNameEnum, Type] = {
     JobNameEnum.KPI_MEASURES_ANALYSIS: KpiMeasuresAnalysisJob,
-    JobNameEnum.MCDA_ANALYSIS: MCDAAnalysisJob
+    JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE: MCDAAnalysisJob
 }
 
 

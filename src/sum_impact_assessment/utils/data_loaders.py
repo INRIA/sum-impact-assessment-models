@@ -8,6 +8,8 @@ from typing import Dict, Any
 # Path to data directory (relative to this file)
 DATA_DIR = Path(__file__).parent.parent / "data"
 
+MCDA_CONFIG_CACHE = None  # Cache for MCDA configuration data
+
 
 def load_json_data(filename: str) -> Dict[str, Any]:
     """
@@ -28,6 +30,19 @@ def load_json_data(filename: str) -> Dict[str, Any]:
         return json.load(f)
 
 
+def load_mcda_config() -> Dict[str, Any]:
+    """
+    Load the entire MCDA configuration from the JSON file.
+
+    Returns:
+        Dictionary containing all MCDA configuration data
+    """
+    global MCDA_CONFIG_CACHE
+    if MCDA_CONFIG_CACHE is None:
+        MCDA_CONFIG_CACHE = load_json_data("mcda_goals_ba_configuration.json")
+    return MCDA_CONFIG_CACHE
+
+
 def load_mcda_goal_weights() -> Dict[str, Dict[str, float]]:
     """
     Load MCDA goal weights configuration for different perspectives.
@@ -42,7 +57,38 @@ def load_mcda_goal_weights() -> Dict[str, Dict[str, float]]:
             "pto": {"Improve Safety": 0.3, "Improve Public Transport": 0.4}
         }
     """
-    return load_json_data("mcda_goal_weights.json")
+    config = load_mcda_config()
+    return config.get("perspectives", {}).get("weights", {})
+
+def get_mcda_perspectives_labels() -> Dict[str, Dict[str, str]]:
+    """
+    Get the labels for MCDA perspectives and their goals.
+
+    Returns:
+        Dictionary mapping perspective names to their labels and goal labels.
+        Structure: {"perspective_name": {"label": "Perspective Label", "goals": {"Goal Name": "Goal Label", ...}}, ...}
+
+    Example:
+        {
+            "regulatory": {
+                "label": "Regulatory Perspective",
+                "goals": {
+                    "Improve Safety": "Improve Safety",
+                    "Improve Public Transport": "Improve Public Transport"
+                }
+            },
+            "pto": {
+                "label": "PTO Perspective",
+                "goals": {
+                    "Improve Safety": "Improve Safety",
+                    "Improve Public Transport": "Improve Public Transport"
+                }
+            }
+        }
+    """
+    config = load_mcda_config()
+    return config.get("perspectives", {}).get("labels", {})
+
 
 
 def get_goal_weights_for_perspective(perspective: str) -> Dict[str, float]:

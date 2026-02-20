@@ -12,7 +12,7 @@ class JobNameEnum(str, Enum):
     Enumeration of valid job names.
     """
     KPI_MEASURES_ANALYSIS = "kpi_measures_analysis"
-    MCDA_ANALYSIS = "mcda_analysis"
+    MCDA_ANALYSIS_QUANTITATIVE = "mcda_analysis_quantitative"
 
 
 class JobStatusEnum(str, Enum):
@@ -31,7 +31,7 @@ class TriggerJobRequest(BaseModel):
     """
     params: Optional[Dict] = Field(
         None,
-        description="Optional job-specific parameters. For mcda_analysis: {'kpi_group_type': 'MCDA_GOALS'}"
+        description="Optional job-specific parameters. For mcda_analysis_quantitative: {'kpi_group_type': 'MCDA_GOALS'}"
     )
 
     class Config:
