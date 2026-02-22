@@ -62,7 +62,7 @@ class AnalysisDataService:
             raw_kpi_groups = self.analysis_repo.get_kpi_groups(
                 kpi_group_filter)
         else:
-            raw_kpi_groups = self.analysis_repo.get_kpi_groups("MCDA_GOALS")
+            raw_kpi_groups = self.analysis_repo.get_kpi_groups("KPI_SIEF")
 
         raw_lab_measures = self.analysis_repo.get_living_lab_measures()
         raw_lab_kpi_results = self.analysis_repo.get_living_lab_kpi_results()

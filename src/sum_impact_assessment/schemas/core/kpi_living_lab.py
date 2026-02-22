@@ -10,6 +10,8 @@ class KPILivingLabResult(KPI):
         None, description="Identifier for the transport mode, only for Modal Split KPIS")
     transport_mode_name: Optional[str] = Field(
         None, description="Name of the transport mode, only for Modal Split KPIS")
+    transport_mode_type: Optional[str] = Field(
+        None, description="Type of the transport mode, only for Modal Split KPIS")
     value_before: Optional[float] = Field(None, description="Value before")
     value_after: Optional[float] = Field(None, description="Value after")
     abs_variation: Optional[float] = Field(

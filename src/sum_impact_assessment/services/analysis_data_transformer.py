@@ -232,6 +232,7 @@ class AnalysisDataTransformer:
                 # New fields for transport mode, if applicable (e.g. Modal Split KPIs)
                 'transport_mode_id': str(raw_kpi_result.get('transport_mode_id')) if raw_kpi_result.get('transport_mode_id') is not None else None,
                 'transport_mode_name': raw_kpi_result.get('transport_mode_name') if raw_kpi_result.get('transport_mode_name') is not None else None,
+                'transport_mode_type': raw_kpi_result.get('transport_mode_type') if raw_kpi_result.get('transport_mode_type') is not None else None,
             }
 
             try:

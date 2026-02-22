@@ -9,6 +9,7 @@ from .analysis_data_service import AnalysisDataService
 from ..models.impact_analysis.kpi_impact_analysis import KPIImpactAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..utils.logger import get_logger
+from ..utils.modal_split import expand_modal_split_groups
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -150,6 +151,11 @@ class KpiMeasuresAnalysisJob:
         kpis, measures, kpi_groups, living_labs = data_service.get_analysis_input_data(
             kpi_group_filter=kpi_group_filter
         )
+
+        # Expand Modal Split group by transport mode for KPI impact analysis only.
+        # MCDA analysis keeps original groups (no transport mode split considered).
+        if kpi_group_filter != "MCDA_GOALS":
+            kpi_groups = expand_modal_split_groups(kpi_groups, living_labs)
 
         # Create input data snapshot
         input_data_snapshot = {

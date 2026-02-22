@@ -167,6 +167,7 @@ class AnalysisDataRepository:
                 b4.kpidefinition_id,
                 b4.transport_mode_id,
                 tm.name as transport_mode_name,
+                tm.type as transport_mode_type,
                 b4.living_lab_id,
                 b4.value as value_before,
                 b4.date as date_before,

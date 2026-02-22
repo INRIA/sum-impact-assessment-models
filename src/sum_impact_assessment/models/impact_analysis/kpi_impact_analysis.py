@@ -60,6 +60,15 @@ class KPIImpactAnalyzer:
             measured_kpis_in_lab = [
                 kpi for kpi in lab.kpis if kpi.id in kpi_group.kpi_ids
                 ]
+
+            if kpi_group.transport_mode_type_filter:
+                mode_filters = {
+                    mode.strip().lower() for mode in kpi_group.transport_mode_type_filter
+                }
+                measured_kpis_in_lab = [
+                    kpi for kpi in measured_kpis_in_lab
+                    if (kpi.transport_mode_type or '').strip().lower() in mode_filters
+                ]
             
             if len(measured_kpis_in_lab)/len(kpi_group.kpi_ids) >= KPIAnalysisParam.MIN_PERC_MEASURED_KPI_IN_GROUP.value:
                 # Add living lab to list of feasible leaving labs
@@ -147,11 +156,25 @@ class KPIImpactAnalyzer:
         Add the LivingLabImpactError result to the KPIGroupImpactOutput object.
         """
         labs_analysis = []
+        mode_filters = None
+        if kpi_group.transport_mode_type_filter:
+            mode_filters = {
+                mode.strip().lower() for mode in kpi_group.transport_mode_type_filter
+            }
+
         for lab in feasible_ll:
             index = feasible_ll.index(lab)
+
+            lab_kpis = [kpi for kpi in lab.kpis if kpi.id in kpi_group.kpi_ids]
+            if mode_filters:
+                lab_kpis = [
+                    kpi for kpi in lab_kpis
+                    if (kpi.transport_mode_type or '').strip().lower() in mode_filters
+                ]
+
             temp_lab = LivingLabImpactError(id=lab.id,
                                             name=lab.name,
-                                            kpis=lab.kpis,
+                                            kpis=lab_kpis,
                                             measures=lab.measures,
                                             kpi_group_id=kpi_group.id,
                                             sqe=sqe_per_sample[index])

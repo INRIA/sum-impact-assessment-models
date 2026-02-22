@@ -4,9 +4,12 @@ Unit tests for KpiMeasuresAnalysisJob.
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime
+import numpy as np
 from src.sum_impact_assessment.services.kpi_measures_analysis_job import KpiMeasuresAnalysisJob
 from src.sum_impact_assessment.schemas.job import JobStatusEnum
 from src.sum_impact_assessment.schemas.impact_analysis import KPIGroupImpactOutput, MeasureImpactCoefficient
+from src.sum_impact_assessment.schemas.core import KPIGroup, KPI, LivingLab, Measure, KPILivingLabResult
+from src.sum_impact_assessment.utils.modal_split import MODAL_SPLIT_TRANSPORT_MODE_GROUPS
 
 
 class TestKpiMeasuresAnalysisJob:
@@ -202,6 +205,7 @@ class TestKpiMeasuresAnalysisJob:
                 "kpidefinition_id": 1,
                 "transport_mode_id": 1,
                 "transport_mode_name": "Bicycle",
+                "transport_mode_type": "NSM",
                 "living_lab_id": 301,
                 "value_before": 150.0,
                 "date_before": datetime(2023, 1, 1),
@@ -451,3 +455,414 @@ class TestKpiMeasuresAnalysisJob:
         status_calls = mock_job_repo.update_job_status.call_args_list
         final_status = status_calls[-1]
         assert final_status[1]['status'] == JobStatusEnum.SUCCESS
+
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataService")
+    def test_run_kpi_impact_analysis_expands_modal_split_into_three_modes(
+        self,
+        mock_data_service_class,
+        mock_analyzer_class,
+    ):
+        """Modal Split group should be expanded according to configured transport-mode sub-groups."""
+        mock_db = Mock()
+
+        modal_group = KPIGroup(
+            id="3",
+            name="Modal Split",
+            kpi_ids=["15"],
+            kpis=[
+                KPI(
+                    id="15",
+                    name="Modal Split KPI",
+                    kpi_number="15a",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                )
+            ],
+        )
+
+        living_lab = LivingLab(
+            id="lab1",
+            name="Lab 1",
+            measures=[Measure(id="m1", name="Measure 1", times_implemented=1)],
+            kpis=[
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="NSM",
+                    value_before=0.3,
+                    value_after=0.4,
+                ),
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="PRIVATE",
+                    value_before=0.5,
+                    value_after=0.45,
+                ),
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="PUBLIC_TRANSPORT",
+                    value_before=0.2,
+                    value_after=0.15,
+                ),
+            ],
+        )
+
+        mock_data_service = mock_data_service_class.return_value
+        mock_data_service.get_analysis_input_data.return_value = (
+            [],
+            [Measure(id="m1", name="Measure 1")],
+            [modal_group],
+            [living_lab],
+        )
+
+        mock_analyzer = mock_analyzer_class.return_value
+        mock_analyzer.run_analysis_group.side_effect = [
+            KPIGroupImpactOutput(
+                id="3__nsm", name="Modal Split - NSM", kpi_ids=["15"]),
+            KPIGroupImpactOutput(
+                id="3__private", name="Modal Split - Private", kpi_ids=["15"]),
+            KPIGroupImpactOutput(
+                id="3__public_transport", name="Modal Split - Public transport", kpi_ids=["15"]),
+            KPIGroupImpactOutput(
+                id="3__sustainable_modes", name="Modal Split - Sustainable modes", kpi_ids=["15"]),
+        ]
+
+        input_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
+            db=mock_db,
+            kpi_group_filter=None,
+        )
+
+        assert len(input_snapshot["kpi_groups"]) == len(
+            MODAL_SPLIT_TRANSPORT_MODE_GROUPS)
+        assert len(successful_results) == len(
+            MODAL_SPLIT_TRANSPORT_MODE_GROUPS)
+        assert len(error_results) == 0
+        assert mock_analyzer.run_analysis_group.call_count == len(
+            MODAL_SPLIT_TRANSPORT_MODE_GROUPS)
+
+        analyzed_names = [
+            call.args[0].name for call in mock_analyzer.run_analysis_group.call_args_list]
+        assert "Modal Split - NSM" in analyzed_names
+        assert "Modal Split - Private" in analyzed_names
+        assert "Modal Split - Public transport" in analyzed_names
+        assert "Modal Split - Sustainable modes" in analyzed_names
+
+        analyzed_groups = [call.args[0]
+                           for call in mock_analyzer.run_analysis_group.call_args_list]
+        sustainable_group = next(
+            g for g in analyzed_groups if g.name == "Modal Split - Sustainable modes"
+        )
+        assert sorted(sustainable_group.transport_mode_type_filter) == [
+            "nsm", "public_transport"]
+
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataService")
+    def test_run_kpi_impact_analysis_does_not_expand_modal_split_for_mcda_goals(
+        self,
+        mock_data_service_class,
+        mock_analyzer_class,
+    ):
+        """MCDA_GOALS runs must keep original groups (no transport-mode split)."""
+        mock_db = Mock()
+
+        modal_group = KPIGroup(
+            id="3",
+            name="Modal Split",
+            kpi_ids=["15"],
+            kpis=[
+                KPI(
+                    id="15",
+                    name="Modal Split KPI",
+                    kpi_number="15",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                )
+            ],
+        )
+
+        mock_data_service = mock_data_service_class.return_value
+        mock_data_service.get_analysis_input_data.return_value = (
+            [],
+            [Measure(id="m1", name="Measure 1")],
+            [modal_group],
+            [],
+        )
+
+        mock_analyzer = mock_analyzer_class.return_value
+        mock_analyzer.run_analysis_group.return_value = KPIGroupImpactOutput(
+            id="3",
+            name="Modal Split",
+            kpi_ids=["15"],
+        )
+
+        input_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
+            db=mock_db,
+            kpi_group_filter="MCDA_GOALS",
+        )
+
+        assert len(input_snapshot["kpi_groups"]) == 1
+        assert len(successful_results) == 1
+        assert len(error_results) == 0
+        mock_analyzer.run_analysis_group.assert_called_once()
+        assert mock_analyzer.run_analysis_group.call_args.args[0].name == "Modal Split"
+
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataService")
+    def test_run_kpi_impact_analysis_modal_split_only_nsm_keeps_nsm_and_sustainable_modes(
+        self,
+        mock_data_service_class,
+        mock_analyzer_class,
+    ):
+        """
+        Given Modal Split analysis and only NSM KPI data in living labs,
+        then only NSM and Sustainable modes sub-groups are analyzed.
+        """
+        mock_db = Mock()
+
+        modal_group = KPIGroup(
+            id="3",
+            name="Modal Split",
+            kpi_ids=["15"],
+            kpis=[
+                KPI(
+                    id="15",
+                    name="Modal Split KPI",
+                    kpi_number="15",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                )
+            ],
+        )
+
+        living_lab = LivingLab(
+            id="lab1",
+            name="Lab 1",
+            measures=[Measure(id="m1", name="Measure 1", times_implemented=1)],
+            kpis=[
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="NSM",
+                    value_before=0.3,
+                    value_after=0.4,
+                ),
+            ],
+        )
+
+        mock_data_service = mock_data_service_class.return_value
+        mock_data_service.get_analysis_input_data.return_value = (
+            [],
+            [Measure(id="m1", name="Measure 1")],
+            [modal_group],
+            [living_lab],
+        )
+
+        mock_analyzer = mock_analyzer_class.return_value
+        mock_analyzer.run_analysis_group.side_effect = [
+            KPIGroupImpactOutput(
+                id="3__nsm", name="Modal Split - NSM", kpi_ids=["15"]),
+            KPIGroupImpactOutput(
+                id="3__sustainable_modes", name="Modal Split - Sustainable modes", kpi_ids=["15"]),
+        ]
+
+        input_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
+            db=mock_db,
+            kpi_group_filter=None,
+        )
+
+        analyzed_names = [
+            call.args[0].name for call in mock_analyzer.run_analysis_group.call_args_list]
+
+        assert len(input_snapshot["kpi_groups"]) == 2
+        assert len(successful_results) == 2
+        assert len(error_results) == 0
+        assert mock_analyzer.run_analysis_group.call_count == 2
+        assert "Modal Split - NSM" in analyzed_names
+        assert "Modal Split - Sustainable modes" in analyzed_names
+        assert "Modal Split - Private" not in analyzed_names
+        assert "Modal Split - Public transport" not in analyzed_names
+
+    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.AnalysisDataService")
+    @patch("src.sum_impact_assessment.models.impact_analysis.kpi_impact_analysis.KPIImpactAnalyzer.run_ridge_regression", autospec=True)
+    def test_run_kpi_impact_analysis_modal_split_all_transport_modes_filters_output_and_ridge_inputs(
+        self,
+        mock_run_ridge_regression,
+        mock_data_service_class,
+    ):
+        """
+        Given Modal Split group and KPI data for all transport modes,
+        then all configured Modal Split sub-groups are analyzed,
+        each subgroup output contains only KPIs for its transport mode filter,
+        and ridge regression is called with subgroup-filtered inputs.
+        """
+        mock_db = Mock()
+
+        modal_group = KPIGroup(
+            id="3",
+            name="Modal Split",
+            kpi_ids=["15"],
+            kpis=[
+                KPI(
+                    id="15",
+                    name="Modal Split KPI",
+                    kpi_number="15",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                )
+            ],
+        )
+
+        living_lab = LivingLab(
+            id="lab1",
+            name="Lab 1",
+            measures=[Measure(id="m1", name="Measure 1", times_implemented=1)],
+            kpis=[
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="NSM",
+                    value_before=0.3,
+                    value_after=0.4,
+                ),
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="PRIVATE",
+                    value_before=0.5,
+                    value_after=0.45,
+                ),
+                KPILivingLabResult(
+                    id="15",
+                    name="Modal Split KPI",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                    living_lab_id="lab1",
+                    transport_mode_type="PUBLIC_TRANSPORT",
+                    value_before=0.2,
+                    value_after=0.15,
+                ),
+            ],
+        )
+
+        mock_data_service = mock_data_service_class.return_value
+        mock_data_service.get_analysis_input_data.return_value = (
+            [
+                KPI(
+                    id="15",
+                    name="Modal Split KPI",
+                    kpi_number="15",
+                    progression_target=1,
+                    value_type="percentage",
+                    value_min=0,
+                    value_max=1,
+                )
+            ],
+            [Measure(id="m1", name="Measure 1")],
+            [modal_group],
+            [living_lab],
+        )
+
+        mock_run_ridge_regression.return_value = (
+            np.zeros(1),
+            0.0,
+            0.0,
+            np.zeros(1),
+        )
+
+        _, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
+            db=mock_db,
+            kpi_group_filter=None,
+        )
+
+        assert len(successful_results) == 4
+        assert len(error_results) == 0
+
+        result_by_group_name = {
+            result["group_name"]: result["results"] for result in successful_results
+        }
+        assert "Modal Split - NSM" in result_by_group_name
+        assert "Modal Split - Private" in result_by_group_name
+        assert "Modal Split - Public transport" in result_by_group_name
+        assert "Modal Split - Sustainable modes" in result_by_group_name
+
+        nsm_modes = {
+            kpi["transport_mode_type"]
+            for kpi in result_by_group_name["Modal Split - NSM"]["living_labs_analysis"][0]["kpis"]
+        }
+        private_modes = {
+            kpi["transport_mode_type"]
+            for kpi in result_by_group_name["Modal Split - Private"]["living_labs_analysis"][0]["kpis"]
+        }
+        public_modes = {
+            kpi["transport_mode_type"]
+            for kpi in result_by_group_name["Modal Split - Public transport"]["living_labs_analysis"][0]["kpis"]
+        }
+        sustainable_modes = {
+            kpi["transport_mode_type"]
+            for kpi in result_by_group_name["Modal Split - Sustainable modes"]["living_labs_analysis"][0]["kpis"]
+        }
+
+        assert nsm_modes == {"NSM"}
+        assert private_modes == {"PRIVATE"}
+        assert public_modes == {"PUBLIC_TRANSPORT"}
+        assert sustainable_modes == {"NSM", "PUBLIC_TRANSPORT"}
+
+        assert mock_run_ridge_regression.call_count == 4
+
+        # Call order follows modal split subgroup constant order:
+        # NSM[0], Private[1], Public transport[2], Sustainable modes[3].
+        # With autospec on an instance method, call args are: (self, X, y, ...)
+        _, nsm_call_X, nsm_call_y = mock_run_ridge_regression.call_args_list[0].args[:3]
+
+        # NSM subgroup should use only NSM KPI variations (no PRIVATE/PUBLIC_TRANSPORT contribution).
+        assert tuple(np.round(nsm_call_y, 5).tolist()) == (10.0,)
+
+        # All subgroup analyses use same living-lab measure input design matrix in this fixture.
+        ridge_x_vectors = [
+            tuple(np.round(call.args[1].flatten(), 5).tolist())
+            for call in mock_run_ridge_regression.call_args_list
+        ]
+        assert ridge_x_vectors.count((1.0,)) == 4

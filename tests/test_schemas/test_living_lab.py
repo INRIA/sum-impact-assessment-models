@@ -213,6 +213,7 @@ class TestLivingLabAutomaticVariationCalculation:
                 living_lab_id="lab_001",
                 transport_mode_id="mode_car",
                 transport_mode_name="Car",
+                transport_mode_type="PRIVATE",
                 value_before=0.6,
                 value_after=0.4
             )
@@ -228,6 +229,7 @@ class TestLivingLabAutomaticVariationCalculation:
         kpi = living_lab.kpis[0]
         assert kpi.transport_mode_id == "mode_car"
         assert kpi.transport_mode_name == "Car"
+        assert kpi.transport_mode_type == "PRIVATE"
         # progression_target=0, decreased from 0.6 to 0.4 (good outcome)
         assert kpi.abs_variation == pytest.approx(0.2)
         assert kpi.ratio_variation == pytest.approx(0.2 / 0.6)
@@ -333,6 +335,7 @@ class TestLivingLabDataIntegrity:
             living_lab_id="lab_001",
             transport_mode_id="mode_001",
             transport_mode_name="Car",
+            transport_mode_type="PRIVATE",
             value_before=0.5,
             value_after=0.8
         )
@@ -355,6 +358,7 @@ class TestLivingLabDataIntegrity:
         assert kpi.living_lab_id == "lab_001"
         assert kpi.transport_mode_id == "mode_001"
         assert kpi.transport_mode_name == "Car"
+        assert kpi.transport_mode_type == "PRIVATE"
         assert kpi.value_before == 0.5
         assert kpi.value_after == 0.8
         # Verify calculated fields
