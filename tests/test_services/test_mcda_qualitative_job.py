@@ -153,7 +153,8 @@ class TestRun:
         analyzer_instance = mock_analyzer_class.return_value
         analyzer_instance.run_analysis.return_value = mock_mcda_output
 
-        McdaQualitativeJob.run(job_id=job_id, db=db, params={"perspective": perspective})
+        McdaQualitativeJob.run(job_id=job_id, db=db, params={
+                               "perspective": perspective})
 
         # STARTED + SUCCESS status updates
         assert repo_instance.update_job_status.call_count == 2
@@ -166,7 +167,8 @@ class TestRun:
 
         # Verify analyzer invoked
         mock_analyzer_class.assert_called_once()
-        analyzer_instance.run_analysis.assert_called_once_with(run_visualizations=False)
+        analyzer_instance.run_analysis.assert_called_once_with(
+            run_visualizations=False)
 
         # Validate first input snapshot has qualitative source fields
         first_call_kwargs = repo_instance.update_job_data.call_args_list[0].kwargs
@@ -186,3 +188,64 @@ class TestRun:
         assert "kpi_impact_results" in third_call_kwargs["output_data"]
         assert "kpi_impact_errors" in third_call_kwargs["output_data"]
         assert "mcda_results" in third_call_kwargs["output_data"]
+
+
+class TestRunUserPersonalized:
+    """Integration-style tests for user-personalized qualitative runs."""
+
+    @patch('sum_impact_assessment.services.mcda_qualitative_job.PrometheeGaiaAnalyzer')
+    @patch('sum_impact_assessment.services.mcda_qualitative_job.JobRepository')
+    @patch('sum_impact_assessment.services.mcda_qualitative_job.load_mcda_config')
+    def test_run_uses_user_personalized_goal_weights_and_saves_name(
+        self,
+        mock_loader_for_service,
+        mock_job_repository,
+        mock_analyzer_class
+    ):
+        mock_loader_for_service.return_value = MOCK_MCDA_CONFIG
+
+        db = Mock()
+        job_id = "job-personalized-qual"
+        params = {
+            "perspective": "user_personalized",
+            "name": "My personalized run",
+            "goals_weights": {
+                "Improve Accessibility": 2.0,
+                "Improve Safety": 1.0
+            }
+        }
+
+        repo_instance = mock_job_repository.return_value
+
+        mock_mcda_output = Mock()
+        mock_mcda_output.gaia_quality = 90.0
+        mock_mcda_output.ranking = ["a1"]
+        mock_mcda_output.alternative_labels = {
+            "a1": "Integrated Mobility Service Platform (MaaS)"
+        }
+        mock_mcda_output.model_dump.return_value = {
+            "ranking": ["a1"],
+            "gaia_quality": 90.0
+        }
+
+        analyzer_instance = mock_analyzer_class.return_value
+        analyzer_instance.run_analysis.return_value = mock_mcda_output
+
+        McdaQualitativeJob.run(job_id=job_id, db=db, params=params)
+
+        # Analyzer should be initialized with goals using normalized personalized weights.
+        analyzer_call_kwargs = mock_analyzer_class.call_args.kwargs
+        goals = analyzer_call_kwargs["goals"]
+        goal_weights = {goal.name: goal.weight for goal in goals}
+
+        assert goal_weights["Improve Accessibility"] == 2.0 / 3.0
+        assert goal_weights["Improve Safety"] == 1.0 / 3.0
+
+        # Second input snapshot should contain MCDA input including goals and custom name.
+        second_call_kwargs = repo_instance.update_job_data.call_args_list[1].kwargs
+        assert second_call_kwargs["input_data"]["name"] == "My personalized run"
+        snapshot_weights = {
+            g["name"]: g["weight"] for g in second_call_kwargs["input_data"]["goals"]
+        }
+        assert snapshot_weights["Improve Accessibility"] == 2.0 / 3.0
+        assert snapshot_weights["Improve Safety"] == 1.0 / 3.0

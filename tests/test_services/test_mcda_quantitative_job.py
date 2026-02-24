@@ -430,3 +430,91 @@ class TestGetGoalWeights:
         result = McdaQuantitativeJob.get_goal_weights("")
 
         assert result is None
+
+
+class TestRunUserPersonalized:
+    """Integration-style tests for user-personalized quantitative runs."""
+
+    @patch('sum_impact_assessment.services.mcda_quantitative_job.PrometheeGaiaAnalyzer')
+    @patch('sum_impact_assessment.services.mcda_quantitative_job.JobRepository')
+    @patch('sum_impact_assessment.services.mcda_quantitative_job.KpiMeasuresAnalysisJob.run_kpi_impact_analysis')
+    def test_run_uses_user_personalized_goal_weights_and_saves_name(
+        self,
+        mock_run_kpi_impact_analysis,
+        mock_job_repository,
+        mock_analyzer_class
+    ):
+        input_data_snapshot = {
+            "measures": [
+                {"id": "M1", "name": "Measure 1"},
+                {"id": "M2", "name": "Measure 2"}
+            ]
+        }
+        kpi_impact_results = [
+            {
+                "group_name": "Improve Accessibility",
+                "results": {
+                    "measure_coefficients": [
+                        {"id": "M1", "coefficient": 0.8},
+                        {"id": "M2", "coefficient": 0.5}
+                    ]
+                }
+            },
+            {
+                "group_name": "Improve Safety",
+                "results": {
+                    "measure_coefficients": [
+                        {"id": "M1", "coefficient": 0.6},
+                        {"id": "M2", "coefficient": 0.4}
+                    ]
+                }
+            }
+        ]
+        mock_run_kpi_impact_analysis.return_value = (
+            input_data_snapshot,
+            kpi_impact_results,
+            []
+        )
+
+        repo_instance = mock_job_repository.return_value
+
+        mock_mcda_output = Mock()
+        mock_mcda_output.gaia_quality = 84.0
+        mock_mcda_output.ranking = ["a1"]
+        mock_mcda_output.alternative_labels = {"a1": "Measure 1"}
+        mock_mcda_output.model_dump.return_value = {
+            "ranking": ["a1"],
+            "gaia_quality": 84.0
+        }
+
+        analyzer_instance = mock_analyzer_class.return_value
+        analyzer_instance.run_analysis.return_value = mock_mcda_output
+
+        McdaQuantitativeJob.run(
+            job_id="job-personalized-quant",
+            db=Mock(),
+            params={
+                "kpi_group_type": "MCDA_GOALS",
+                "perspective": "user_personalized",
+                "name": "Custom quantitative analysis",
+                "goals_weights": {
+                    "Improve Accessibility": 3.0,
+                    "Improve Safety": 1.0
+                }
+            }
+        )
+
+        analyzer_call_kwargs = mock_analyzer_class.call_args.kwargs
+        goals = analyzer_call_kwargs["goals"]
+        goal_weights = {goal.name: goal.weight for goal in goals}
+
+        assert goal_weights["Improve Accessibility"] == 0.75
+        assert goal_weights["Improve Safety"] == 0.25
+
+        second_call_kwargs = repo_instance.update_job_data.call_args_list[1].kwargs
+        assert second_call_kwargs["input_data"]["name"] == "Custom quantitative analysis"
+        snapshot_weights = {
+            g["name"]: g["weight"] for g in second_call_kwargs["input_data"]["goals"]
+        }
+        assert snapshot_weights["Improve Accessibility"] == 0.75
+        assert snapshot_weights["Improve Safety"] == 0.25

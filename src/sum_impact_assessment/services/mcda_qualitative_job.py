@@ -9,7 +9,7 @@ from ..models.mcda_analysis.promethee_gaia_analysis import PrometheeGaiaAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..schemas.mcda import Goal, Alternative
 from ..utils.logger import get_logger
-from ..utils.data_loaders import get_goal_weights_for_perspective, load_mcda_config
+from ..utils.data_loaders import get_goal_weights_for_perspective, load_mcda_config, normalize_goal_weights
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -27,18 +27,10 @@ class McdaQualitativeJob:
     """
 
     @staticmethod
-    def _normalize_goal_weights(goal_weights: Dict[str, float]) -> Dict[str, float]:
-        """Normalize all goal weight keys to lower-case."""
-        return {
-            goal_name : weight
-            for goal_name, weight in goal_weights.items()
-        }
-
-    @staticmethod
     def _normalize_goal_scores(goal_scores: Dict[str, float]) -> Dict[str, float]:
         """Normalize all goal score keys to lower-case."""
         return {
-            goal_name : score
+            goal_name: score
             for goal_name, score in goal_scores.items()
         }
 
@@ -108,7 +100,8 @@ class McdaQualitativeJob:
 
         alternatives = []
         for activity_key, activity_goal_scores in goals_score.items():
-            values = McdaQualitativeJob._normalize_goal_scores(activity_goal_scores)
+            values = McdaQualitativeJob._normalize_goal_scores(
+                activity_goal_scores)
             alternative = Alternative(
                 name=activity_labels.get(activity_key, activity_key),
                 values=values
@@ -136,11 +129,6 @@ class McdaQualitativeJob:
         if not alternatives:
             return []
 
-        normalized_goal_weights = (
-            McdaQualitativeJob._normalize_goal_weights(goal_weights)
-            if goal_weights else None
-        )
-
         goal_names = list(alternatives[0].values.keys())
         if not goal_names:
             return []
@@ -150,7 +138,7 @@ class McdaQualitativeJob:
 
         for goal_name in goal_names:
             weight = McdaQualitativeJob._get_weight_by_goal(
-                goal_name, normalized_goal_weights, default_weight)
+                goal_name, goal_weights, default_weight)
 
             min_value, max_value = McdaQualitativeJob._get_min_max_values_per_goal(
                 goal_name, alternatives)
@@ -196,7 +184,7 @@ class McdaQualitativeJob:
                 goal_weights = get_goal_weights_for_perspective(perspective)
                 logger.info(
                     f"Using qualitative goal weights for perspective: {perspective}")
-                return McdaQualitativeJob._normalize_goal_weights(goal_weights)
+                return goal_weights
             except ValueError as e:
                 logger.warning(
                     f"Failed to load perspective weights: {e}. Using equal weights.")
@@ -227,9 +215,16 @@ class McdaQualitativeJob:
             )
 
             perspective = params.get("perspective") if params else None
+            analysis_name = params.get("name") if params else None
+            personalized_goal_weights = params.get(
+                "goals_weights") if params else None
             logger.debug(
                 "Qualitative MCDA analysis parameters",
-                extra={"perspective": perspective}
+                extra={
+                    "perspective": perspective,
+                    "analysis_name": analysis_name,
+                    "personalized_goal_weights": bool(personalized_goal_weights)
+                }
             )
 
             config = load_mcda_config()
@@ -238,16 +233,25 @@ class McdaQualitativeJob:
                 "perspectives": config.get("perspectives", {}),
                 "business_activities": config.get("business_activities", {})
             }
-            job_repo.update_job_data(job_id=job_id, input_data=input_data_snapshot)
+            job_repo.update_job_data(
+                job_id=job_id, input_data=input_data_snapshot)
 
-            goal_weights = McdaQualitativeJob.get_goal_weights(perspective)
+            if perspective == "user_personalized" and personalized_goal_weights:
+                goal_weights = normalize_goal_weights(
+                    personalized_goal_weights)
+                logger.info("Using user-personalized qualitative goal weights")
+            else:
+                goal_weights = McdaQualitativeJob.get_goal_weights(perspective)
+
             alternatives = McdaQualitativeJob.build_alternatives(config)
             goals = McdaQualitativeJob.build_goals(alternatives, goal_weights)
 
             if not alternatives:
-                raise Exception("No business activities were found. Cannot proceed with qualitative MCDA.")
+                raise Exception(
+                    "No business activities were found. Cannot proceed with qualitative MCDA.")
             if not goals:
-                raise Exception("No goals were built from business activity scores. Cannot proceed with qualitative MCDA.")
+                raise Exception(
+                    "No goals were built from business activity scores. Cannot proceed with qualitative MCDA.")
 
             mcda_analyzer = PrometheeGaiaAnalyzer(
                 goals=goals,
@@ -256,22 +260,26 @@ class McdaQualitativeJob:
 
             mcda_input_data_snapshot = {
                 "perspective": perspective,
+                "name": analysis_name,
                 "goals": [goal.model_dump() for goal in goals],
                 "alternatives": [alt.model_dump() for alt in alternatives],
                 "timestamp": datetime.utcnow().isoformat()
             }
             input_data_snapshot.update(mcda_input_data_snapshot)
-            job_repo.update_job_data(job_id=job_id, input_data=input_data_snapshot)
+            job_repo.update_job_data(
+                job_id=job_id, input_data=input_data_snapshot)
 
             mcda_output = mcda_analyzer.run_analysis(run_visualizations=False)
 
             output_data_snapshot = {
+                "name": analysis_name,
                 "kpi_impact_results": [],
                 "kpi_impact_errors": [],
                 "mcda_results": mcda_output.model_dump(),
                 "timestamp": datetime.utcnow().isoformat()
             }
-            job_repo.update_job_data(job_id=job_id, output_data=output_data_snapshot)
+            job_repo.update_job_data(
+                job_id=job_id, output_data=output_data_snapshot)
 
             top_alt_key = mcda_output.ranking[0] if mcda_output.ranking else "N/A"
             top_alt_name = mcda_output.alternative_labels.get(
@@ -291,7 +299,8 @@ class McdaQualitativeJob:
                 message=success_message,
                 completed_at=datetime.utcnow()
             )
-            logger.info(f"Qualitative MCDA analysis job completed successfully: {job_id}")
+            logger.info(
+                f"Qualitative MCDA analysis job completed successfully: {job_id}")
 
         except Exception as e:
             error_message = f"McdaQualitativeJob failed: {str(e)}"

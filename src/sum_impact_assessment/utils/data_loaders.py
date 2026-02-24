@@ -3,7 +3,7 @@ Data loader utilities for loading static JSON configuration files.
 """
 import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 # Path to data directory (relative to this file)
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -60,6 +60,7 @@ def load_mcda_goal_weights() -> Dict[str, Dict[str, float]]:
     config = load_mcda_config()
     return config.get("perspectives", {}).get("weights", {})
 
+
 def get_mcda_perspectives_labels() -> Dict[str, Dict[str, str]]:
     """
     Get the labels for MCDA perspectives and their goals.
@@ -90,7 +91,6 @@ def get_mcda_perspectives_labels() -> Dict[str, Dict[str, str]]:
     return config.get("perspectives", {}).get("labels", {})
 
 
-
 def get_goal_weights_for_perspective(perspective: str) -> Dict[str, float]:
     """
     Get goal weights for a specific perspective.
@@ -114,3 +114,32 @@ def get_goal_weights_for_perspective(perspective: str) -> Dict[str, float]:
         )
 
     return all_weights[perspective]
+
+
+def normalize_goal_weights(goal_weights: Optional[Dict[str, float]]) -> Optional[Dict[str, float]]:
+    """
+    Normalize goal weights so the total equals 1.0 (100%).
+
+    Args:
+        goal_weights: Dictionary mapping goal names to non-negative weights.
+
+    Returns:
+        Normalized weights dictionary, or None if goal_weights is None.
+
+    Raises:
+        ValueError: If goal_weights is empty or total weight is zero.
+    """
+    if goal_weights is None:
+        return None
+
+    if not goal_weights:
+        raise ValueError("Goal weights are empty and cannot be normalized")
+
+    total_weight = sum(goal_weights.values())
+    if total_weight == 0:
+        raise ValueError("Goal weights sum to zero and cannot be normalized")
+
+    return {
+        goal_name: weight / total_weight
+        for goal_name, weight in goal_weights.items()
+    }

@@ -11,7 +11,7 @@ from ..schemas.job import JobStatusEnum
 from ..schemas.mcda import Goal, Alternative
 from ..schemas.core import Measure
 from ..utils.logger import get_logger
-from ..utils.data_loaders import get_goal_weights_for_perspective
+from ..utils.data_loaders import get_goal_weights_for_perspective, normalize_goal_weights
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -232,11 +232,16 @@ class McdaQuantitativeJob:
             # Extract optional parameters
             kpi_group_filter = params.get("kpi_group_type") if params else None
             perspective = params.get("perspective") if params else None
+            analysis_name = params.get("name") if params else None
+            personalized_goal_weights = params.get(
+                "goals_weights") if params else None
             logger.debug(
                 f"MCDA analysis parameters",
                 extra={
                     "kpi_group_filter": kpi_group_filter,
-                    "perspective": perspective
+                    "perspective": perspective,
+                    "analysis_name": analysis_name,
+                    "personalized_goal_weights": bool(personalized_goal_weights)
                 }
             )
 
@@ -269,7 +274,14 @@ class McdaQuantitativeJob:
 
             # Build Goals from KPI groups with perspective-based weights
             # Load weights from perspective if provided, otherwise use equal weights
-            goal_weights = McdaQuantitativeJob.get_goal_weights(perspective)
+            if perspective == "user_personalized" and personalized_goal_weights:
+                goal_weights = normalize_goal_weights(
+                    personalized_goal_weights)
+                logger.info(
+                    "Using user-personalized quantitative goal weights")
+            else:
+                goal_weights = McdaQuantitativeJob.get_goal_weights(
+                    perspective)
 
             # Build Alternatives from measures
             alternatives = McdaQuantitativeJob.build_alternatives(
@@ -289,6 +301,7 @@ class McdaQuantitativeJob:
             # save MCDA input data snapshot, added to previous input_data_snapshot
             mcda_input_data_snapshot = {
                 "perspective": perspective,
+                "name": analysis_name,
                 "goals": [goal.model_dump() for goal in goals],
                 "alternatives": [alt.model_dump() for alt in alternatives],
                 "timestamp": datetime.utcnow().isoformat()
@@ -313,6 +326,7 @@ class McdaQuantitativeJob:
             # PHASE 5: Save output data
             logger.debug("Phase 5: Saving MCDA output")
             output_data_snapshot = {
+                "name": analysis_name,
                 "kpi_impact_results": kpi_impact_results,
                 "kpi_impact_errors": error_results,
                 "mcda_results": mcda_output.model_dump(),
