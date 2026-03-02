@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     API_PORT: int = 8000
     API_TITLE: str = "SUM Impact Assessment API"
     API_VERSION: str = __version__
+    INTERNAL_API_KEY: str = ""
 
     # Application configuration
     LOG_LEVEL: str = "INFO"

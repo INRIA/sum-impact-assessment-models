@@ -2,9 +2,10 @@
 FastAPI application instance and configuration.
 """
 import time
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import kpis, jobs, simulation, health
+from .dependencies.auth import verify_api_key
 from ..config.settings import settings
 from ..utils.logger import get_logger
 from ..database.connection import Base, engine
@@ -74,9 +75,9 @@ async def log_requests(request: Request, call_next):
 
 # Include routers
 app.include_router(health.router, tags=["Health"])
-app.include_router(kpis.router, tags=["KPIs"])
-app.include_router(jobs.router, tags=["Jobs"])
-app.include_router(simulation.router, tags=["Simulation (NON-prod only)⚠️"])
+app.include_router(kpis.router, tags=["KPIs"], dependencies=[Depends(verify_api_key)])
+app.include_router(jobs.router, tags=["Jobs"], dependencies=[Depends(verify_api_key)])
+app.include_router(simulation.router, tags=["Simulation (NON-prod only)⚠️"], dependencies=[Depends(verify_api_key)])
 
 
 @app.on_event("startup")

@@ -1,14 +1,19 @@
 """
 Unit tests for simulation API routes.
 """
+import os
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from fastapi import status
 from fastapi.testclient import TestClient
+
+os.environ["INTERNAL_API_KEY"] = "test-key"
+
 from src.sum_impact_assessment.api.main import app
 
 # Create test client
 client = TestClient(app)
+AUTH_HEADERS = {"X-Internal-API-Key": "test-key"}
 
 
 class TestSimulationAPI:
@@ -23,6 +28,7 @@ class TestSimulationAPI:
         # Attempt to run simulation
         response = client.post(
             "/simulation/kpi-results",
+            headers=AUTH_HEADERS,
             json={
                 "baseline_years": [2023],
                 "target_year": 2025,
@@ -55,6 +61,7 @@ class TestSimulationAPI:
         # Run simulation
         response = client.post(
             "/simulation/kpi-results",
+            headers=AUTH_HEADERS,
             json={
                 "baseline_years": [2023],
                 "target_year": 2025,
@@ -87,6 +94,7 @@ class TestSimulationAPI:
         # Run simulation with invalid params
         response = client.post(
             "/simulation/kpi-results",
+            headers=AUTH_HEADERS,
             json={
                 "baseline_years": [2025],
                 "target_year": 2023,  # Invalid: target < baseline
@@ -104,7 +112,7 @@ class TestSimulationAPI:
         """Test environment status endpoint in development."""
         mock_settings.ENV = "development"
 
-        response = client.get("/simulation/environment")
+        response = client.get("/simulation/environment", headers=AUTH_HEADERS)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -116,7 +124,7 @@ class TestSimulationAPI:
         """Test environment status endpoint in production."""
         mock_settings.ENV = "production"
 
-        response = client.get("/simulation/environment")
+        response = client.get("/simulation/environment", headers=AUTH_HEADERS)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()

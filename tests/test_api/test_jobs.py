@@ -1,11 +1,15 @@
 """
 Unit tests for job management API.
 """
+import os
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from fastapi import status
 from fastapi.testclient import TestClient
 from datetime import datetime
+
+os.environ["INTERNAL_API_KEY"] = "test-key"
+
 from src.sum_impact_assessment.api.main import app
 from sum_impact_assessment.database.models.job import JobRun
 from src.sum_impact_assessment.schemas.job import JobNameEnum, JobStatusEnum
@@ -13,6 +17,7 @@ from src.sum_impact_assessment.schemas.job import JobNameEnum, JobStatusEnum
 
 # Create test client
 client = TestClient(app)
+AUTH_HEADERS = {"X-Internal-API-Key": "test-key"}
 
 
 class TestJobsAPI:
@@ -43,7 +48,7 @@ class TestJobsAPI:
         mock_get_job_class.return_value = mock_job_class
 
         # Make request
-        response = client.post("/jobs/runs/kpi_measures_analysis")
+        response = client.post("/jobs/runs/kpi_measures_analysis", headers=AUTH_HEADERS)
 
         # Assertions
         assert response.status_code == status.HTTP_201_CREATED
@@ -68,7 +73,7 @@ class TestJobsAPI:
         mock_get_job_class.side_effect = KeyError("Job not found")
 
         # Make request
-        response = client.post("/jobs/runs/kpi_measures_analysis")
+        response = client.post("/jobs/runs/kpi_measures_analysis", headers=AUTH_HEADERS)
 
         # Assertions
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -80,7 +85,7 @@ class TestJobsAPI:
     def test_trigger_job_invalid_job_name(self):
         """Test triggering a job with invalid job name returns 422."""
         # Make request with invalid job name
-        response = client.post("/jobs/runs/invalid_job_name")
+        response = client.post("/jobs/runs/invalid_job_name", headers=AUTH_HEADERS)
 
         # Assertions
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
@@ -100,7 +105,7 @@ class TestJobsAPI:
         mock_job_repo_class.return_value = mock_repo_instance
 
         # Make request
-        response = client.post("/jobs/runs/kpi_measures_analysis")
+        response = client.post("/jobs/runs/kpi_measures_analysis", headers=AUTH_HEADERS)
 
         # Assertions
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -133,6 +138,7 @@ class TestJobsAPI:
         # Make request with params
         response = client.post(
             "/jobs/runs/mcda_analysis_quantitative",
+            headers=AUTH_HEADERS,
             json={"params": {"kpi_group_type": "MCDA_GOALS"}}
         )
 
@@ -168,7 +174,7 @@ class TestJobsAPI:
         mock_get_job_class.return_value = mock_job_class
 
         # Make request
-        response = client.post("/jobs/runs/mcda_analysis_quantitative")
+        response = client.post("/jobs/runs/mcda_analysis_quantitative", headers=AUTH_HEADERS)
 
         # Assertions
         assert response.status_code == status.HTTP_201_CREATED
@@ -207,6 +213,7 @@ class TestJobsAPI:
         # Make request with perspective parameter
         response = client.post(
             "/jobs/runs/mcda_analysis_quantitative",
+            headers=AUTH_HEADERS,
             json={"params": {"perspective": "regulatory"}}
         )
 
