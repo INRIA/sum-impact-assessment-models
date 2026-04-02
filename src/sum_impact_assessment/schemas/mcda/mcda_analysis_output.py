@@ -10,7 +10,7 @@ KEY NAMING CONVENTION:
 - Use alternative_labels and criteria_labels to map keys to full names
 """
 from pydantic import BaseModel, Field
-from typing import Dict, List, Literal
+from typing import Dict, List, Literal, Optional
 
 
 class GAIAAlternativeCoordinate(BaseModel):
@@ -84,29 +84,29 @@ class MCDAAnalysisOutput(BaseModel):
     )
 
     # GAIA: Visual decision plane data (using keys)
-    gaia_alternatives: List[GAIAAlternativeCoordinate] = Field(
-        ...,
-        description="2D coordinates for each alternative in GAIA plane. Each has 'key' (a1, a2, etc), 'x', and 'y'."
+    gaia_alternatives: Optional[List[GAIAAlternativeCoordinate]] = Field(
+        default=None,
+        description="2D coordinates for each alternative in GAIA plane. Each has 'key' (a1, a2, etc), 'x', and 'y'. None if GAIA projection could not be computed."
     )
-    gaia_criteria: List[GAIACriterionVector] = Field(
-        ...,
-        description="2D vectors for each criterion in GAIA plane. Each has 'key' (c1, c2, etc), 'x', and 'y'. Arrow direction indicates preference direction."
+    gaia_criteria: Optional[List[GAIACriterionVector]] = Field(
+        default=None,
+        description="2D vectors for each criterion in GAIA plane. Each has 'key' (c1, c2, etc), 'x', and 'y'. Arrow direction indicates preference direction. None if GAIA projection could not be computed."
     )
-    gaia_decision_stick: List[float] = Field(
-        ...,
-        description="[x, y] coordinates of the decision stick (weighted sum of criterion vectors).",
+    gaia_decision_stick: Optional[List[float]] = Field(
+        default=None,
+        description="[x, y] coordinates of the decision stick (weighted sum of criterion vectors). None if GAIA projection could not be computed.",
         min_length=2,
         max_length=2
     )
-    gaia_quality: float = Field(
-        ...,
-        ge=0,
-        le=100,
-        description="Quality percentage of the 2D GAIA projection. Represents how much variance is explained by PC1 and PC2."
+    gaia_quality: Optional[float] = Field(
+        default=None,
+        # ge=0,
+        # le=100,
+        description="Quality percentage of the 2D GAIA projection. Represents how much variance is explained by PC1 and PC2. None if GAIA projection could not be computed."
     )
-    gaia_method: Literal['pca', 'svd'] = Field(
-        default='pca',
-        description="Dimensionality reduction method used for GAIA plane construction."
+    gaia_method: Optional[Literal['pca', 'svd']] = Field(
+        default=None,
+        description="Dimensionality reduction method used for GAIA plane construction. None if GAIA projection could not be computed."
     )
 
     class Config:

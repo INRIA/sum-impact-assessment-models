@@ -116,6 +116,50 @@ def trigger_job(
                     }
                 }
             },
+            "mcda_custom_analysis": {
+                "summary": "Custom MCDA Analysis with user-defined goals and alternatives",
+                "description": "Run MCDA analysis using fully customized goals, weights, and alternative scores",
+                "value": {
+                    "params": {
+                        "name": "Custom MCDA Run",
+                        "goals": [
+                            {
+                                "name": "Environmental Impact",
+                                "weight": 0.35,
+                                "direction": "max"
+                            },
+                            {
+                                "name": "Economic Cost",
+                                "weight": 0.25,
+                                "direction": "min"
+                            },
+                            {
+                                "name": "Social Acceptance",
+                                "weight": 0.40,
+                                "direction": "max"
+                            }
+                        ],
+                        "alternatives": [
+                            {
+                                "name": "Project A",
+                                "values": {
+                                    "Environmental Impact": 0.82,
+                                    "Economic Cost": 1200.0,
+                                    "Social Acceptance": 0.67
+                                }
+                            },
+                            {
+                                "name": "Project B",
+                                "values": {
+                                    "Environmental Impact": 0.75,
+                                    "Economic Cost": 980.0,
+                                    "Social Acceptance": 0.74
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
             "mcda_quantitative_user_personalized": {
                 "summary": "Quantitative MCDA Analysis for user-personalized perspective",
                 "description": "Run MCDA analysis with user-personalized stakeholder weights, from Quantitative data from KPI/measures impact analysis",

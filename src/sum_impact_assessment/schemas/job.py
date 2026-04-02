@@ -14,6 +14,7 @@ class JobNameEnum(str, Enum):
     KPI_MEASURES_ANALYSIS = "kpi_measures_analysis"
     MCDA_ANALYSIS_QUANTITATIVE = "mcda_analysis_quantitative"
     MCDA_ANALYSIS_QUALITATIVE = "mcda_analysis_qualitative"
+    MCDA_ANALYSIS_CUSTOM = "mcda_analysis_custom"
 
 
 class JobStatusEnum(str, Enum):

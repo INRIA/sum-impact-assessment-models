@@ -5,13 +5,15 @@ from typing import Dict, Type
 from ..services.kpi_measures_analysis_job import KpiMeasuresAnalysisJob
 from ..services.mcda_quantitative_job import McdaQuantitativeJob
 from ..services.mcda_qualitative_job import McdaQualitativeJob
+from ..services.mcda_custom_job import McdaCustomJob
 from ..schemas.job import JobNameEnum
 
 # Job registry mapping job names to job classes
 JOB_REGISTRY: Dict[JobNameEnum, Type] = {
     JobNameEnum.KPI_MEASURES_ANALYSIS: KpiMeasuresAnalysisJob,
     JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE: McdaQuantitativeJob,
-    JobNameEnum.MCDA_ANALYSIS_QUALITATIVE: McdaQualitativeJob
+    JobNameEnum.MCDA_ANALYSIS_QUALITATIVE: McdaQualitativeJob,
+    JobNameEnum.MCDA_ANALYSIS_CUSTOM: McdaCustomJob
 }
 
 

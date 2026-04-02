@@ -321,29 +321,36 @@ class PrometheeGaiaAnalyzer:
         # Run all analyses
         pI_results = self.run_prometheeI(graph=False)
         pII_results = self.run_prometheeII(graph=False)
-        gaia_results = self.run_gaia_custom(n_components=2)
 
-        # Build GAIA alternative coordinates list (using keys)
-        gaia_alternatives = [
-            GAIAAlternativeCoordinate(
-                # Already 'a1', 'a2', etc.
-                key=gaia_results['alternative_names'][i],
-                x=float(gaia_results['alternative_coords'][i][0]),
-                y=float(gaia_results['alternative_coords'][i][1])
-            )
-            for i in range(len(gaia_results['alternative_names']))
-        ]
-
-        # Build GAIA criterion vectors list (using keys)
-        gaia_criteria = [
-            GAIACriterionVector(
-                # Already 'c1', 'c2', etc.
-                key=gaia_results['criteria_names'][i],
-                x=float(gaia_results['criteria_coords'][i][0]),
-                y=float(gaia_results['criteria_coords'][i][1])
-            )
-            for i in range(len(gaia_results['criteria_names']))
-        ]
+        # GAIA requires min(n_alternatives, n_criteria) >= 2 for PCA
+        gaia_alternatives = None
+        gaia_criteria = None
+        gaia_decision_stick = None
+        gaia_quality = None
+        gaia_method = None
+        try:
+            gaia_results = self.run_gaia_custom(n_components=2)
+            gaia_alternatives = [
+                GAIAAlternativeCoordinate(
+                    key=gaia_results['alternative_names'][i],
+                    x=float(gaia_results['alternative_coords'][i][0]),
+                    y=float(gaia_results['alternative_coords'][i][1])
+                )
+                for i in range(len(gaia_results['alternative_names']))
+            ]
+            gaia_criteria = [
+                GAIACriterionVector(
+                    key=gaia_results['criteria_names'][i],
+                    x=float(gaia_results['criteria_coords'][i][0]),
+                    y=float(gaia_results['criteria_coords'][i][1])
+                )
+                for i in range(len(gaia_results['criteria_names']))
+            ]
+            gaia_decision_stick = [float(x) for x in gaia_results['decision_stick']]
+            gaia_quality = float(gaia_results['quality_percentage'])
+            gaia_method = gaia_results['method']
+        except Exception:
+            pass
 
         # Create the output model
         output = MCDAAnalysisOutput(
@@ -355,10 +362,9 @@ class PrometheeGaiaAnalyzer:
             ranking=pII_results['ranking'],
             gaia_alternatives=gaia_alternatives,
             gaia_criteria=gaia_criteria,
-            gaia_decision_stick=[float(x)
-                                 for x in gaia_results['decision_stick']],
-            gaia_quality=float(gaia_results['quality_percentage']),
-            gaia_method=gaia_results['method']
+            gaia_decision_stick=gaia_decision_stick,
+            gaia_quality=gaia_quality,
+            gaia_method=gaia_method
         )
 
         # Optionally show visualizations
