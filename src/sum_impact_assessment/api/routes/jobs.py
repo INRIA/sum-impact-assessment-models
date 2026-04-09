@@ -70,25 +70,6 @@ def trigger_job(
                     }
                 }
             },
-            "mcda_qualitative_user_personalized": {
-                "summary": "Qualitative MCDA Analysis for user-personalized perspective",
-                "description": "Run MCDA analysis with user-personalized stakeholder weights, from qualitative data from expert surveys",
-                "value": {
-                    "params": {
-                        "perspective": "user_personalized",
-                        "goals_weights": {
-                            "Improve Accessibility": 0.12,
-                            "Improve Mobility Service": 0.16,
-                            "Improve Multimodality": 0.13,
-                            "Noise Hinderance": 0.07,
-                            "Improve Public Transport": 0.12,
-                            "Reduction of Congestion": 0.15,
-                            "Reduction of Emission": 0.14,
-                            "Improve Safety": 0.11
-                        }
-                    }
-                }
-            },
             "mcda_qualitative_regulatory_perspective": {
                 "summary": "Qualitative MCDA Analysis for regulatory perspective",
                 "description": "Run MCDA analysis with regulatory stakeholder weights, from qualitative data from expert surveys",
@@ -157,26 +138,6 @@ def trigger_job(
                                 }
                             }
                         ]
-                    }
-                }
-            },
-            "mcda_quantitative_user_personalized": {
-                "summary": "Quantitative MCDA Analysis for user-personalized perspective",
-                "description": "Run MCDA analysis with user-personalized stakeholder weights, from Quantitative data from KPI/measures impact analysis",
-                "value": {
-                    "params": {
-                        "perspective": "user_personalized",
-                        "kpi_group_type": "MCDA_GOALS",
-                        "goals_weights": {
-                            "Improve Accessibility": 0.12,
-                            "Improve Mobility Service": 0.16,
-                            "Improve Multimodality": 0.13,
-                            "Noise Hinderance": 0.07,
-                            "Improve Public Transport": 0.12,
-                            "Reduction of Congestion": 0.15,
-                            "Reduction of Emission": 0.14,
-                            "Improve Safety": 0.11
-                        }
                     }
                 }
             },
