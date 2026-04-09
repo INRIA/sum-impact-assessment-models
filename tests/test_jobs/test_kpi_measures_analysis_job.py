@@ -544,7 +544,7 @@ class TestKpiMeasuresAnalysisJob:
             KPIGroupImpactOutput(
                 id="3__public_transport", name="Modal Split - Public transport", kpi_ids=["15"]),
             KPIGroupImpactOutput(
-                id="3__sustainable_modes", name="Modal Split - Sustainable modes", kpi_ids=["15"]),
+                id="3__sustainable_modes", name="Modal Split - PT+NSM", kpi_ids=["15"]),
         ]
 
         input_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
@@ -565,12 +565,12 @@ class TestKpiMeasuresAnalysisJob:
         assert "Modal Split - NSM" in analyzed_names
         assert "Modal Split - Private" in analyzed_names
         assert "Modal Split - Public transport" in analyzed_names
-        assert "Modal Split - Sustainable modes" in analyzed_names
+        assert "Modal Split - PT+NSM" in analyzed_names
 
         analyzed_groups = [call.args[0]
                            for call in mock_analyzer.run_analysis_group.call_args_list]
         sustainable_group = next(
-            g for g in analyzed_groups if g.name == "Modal Split - Sustainable modes"
+            g for g in analyzed_groups if g.name == "Modal Split - PT+NSM"
         )
         assert sorted(sustainable_group.transport_mode_type_filter) == [
             "nsm", "public_transport"]
@@ -637,7 +637,7 @@ class TestKpiMeasuresAnalysisJob:
     ):
         """
         Given Modal Split analysis and only NSM KPI data in living labs,
-        then only NSM and Sustainable modes sub-groups are analyzed.
+        then only NSM and PT+NSM sub-groups are analyzed.
         """
         mock_db = Mock()
 
@@ -691,7 +691,7 @@ class TestKpiMeasuresAnalysisJob:
             KPIGroupImpactOutput(
                 id="3__nsm", name="Modal Split - NSM", kpi_ids=["15"]),
             KPIGroupImpactOutput(
-                id="3__sustainable_modes", name="Modal Split - Sustainable modes", kpi_ids=["15"]),
+                id="3__sustainable_modes", name="Modal Split - PT+NSM", kpi_ids=["15"]),
         ]
 
         input_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
@@ -707,7 +707,7 @@ class TestKpiMeasuresAnalysisJob:
         assert len(error_results) == 0
         assert mock_analyzer.run_analysis_group.call_count == 2
         assert "Modal Split - NSM" in analyzed_names
-        assert "Modal Split - Sustainable modes" in analyzed_names
+        assert "Modal Split - PT+NSM" in analyzed_names
         assert "Modal Split - Private" not in analyzed_names
         assert "Modal Split - Public transport" not in analyzed_names
 
@@ -826,7 +826,7 @@ class TestKpiMeasuresAnalysisJob:
         assert "Modal Split - NSM" in result_by_group_name
         assert "Modal Split - Private" in result_by_group_name
         assert "Modal Split - Public transport" in result_by_group_name
-        assert "Modal Split - Sustainable modes" in result_by_group_name
+        assert "Modal Split - PT+NSM" in result_by_group_name
 
         nsm_modes = {
             kpi["transport_mode_type"]
@@ -842,7 +842,7 @@ class TestKpiMeasuresAnalysisJob:
         }
         sustainable_modes = {
             kpi["transport_mode_type"]
-            for kpi in result_by_group_name["Modal Split - Sustainable modes"]["living_labs_analysis"][0]["kpis"]
+            for kpi in result_by_group_name["Modal Split - PT+NSM"]["living_labs_analysis"][0]["kpis"]
         }
 
         assert nsm_modes == {"NSM"}
@@ -853,7 +853,7 @@ class TestKpiMeasuresAnalysisJob:
         assert mock_run_ridge_regression.call_count == 4
 
         # Call order follows modal split subgroup constant order:
-        # NSM[0], Private[1], Public transport[2], Sustainable modes[3].
+        # NSM[0], Private[1], Public transport[2], PT+NSM[3].
         # With autospec on an instance method, call args are: (self, X, y, ...)
         _, nsm_call_X, nsm_call_y = mock_run_ridge_regression.call_args_list[0].args[:3]
 

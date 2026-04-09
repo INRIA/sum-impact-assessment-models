@@ -14,7 +14,7 @@ MODAL_SPLIT_TRANSPORT_MODE_GROUPS: Dict[str, List[str]] = {
     "NSM": ["NSM"],
     "Private": ["PRIVATE"],
     "Public transport": ["PUBLIC_TRANSPORT"],
-    "Sustainable modes": ["NSM", "PUBLIC_TRANSPORT"],
+    "PT+NSM": ["NSM", "PUBLIC_TRANSPORT"],
 }
 
 
