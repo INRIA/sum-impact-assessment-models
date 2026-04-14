@@ -25,6 +25,13 @@ class PrometheeGaiaAnalyzer:
             [[a.values[c] for c in self.criteria_names] for a in alternatives])
         self.alternative_names = [a.name for a in alternatives]
 
+        # Build direction-adjusted matrix: negate columns for 'min' criteria so
+        # that all downstream calculations can uniformly treat higher = better.
+        self.adjusted_matrix = self.matrix.copy().astype(float)
+        for k, direction in enumerate(self.directions):
+            if direction == 'min':
+                self.adjusted_matrix[:, k] = -self.adjusted_matrix[:, k]
+
         # Standardized keys (c1, c2 for criteria; a1, a2 for alternatives)
         self.criteria_short = [f"c{i+1}" for i in range(len(self.goals))]
         self.alternative_short = [
@@ -115,6 +122,7 @@ class PrometheeGaiaAnalyzer:
             for i in range(n_alternatives):
                 for j in range(n_alternatives):
                     if i != j:
+                        # matrix is already direction-adjusted (min cols negated)
                         diff = matrix[i, k] - matrix[j, k]
                         criterion_pd[i, j] = self._calculate_preference_function(
                             diff, Q[k], S[k], P[k], F[k]
@@ -136,10 +144,10 @@ class PrometheeGaiaAnalyzer:
         Returns:
             Array of net flows (φ+ - φ-) for each alternative on this single criterion
         """
-        n_alternatives = self.matrix.shape[0]
+        n_alternatives = self.adjusted_matrix.shape[0]
 
-        # Create single-criterion matrix
-        single_criterion_matrix = self.matrix[:, criterion_idx:criterion_idx+1]
+        # Create single-criterion matrix (direction-adjusted: min cols are negated)
+        single_criterion_matrix = self.adjusted_matrix[:, criterion_idx:criterion_idx+1]
 
         # Calculate preference degree for this criterion only
         pd_matrix = np.zeros((n_alternatives, n_alternatives))
@@ -174,13 +182,14 @@ class PrometheeGaiaAnalyzer:
             - negative_flows: Dict mapping alternative names to φ- values  
             - preference_matrix: n x n matrix of preference codes (P+, R, I, -)
         """
-        # Get preference matrix codes from pyDecision
-        preference_codes = promethee_i(self.matrix, W=self.weights,
+        # Get preference matrix codes from pyDecision (pass adjusted matrix so
+        # that pyDecision also honours direction — it has no native direction param)
+        preference_codes = promethee_i(self.adjusted_matrix, W=self.weights,
                                        Q=self.Q, S=self.S, P=self.P, F=self.F, graph=graph)
 
         # Calculate actual flow values manually
         pd_matrix = self._calculate_preference_degree_matrix(
-            self.matrix, self.weights, self.Q, self.S, self.P, self.F
+            self.adjusted_matrix, self.weights, self.Q, self.S, self.P, self.F
         )
 
         flow_plus = np.sum(pd_matrix, axis=1) / (pd_matrix.shape[0] - 1)
@@ -215,7 +224,7 @@ class PrometheeGaiaAnalyzer:
             - net_flows: Dict mapping alternative names to net flow values
             - ranking: Ordered list of alternative names (best to worst)
         """
-        net_flow_array = promethee_ii(self.matrix, self.weights,
+        net_flow_array = promethee_ii(self.adjusted_matrix, self.weights,
                                       Q=self.Q, S=self.S, P=self.P, F=self.F,
                                       sort=True, graph=graph, verbose=False)
 
@@ -261,7 +270,7 @@ class PrometheeGaiaAnalyzer:
         Returns:
             Dictionary with complete GAIA visualization data
         """
-        n_alternatives = self.matrix.shape[0]
+        n_alternatives = self.adjusted_matrix.shape[0]
         n_criteria = len(self.goals)
 
         # Step 1 & 2: Build unicriterion flow matrix
