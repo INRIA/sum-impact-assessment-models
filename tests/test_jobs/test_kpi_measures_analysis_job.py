@@ -743,49 +743,55 @@ class TestKpiMeasuresAnalysisJob:
             ],
         )
 
-        living_lab = LivingLab(
-            id="lab1",
-            name="Lab 1",
-            measures=[Measure(id="m1", name="Measure 1", times_implemented=1)],
-            kpis=[
-                KPILivingLabResult(
-                    id="15",
-                    name="Modal Split KPI",
-                    progression_target=1,
-                    value_type="percentage",
-                    value_min=0,
-                    value_max=1,
-                    living_lab_id="lab1",
-                    transport_mode_type="NSM",
-                    value_before=0.3,
-                    value_after=0.4,
-                ),
-                KPILivingLabResult(
-                    id="15",
-                    name="Modal Split KPI",
-                    progression_target=1,
-                    value_type="percentage",
-                    value_min=0,
-                    value_max=1,
-                    living_lab_id="lab1",
-                    transport_mode_type="PRIVATE",
-                    value_before=0.5,
-                    value_after=0.45,
-                ),
-                KPILivingLabResult(
-                    id="15",
-                    name="Modal Split KPI",
-                    progression_target=1,
-                    value_type="percentage",
-                    value_min=0,
-                    value_max=1,
-                    living_lab_id="lab1",
-                    transport_mode_type="PUBLIC_TRANSPORT",
-                    value_before=0.2,
-                    value_after=0.15,
-                ),
-            ],
-        )
+        def _make_living_lab(lab_id: str) -> LivingLab:
+            return LivingLab(
+                id=lab_id,
+                name=f"Lab {lab_id}",
+                measures=[Measure(id="m1", name="Measure 1", times_implemented=1)],
+                kpis=[
+                    KPILivingLabResult(
+                        id="15",
+                        name="Modal Split KPI",
+                        progression_target=1,
+                        value_type="percentage",
+                        value_min=0,
+                        value_max=1,
+                        living_lab_id=lab_id,
+                        transport_mode_type="NSM",
+                        value_before=0.3,
+                        value_after=0.4,
+                    ),
+                    KPILivingLabResult(
+                        id="15",
+                        name="Modal Split KPI",
+                        progression_target=1,
+                        value_type="percentage",
+                        value_min=0,
+                        value_max=1,
+                        living_lab_id=lab_id,
+                        transport_mode_type="PRIVATE",
+                        value_before=0.5,
+                        value_after=0.45,
+                    ),
+                    KPILivingLabResult(
+                        id="15",
+                        name="Modal Split KPI",
+                        progression_target=1,
+                        value_type="percentage",
+                        value_min=0,
+                        value_max=1,
+                        living_lab_id=lab_id,
+                        transport_mode_type="PUBLIC_TRANSPORT",
+                        value_before=0.2,
+                        value_after=0.15,
+                    ),
+                ],
+            )
+
+        # Two labs are required so m1 is implemented by ≥2 labs and ridge
+        # regression is actually called (single-lab measures are excluded).
+        living_lab1 = _make_living_lab("lab1")
+        living_lab2 = _make_living_lab("lab2")
 
         mock_data_service = mock_data_service_class.return_value
         mock_data_service.get_analysis_input_data.return_value = (
@@ -802,14 +808,14 @@ class TestKpiMeasuresAnalysisJob:
             ],
             [Measure(id="m1", name="Measure 1")],
             [modal_group],
-            [living_lab],
+            [living_lab1, living_lab2],
         )
 
         mock_run_ridge_regression.return_value = (
             np.zeros(1),
             0.0,
             0.0,
-            np.zeros(1),
+            np.zeros(2),  # sqe_per_sample — one entry per feasible lab
         )
 
         _, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
@@ -858,11 +864,13 @@ class TestKpiMeasuresAnalysisJob:
         _, nsm_call_X, nsm_call_y = mock_run_ridge_regression.call_args_list[0].args[:3]
 
         # NSM subgroup should use only NSM KPI variations (no PRIVATE/PUBLIC_TRANSPORT contribution).
-        assert tuple(np.round(nsm_call_y, 5).tolist()) == (10.0,)
+        # Two identical labs → two identical y entries of 10.0 each.
+        assert tuple(np.round(nsm_call_y, 5).tolist()) == (10.0, 10.0)
 
         # All subgroup analyses use same living-lab measure input design matrix in this fixture.
+        # Two labs × one measure → each flattened X column is (1.0, 1.0).
         ridge_x_vectors = [
             tuple(np.round(call.args[1].flatten(), 5).tolist())
             for call in mock_run_ridge_regression.call_args_list
         ]
-        assert ridge_x_vectors.count((1.0,)) == 4
+        assert ridge_x_vectors.count((1.0, 1.0)) == 4

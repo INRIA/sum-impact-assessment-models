@@ -184,24 +184,69 @@ class KPIImpactAnalyzer:
 
         return output_group
 
-    def add_measure_results(self, output_group:KPIGroupImpactOutput, 
-                               kpi_group:KPIGroup,
-                               coef:np.array
-                            ) -> KPIGroupImpactOutput:
+    def filter_measures_with_min_implementations(
+        self, X: np.array, measures: list, min_labs: int = 2
+    ) -> tuple[np.array, list]:
+        """
+        Remove measure columns from X that are implemented in fewer than `min_labs`
+        distinct feasible living labs (i.e. fewer than `min_labs` non-zero column entries).
+
+        A measure implemented by only one lab produces a coefficient that is
+        statistically meaningless (the regression cannot separate its contribution
+        from other effects), so it is excluded from the results entirely.
+
+        Parameters:
+        - X (numpy array): data matrix with shape (n_feasible_labs, n_measures)
+        - measures (list): measure objects corresponding to each column of X
+        - min_labs (int): minimum number of feasible labs that must implement a
+                          measure for it to be kept (default: 2)
+
+        Returns:
+        - X_filtered (numpy array): X with single-lab-or-never columns removed
+        - kept_measures (list): measure objects for the retained columns
+        """
+        # Count non-zero entries per column (number of labs implementing each measure)
+        labs_per_measure = np.count_nonzero(X, axis=0)
+        keep_mask = labs_per_measure >= min_labs
+
+        X_filtered = X[:, keep_mask]
+        kept_measures = [m for m, keep in zip(measures, keep_mask) if keep]
+
+        return X_filtered, kept_measures
+
+    def add_measure_results(
+        self,
+        output_group: KPIGroupImpactOutput,
+        kpi_group: KPIGroup,
+        measures: list,
+        coef: np.array,
+        times_implemented_per_measure: list[int]
+    ) -> KPIGroupImpactOutput:
         """
         Add the MeasureImpactCoefficient results to the KPIGroupImpactOutput object.
+
+        Parameters:
+        - output_group: object to populate
+        - kpi_group: KPI group being analyzed
+        - measures: list of Measure objects corresponding to entries in `coef`
+                    (may be a subset of self.measures after single-lab filtering)
+        - coef: ridge regression coefficients aligned with `measures`
+        - times_implemented_per_measure: total times each measure was implemented
+          across the feasible living labs analyzed (column sums of the filtered X)
         """
         results = []
-        for measure in self.measures:
-            index = self.measures.index(measure)
-            result = MeasureImpactCoefficient(id=measure.id,
-                                              name=measure.name,
-                                              kpi_group_id=kpi_group.id,
-                                              coefficient=round(coef[index], 5))
+        for i, measure in enumerate(measures):
+            result = MeasureImpactCoefficient(
+                id=measure.id,
+                name=measure.name,
+                kpi_group_id=kpi_group.id,
+                coefficient=round(coef[i], 5),
+                times_implemented=times_implemented_per_measure[i]
+            )
             results.append(result)
 
         # sort results by coefficient descending
-        results.sort(key=lambda x: x.coefficient,  reverse=True)
+        results.sort(key=lambda x: x.coefficient, reverse=True)
         output_group.measure_coefficients = results
 
         return output_group
@@ -232,22 +277,41 @@ class KPIImpactAnalyzer:
         # Initialise data matrix X and target vector y
         X, y, feasible_ll, kpi_group = self.compute_X_y_input(kpi_group)
 
+        # Remove measures implemented by fewer than 2 feasible living labs;
+        # their coefficients would be statistically meaningless.
+        X_filtered, kept_measures = self.filter_measures_with_min_implementations(X, self.measures)
+
+        # Initialise output object (populated regardless of whether measures remain)
+        output_group = KPIGroupImpactOutput(
+            id=kpi_group.id,
+            name=kpi_group.name,
+            kpi_ids=kpi_group.kpi_ids
+        )
+        output_group = self.add_living_lab_results(output_group, kpi_group, feasible_ll,
+                                                   np.zeros(len(feasible_ll)))
+
+        if len(kept_measures) == 0:
+            # No meaningful coefficients can be estimated; return empty results.
+            output_group.measure_coefficients = []
+            return output_group
+
         # Normalise target vector y
         max_variation = self.compute_max_variation(kpi_group)
         y = self.normalize_variation(y=y, max_variation=max_variation, target_range=100.0)
 
         # Run Ridge Regression & compute Mean Squared Error (MSE)
-        coef, intercept, msqe, sqe_per_sample = self.run_ridge_regression(X, y)
+        coef, intercept, msqe, sqe_per_sample = self.run_ridge_regression(X_filtered, y)
 
-        # Update KPIGroup object with analysis results
-        output_group = KPIGroupImpactOutput(id=kpi_group.id,
-                                            name=kpi_group.name,
-                                            kpi_ids=kpi_group.kpi_ids)
-        
+        # Update living lab results with actual squared errors
         output_group = self.add_living_lab_results(output_group, kpi_group, feasible_ll, sqe_per_sample)
         output_group.msqe = msqe
         output_group.variation_under_no_measures = intercept
-        output_group = self.add_measure_results(output_group, kpi_group, coef)
+
+        # Column sums of filtered X = total times each kept measure was implemented
+        times_implemented_per_measure = X_filtered.sum(axis=0).tolist()
+        output_group = self.add_measure_results(
+            output_group, kpi_group, kept_measures, coef, times_implemented_per_measure
+        )
 
         return output_group
 
