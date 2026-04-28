@@ -9,7 +9,15 @@ from ..models.mcda_analysis.promethee_gaia_analysis import PrometheeGaiaAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..schemas.mcda import Goal, Alternative
 from ..utils.logger import get_logger
-from ..utils.data_loaders import get_goal_weights_for_perspective, load_mcda_config, normalize_goal_weights
+from ..utils.data_loaders import load_mcda_config
+from .mcda_goal_builder import (
+    apply_normalized_goal_weights,
+    build_goal_for_name,
+    get_goal_weights as get_resolved_goal_weights,
+    get_min_max_values_per_goal,
+    get_weight_by_goal,
+    resolve_goal_weights,
+)
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -47,15 +55,7 @@ class McdaQualitativeJob:
         Returns:
             Weight value for the goal
         """
-        if goal_weights and goal_name in goal_weights:
-            return goal_weights[goal_name]
-        else:
-            if goal_weights:
-                logger.warning(
-                    f"Goal '{goal_name}' not found in perspective weights. "
-                    f"Using default weight: {default_weight:.3f}"
-                )
-            return default_weight
+        return get_weight_by_goal(goal_name, goal_weights, default_weight)
 
     @staticmethod
     def _get_min_max_values_per_goal(goal_name: str, alternatives: list[Alternative]) -> tuple[Optional[float], Optional[float]]:
@@ -69,16 +69,7 @@ class McdaQualitativeJob:
         Returns:
             Tuple of (min_value, max_value) for the goal, or (None, None) if no values found
         """
-        min_value = None
-        max_value = None
-        for alt in alternatives:
-            alt_goal_value = alt.values.get(goal_name)
-            if alt_goal_value is not None:
-                if (min_value is None) or (alt_goal_value < min_value):
-                    min_value = alt_goal_value
-                if (max_value is None) or (alt_goal_value > max_value):
-                    max_value = alt_goal_value
-        return min_value, max_value
+        return get_min_max_values_per_goal(goal_name, alternatives)
 
     @staticmethod
     def build_alternatives(config: Dict[str, Any]) -> list[Alternative]:
@@ -137,32 +128,17 @@ class McdaQualitativeJob:
         goals = []
 
         for goal_name in goal_names:
-            weight = McdaQualitativeJob._get_weight_by_goal(
-                goal_name, goal_weights, default_weight)
-
-            min_value, max_value = McdaQualitativeJob._get_min_max_values_per_goal(
-                goal_name, alternatives)
-
-            if weight is None:
-                logger.warning(
-                    f"Skipping goal '{goal_name}' due to missing weight")
-                continue
-            if (min_value is None) or (max_value is None):
-                logger.warning(
-                    f"Skipping goal '{goal_name}' due to missing min/max values min='{min_value}', max='{max_value}'")
-                continue
-
-            goals.append(
-                Goal(
-                    name=goal_name,
-                    weight=weight,
-                    direction="max",
-                    Q=0,
-                    S=0,
-                    P=max_value - min_value,
-                    F='t3'
-                )
+            goal = build_goal_for_name(
+                goal_name=goal_name,
+                alternatives=alternatives,
+                goal_weights=goal_weights,
+                default_weight=default_weight,
             )
+            if goal is None:
+                continue
+            goals.append(goal)
+
+        apply_normalized_goal_weights(goals, context_label="qualitative MCDA")
 
         logger.info(f"Created {len(goals)} qualitative goals")
         return goals
@@ -179,19 +155,10 @@ class McdaQualitativeJob:
             Dictionary mapping normalized goal names to weights,
             or None if no perspective or loading fails.
         """
-        if perspective:
-            try:
-                goal_weights = get_goal_weights_for_perspective(perspective)
-                logger.info(
-                    f"Using qualitative goal weights for perspective: {perspective}")
-                return goal_weights
-            except ValueError as e:
-                logger.warning(
-                    f"Failed to load perspective weights: {e}. Using equal weights.")
-                return None
-        else:
-            logger.info("No perspective specified, using equal weights")
-            return None
+        return get_resolved_goal_weights(
+            perspective,
+            use_qualitative_prefix=True,
+        )
 
     @staticmethod
     def run(job_id: str, db: Session, params: Optional[Dict] = None) -> None:
@@ -236,12 +203,12 @@ class McdaQualitativeJob:
             job_repo.update_job_data(
                 job_id=job_id, input_data=input_data_snapshot)
 
-            if perspective == "user_personalized" and personalized_goal_weights:
-                goal_weights = normalize_goal_weights(
-                    personalized_goal_weights)
-                logger.info("Using user-personalized qualitative goal weights")
-            else:
-                goal_weights = McdaQualitativeJob.get_goal_weights(perspective)
+            goal_weights = resolve_goal_weights(
+                perspective=perspective,
+                personalized_goal_weights=personalized_goal_weights,
+                personalized_message="Using user-personalized qualitative goal weights",
+                use_qualitative_prefix=True,
+            )
 
             alternatives = McdaQualitativeJob.build_alternatives(config)
             goals = McdaQualitativeJob.build_goals(alternatives, goal_weights)

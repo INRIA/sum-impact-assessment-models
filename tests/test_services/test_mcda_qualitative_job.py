@@ -1,6 +1,7 @@
 """
 Integration tests for McdaQualitativeJob.
 """
+import pytest
 from unittest.mock import Mock, patch
 
 from sum_impact_assessment.services.mcda_qualitative_job import McdaQualitativeJob
@@ -75,6 +76,39 @@ class TestBuildGoals:
         assert goals[0].F == "t3"
         assert goals[1].name == "Improve Safety"
         assert goals[1].weight == 0.4
+
+    def test_normalizes_weights_when_perspective_has_unused_goals(self):
+        """Only considered goals should be normalized to sum to 1.0."""
+        alternatives = McdaQualitativeJob.build_alternatives(MOCK_MCDA_CONFIG)
+        goal_weights = {
+            "Improve Accessibility": 0.6,
+            "Improve Safety": 0.3,
+            "Unused Goal": 0.1
+        }
+
+        goals = McdaQualitativeJob.build_goals(alternatives, goal_weights)
+
+        assert len(goals) == 2
+        weights_by_goal = {goal.name: goal.weight for goal in goals}
+        assert sum(weights_by_goal.values()) == pytest.approx(1.0)
+        assert weights_by_goal["Improve Accessibility"] == pytest.approx(2.0 / 3.0)
+        assert weights_by_goal["Improve Safety"] == pytest.approx(1.0 / 3.0)
+
+    def test_normalizes_when_default_weight_is_used_for_missing_goal_weight(self):
+        """Mixed configured and defaulted weights should be normalized."""
+        alternatives = McdaQualitativeJob.build_alternatives(MOCK_MCDA_CONFIG)
+        goal_weights = {
+            "Improve Accessibility": 0.6
+            # Improve Safety falls back to default 1/2 = 0.5
+        }
+
+        goals = McdaQualitativeJob.build_goals(alternatives, goal_weights)
+
+        assert len(goals) == 2
+        weights_by_goal = {goal.name: goal.weight for goal in goals}
+        assert sum(weights_by_goal.values()) == pytest.approx(1.0)
+        assert weights_by_goal["Improve Accessibility"] == pytest.approx(0.6 / 1.1)
+        assert weights_by_goal["Improve Safety"] == pytest.approx(0.5 / 1.1)
 
 
 class TestGetGoalWeights:

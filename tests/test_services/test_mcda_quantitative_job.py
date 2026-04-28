@@ -389,6 +389,77 @@ class TestBuildGoals:
         assert goal.P == 0.7  # 0.9 - 0.2
         assert goal.F == 't3'
 
+    def test_normalizes_weights_after_skipping_goals_with_missing_values(self):
+        """Surviving goals should be normalized to sum to 1.0 after filtering."""
+        kpi_impact_results = [
+            {
+                'group_name': 'Sustainability',
+                'results': {'measure_coefficients': []}
+            },
+            {
+                'group_name': 'Safety',
+                'results': {'measure_coefficients': []}
+            },
+            {
+                'group_name': 'Efficiency',
+                'results': {'measure_coefficients': []}
+            }
+        ]
+        alternatives = [
+            Alternative(name="Alt1", values={
+                        "Sustainability": 0.5, "Safety": 0.3}),
+            Alternative(name="Alt2", values={
+                        "Sustainability": 0.8, "Safety": 0.6})
+            # Efficiency is missing in all alternatives and will be skipped.
+        ]
+        goal_weights = {
+            "Sustainability": 0.6,
+            "Safety": 0.3,
+            "Efficiency": 0.1
+        }
+
+        result = McdaQuantitativeJob.build_goals(
+            kpi_impact_results, alternatives, goal_weights)
+
+        assert len(result) == 2
+        weights_by_goal = {goal.name: goal.weight for goal in result}
+        assert sum(weights_by_goal.values()) == pytest.approx(1.0)
+        assert weights_by_goal["Sustainability"] == pytest.approx(2.0 / 3.0)
+        assert weights_by_goal["Safety"] == pytest.approx(1.0 / 3.0)
+
+    def test_normalizes_default_weights_when_some_goals_are_skipped(self):
+        """Default weights should also be normalized against kept goals only."""
+        kpi_impact_results = [
+            {
+                'group_name': 'Sustainability',
+                'results': {'measure_coefficients': []}
+            },
+            {
+                'group_name': 'Safety',
+                'results': {'measure_coefficients': []}
+            },
+            {
+                'group_name': 'Efficiency',
+                'results': {'measure_coefficients': []}
+            }
+        ]
+        alternatives = [
+            Alternative(name="Alt1", values={
+                        "Sustainability": 0.5, "Safety": 0.3}),
+            Alternative(name="Alt2", values={
+                        "Sustainability": 0.8, "Safety": 0.6})
+            # Efficiency is missing in all alternatives and will be skipped.
+        ]
+
+        result = McdaQuantitativeJob.build_goals(
+            kpi_impact_results, alternatives, None)
+
+        assert len(result) == 2
+        weights_by_goal = {goal.name: goal.weight for goal in result}
+        assert sum(weights_by_goal.values()) == pytest.approx(1.0)
+        assert weights_by_goal["Sustainability"] == pytest.approx(0.5)
+        assert weights_by_goal["Safety"] == pytest.approx(0.5)
+
 
 class TestGetGoalWeights:
     """Test suite for get_goal_weights static method."""

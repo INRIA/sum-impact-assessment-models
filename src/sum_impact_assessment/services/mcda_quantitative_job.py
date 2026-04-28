@@ -11,7 +11,14 @@ from ..schemas.job import JobStatusEnum
 from ..schemas.mcda import Goal, Alternative
 from ..schemas.core import Measure
 from ..utils.logger import get_logger
-from ..utils.data_loaders import get_goal_weights_for_perspective, normalize_goal_weights
+from .mcda_goal_builder import (
+    apply_normalized_goal_weights,
+    build_goal_for_name,
+    get_goal_weights as get_resolved_goal_weights,
+    get_min_max_values_per_goal,
+    get_weight_by_goal,
+    resolve_goal_weights,
+)
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -42,15 +49,7 @@ class McdaQuantitativeJob:
         Returns:
             Weight value for the goal
         """
-        if goal_weights and goal_name in goal_weights:
-            return goal_weights[goal_name]
-        else:
-            if goal_weights:
-                logger.warning(
-                    f"Goal '{goal_name}' not found in perspective weights. "
-                    f"Using default weight: {default_weight:.3f}"
-                )
-            return default_weight
+        return get_weight_by_goal(goal_name, goal_weights, default_weight)
 
     @staticmethod
     def _build_goal_values_by_measure(measure: Measure, kpi_impact_results: list) -> Dict[str, float]:
@@ -89,16 +88,7 @@ class McdaQuantitativeJob:
         Returns:
             Tuple of (min_value, max_value) for the goal, or (None, None) if no values found
         """
-        min_value = None
-        max_value = None
-        for alt in alternatives:
-            alt_goal_value = alt.values.get(goal_name)
-            if alt_goal_value is not None:
-                if (min_value is None) or (alt_goal_value < min_value):
-                    min_value = alt_goal_value
-                if (max_value is None) or (alt_goal_value > max_value):
-                    max_value = alt_goal_value
-        return min_value, max_value
+        return get_min_max_values_per_goal(goal_name, alternatives)
 
     @staticmethod
     def build_alternatives(measures: list[Measure], kpi_impact_results: list) -> list[Alternative]:
@@ -149,34 +139,17 @@ class McdaQuantitativeJob:
         for result in kpi_impact_results:
             group_name = result['group_name']
 
-            # Get weight for this goal using helper function
-            weight = McdaQuantitativeJob._get_weight_by_goal(
-                group_name, goal_weights, default_weight)
-
-            # Get min and max values for this goal across all alternatives
-            min_value, max_value = McdaQuantitativeJob._get_min_max_values_per_goal(
-                group_name, alternatives)
-
-            # Validate required values
-            if weight is None:
-                logger.warning(
-                    f"Skipping goal '{group_name}' due to missing weight")
-                continue
-            if (min_value is None) or (max_value is None):
-                logger.warning(
-                    f"Skipping goal '{group_name}' due to missing min/max values min='{min_value}', max='{max_value}'")
-                continue
-
-            goal = Goal(
-                name=group_name,
-                weight=weight,
-                direction="max",  # Higher coefficient = better impact
-                Q=0,  # default to min value (disabled effect)
-                S=0,  # default to 0 (not used here)
-                P=max_value - min_value,  # max - min value
-                F='t3'  # V-shape for continuous data
+            goal = build_goal_for_name(
+                goal_name=group_name,
+                alternatives=alternatives,
+                goal_weights=goal_weights,
+                default_weight=default_weight,
             )
+            if goal is None:
+                continue
             goals.append(goal)
+
+        apply_normalized_goal_weights(goals, context_label="quantitative MCDA")
 
         logger.info(f"Created {len(goals)} goals from KPI groups")
         return goals
@@ -192,19 +165,7 @@ class McdaQuantitativeJob:
         Returns:
             Dictionary mapping goal names to weights, or None if no perspective or loading fails
         """
-        if perspective:
-            try:
-                goal_weights = get_goal_weights_for_perspective(perspective)
-                logger.info(
-                    f"Using goal weights for perspective: {perspective}")
-                return goal_weights
-            except ValueError as e:
-                logger.warning(
-                    f"Failed to load perspective weights: {e}. Using equal weights.")
-                return None
-        else:
-            logger.info("No perspective specified, using equal weights")
-            return None
+        return get_resolved_goal_weights(perspective)
 
     @staticmethod
     def run(job_id: str, db: Session, params: Optional[Dict] = None) -> None:
@@ -274,14 +235,11 @@ class McdaQuantitativeJob:
 
             # Build Goals from KPI groups with perspective-based weights
             # Load weights from perspective if provided, otherwise use equal weights
-            if perspective == "user_personalized" and personalized_goal_weights:
-                goal_weights = normalize_goal_weights(
-                    personalized_goal_weights)
-                logger.info(
-                    "Using user-personalized quantitative goal weights")
-            else:
-                goal_weights = McdaQuantitativeJob.get_goal_weights(
-                    perspective)
+            goal_weights = resolve_goal_weights(
+                perspective=perspective,
+                personalized_goal_weights=personalized_goal_weights,
+                personalized_message="Using user-personalized quantitative goal weights",
+            )
 
             # Build Alternatives from measures
             alternatives = McdaQuantitativeJob.build_alternatives(
@@ -290,7 +248,6 @@ class McdaQuantitativeJob:
             # Build Goals from KPI groups with perspective-based weights
             goals = McdaQuantitativeJob.build_goals(
                 kpi_impact_results, alternatives, goal_weights)
-
             # PHASE 4: Run PROMETHEE-GAIA analysis
             logger.debug("Phase 4: Running PROMETHEE-GAIA analysis")
             mcda_analyzer = PrometheeGaiaAnalyzer(
