@@ -12,9 +12,11 @@ MODAL_SPLIT_KPI_NUMBERS = {"15", "15a", "15b", "15c"}
 # Value: one or more transport mode types used as filter
 MODAL_SPLIT_TRANSPORT_MODE_GROUPS: Dict[str, List[str]] = {
     "NSM": ["NSM"],
-    "Private": ["PRIVATE"],
+    "All private modes": ["PRIVATE", "PRIVATE_SUSTAINABLE", "PRIVATE_CAR"],
+    "Sustainable private modes": ["PRIVATE_SUSTAINABLE"],
+    "Private car": ["PRIVATE_CAR"],
     "Public transport": ["PUBLIC_TRANSPORT"],
-    "PT+NSM": ["NSM", "PUBLIC_TRANSPORT"],
+    "Public Transport with NSM": ["NSM", "PUBLIC_TRANSPORT"],
 }
 
 
