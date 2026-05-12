@@ -11,6 +11,7 @@ from src.sum_impact_assessment.services.full_impact_refresh_service import (
     build_dispatch_plan,
     build_initial_dispatch_state,
     dispatch_full_refresh,
+    dispatch_full_refresh_sync,
 )
 
 
@@ -42,7 +43,7 @@ def test_build_initial_dispatch_state_sets_pending_status():
 
 @pytest.mark.anyio
 @patch("src.sum_impact_assessment.services.full_impact_refresh_service.asyncio.create_task")
-@patch("src.sum_impact_assessment.services.full_impact_refresh_service.asyncio.to_thread")
+@patch("src.sum_impact_assessment.services.full_impact_refresh_service.asyncio.to_thread", new_callable=Mock)
 @patch("src.sum_impact_assessment.services.full_impact_refresh_service.asyncio.sleep")
 @patch("src.sum_impact_assessment.services.full_impact_refresh_service.JobRepository")
 @patch("src.sum_impact_assessment.services.full_impact_refresh_service.get_db_session")
@@ -85,3 +86,25 @@ async def test_dispatch_full_refresh_dispatches_all_children(
     assert final_call.kwargs["status"] == JobStatusEnum.SUCCESS
     assert mock_create_task.call_count == 7
     assert mock_sleep.await_count == 6
+    first_dispatch = mock_to_thread.call_args_list[0]
+    assert first_dispatch.args[2] == "child-0"
+    first_update = repo_instance.update_dispatched_job.call_args_list[0]
+    assert first_update.args[2]["job_run_id"] == "child-0"
+    assert first_update.args[2]["scheduled_at"] == "2026-05-12T10:00:00"
+
+
+@patch("src.sum_impact_assessment.services.full_impact_refresh_service.asyncio.run")
+@patch("src.sum_impact_assessment.services.full_impact_refresh_service.dispatch_full_refresh", new_callable=Mock)
+def test_dispatch_full_refresh_sync_uses_asyncio_run(
+    mock_dispatch_full_refresh,
+    mock_asyncio_run,
+):
+    """The sync wrapper should delegate the coroutine through asyncio.run."""
+    plan = [{"job_name": "kpi_measures_analysis"}]
+    mock_coroutine = object()
+    mock_dispatch_full_refresh.return_value = mock_coroutine
+
+    dispatch_full_refresh_sync("parent-1", plan)
+
+    mock_dispatch_full_refresh.assert_called_once_with("parent-1", plan)
+    mock_asyncio_run.assert_called_once_with(mock_coroutine)

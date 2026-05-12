@@ -19,6 +19,7 @@ from ..schemas.job import (
     JobStatusEnum,
 )
 from ..utils.logger import get_logger
+from ..utils.time import utc_now
 from .job_dispatch_service import execute_job_in_background, resolve_actual_job_name
 
 logger = get_logger(__name__)
@@ -66,6 +67,13 @@ def build_initial_dispatch_state(plan: List[Dict[str, Any]]) -> List[Dict[str, A
     ]
 
 
+def dispatch_full_refresh_sync(parent_run_id: str, plan: List[Dict[str, Any]]) -> None:
+    """
+    Run the async dispatcher from a sync entrypoint compatible with BackgroundTasks.
+    """
+    asyncio.run(dispatch_full_refresh(parent_run_id, plan))
+
+
 async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) -> None:
     """
     Create child job runs for the configured plan and launch each execution asynchronously.
@@ -79,7 +87,7 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
             job_repository.update_job_status(
                 parent_run_id,
                 status=JobStatusEnum.STARTED,
-                started_at=datetime.utcnow(),
+                started_at=utc_now(),
             )
 
         for index, plan_item in enumerate(plan):
@@ -93,8 +101,10 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                     child_job_run = job_repository.create_job_run(
                         job_name=plan_item["actual_job_name"]
                     )
+                    child_job_run_id = child_job_run.id
+                    child_scheduled_at = child_job_run.created_at.isoformat()
                     job_repository.update_job_data(
-                        child_job_run.id,
+                        child_job_run_id,
                         input_data={
                             "params": params,
                             "parent_run_id": parent_run_id,
@@ -105,9 +115,9 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                         parent_run_id,
                         sequence,
                         {
-                            "job_run_id": child_job_run.id,
+                            "job_run_id": child_job_run_id,
                             "dispatch_status": "scheduled",
-                            "scheduled_at": child_job_run.created_at.isoformat(),
+                            "scheduled_at": child_scheduled_at,
                             "error": None,
                         },
                     )
@@ -116,7 +126,7 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                     asyncio.to_thread(
                         execute_job_in_background,
                         job_name,
-                        child_job_run.id,
+                        child_job_run_id,
                         params,
                     )
                 )
@@ -156,7 +166,7 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                 parent_run_id,
                 status=final_status,
                 message=f"Dispatched {dispatch_count - dispatch_failures}/{dispatch_count} jobs",
-                completed_at=datetime.utcnow(),
+                completed_at=utc_now(),
             )
     except Exception as error:
         logger.error(
@@ -249,3 +259,18 @@ def build_status_response(parent_run: JobRun, job_repository: JobRepository) -> 
         source_ip=input_data.get("source_ip"),
         dispatched_jobs=dispatched_jobs,
     )
+
+
+class FullImpactRefreshOrchestrator:
+    """
+    Groups all full impact refresh orchestration helpers under a single class namespace.
+
+    All methods are module-level functions bound as static methods — the
+    module-level aliases preserve backward compatibility for existing imports.
+    """
+    build_dispatch_plan = staticmethod(build_dispatch_plan)
+    build_initial_dispatch_state = staticmethod(build_initial_dispatch_state)
+    dispatch = staticmethod(dispatch_full_refresh)
+    dispatch_sync = staticmethod(dispatch_full_refresh_sync)
+    build_trigger_response = staticmethod(build_trigger_response)
+    build_status_response = staticmethod(build_status_response)

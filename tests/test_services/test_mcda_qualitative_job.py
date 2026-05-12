@@ -152,7 +152,7 @@ class TestRun:
     """Integration-style tests for qualitative run method."""
 
     @patch('sum_impact_assessment.services.mcda_qualitative_job.PrometheeGaiaAnalyzer')
-    @patch('sum_impact_assessment.services.mcda_qualitative_job.JobRepository')
+    @patch('sum_impact_assessment.services.jobs.base.JobRepository')
     @patch('sum_impact_assessment.services.mcda_qualitative_job.load_mcda_config')
     @patch('sum_impact_assessment.utils.data_loaders.load_mcda_config')
     def test_run_saves_input_output_and_uses_cached_config_once(
@@ -228,7 +228,7 @@ class TestRunUserPersonalized:
     """Integration-style tests for user-personalized qualitative runs."""
 
     @patch('sum_impact_assessment.services.mcda_qualitative_job.PrometheeGaiaAnalyzer')
-    @patch('sum_impact_assessment.services.mcda_qualitative_job.JobRepository')
+    @patch('sum_impact_assessment.services.jobs.base.JobRepository')
     @patch('sum_impact_assessment.services.mcda_qualitative_job.load_mcda_config')
     def test_run_uses_user_personalized_goal_weights_and_saves_name(
         self,

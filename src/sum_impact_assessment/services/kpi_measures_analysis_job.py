@@ -6,16 +6,18 @@ from sqlalchemy.orm import Session
 from typing import Optional, Dict
 from ..repositories.job_repository import JobRepository
 from .analysis_data_service import AnalysisDataService
+from .jobs.base import BaseJob
 from ..models.impact_analysis.kpi_impact_analysis import KPIImpactAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..utils.logger import get_logger
 from ..utils.modal_split import expand_modal_split_groups
+from ..utils.time import utc_now
 
 # Initialize logger
 logger = get_logger(__name__)
 
 
-class KpiMeasuresAnalysisJob:
+class KpiMeasuresAnalysisJob(BaseJob):
     """
     Job that executes KPI measures impact analysis.
 
@@ -27,109 +29,64 @@ class KpiMeasuresAnalysisJob:
     5. Logs results and updates job status
     """
 
-    @staticmethod
-    def run(job_id: str, db: Session, params: Optional[Dict] = None) -> None:
-        """
-        Execute the KPI measures analysis job.
+    @classmethod
+    def _execute(cls, job_id: str, db: Session, params: Optional[Dict], job_repo: JobRepository) -> None:
+        """Domain logic for KPI measures impact analysis."""
+        # Run KPI impact analysis using shared function
+        kpi_group_filter = params.get("kpi_group_type") if params else None
+        logger.info("Running impact analysis")
 
-        Args:
-            job_id: UUID of the job run to track
-            db: Database session for updating job status and fetching data
-            params: Optional job parameters. Supported keys:
-                - kpi_group_type: Filter to specific KPI group (e.g., "MCDA_GOALS")
-        """
-        job_repo = JobRepository(db)
+        input_data_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
+            db=db,
+            kpi_group_filter=kpi_group_filter
+        )
 
-        try:
-            # Update status to STARTED
-            logger.info(f"Starting KPI measures analysis job: {job_id}")
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.STARTED,
-                started_at=datetime.utcnow()
-            )
+        # Save input data snapshot
+        job_repo.update_job_data(
+            job_id=job_id, input_data=input_data_snapshot)
+        logger.info("Input data snapshot saved")
 
-            # Run KPI impact analysis using shared function
-            kpi_group_filter = params.get("kpi_group_type") if params else None
-            logger.info("Running impact analysis")
+        # Serialize and save output data snapshot
+        output_data_snapshot = {
+            "success": successful_results,
+            "errors": error_results,
+            "timestamp": utc_now().isoformat()
+        }
+        job_repo.update_job_data(
+            job_id=job_id, output_data=output_data_snapshot)
+        logger.info("Output data snapshot saved")
 
-            input_data_snapshot, successful_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
-                db=db,
-                kpi_group_filter=kpi_group_filter
-            )
-
-            # Save input data snapshot
-            job_repo.update_job_data(
-                job_id=job_id, input_data=input_data_snapshot)
-            logger.info("Input data snapshot saved")
-
-            # Serialize and save output data snapshot
-            output_data_snapshot = {
-                "success": successful_results,
-                "errors": error_results,
-                "timestamp": datetime.utcnow().isoformat()
+        # Log results
+        logger.info(
+            "Analysis completed successfully",
+            extra={
+                "groups_analyzed": len(successful_results),
+                "groups_failed": len(error_results)
             }
-            job_repo.update_job_data(
-                job_id=job_id, output_data=output_data_snapshot)
-            logger.info("Output data snapshot saved")
+        )
 
-            # Log results
-            logger.info(
-                "Analysis completed successfully",
-                extra={
-                    "groups_analyzed": len(successful_results),
-                    "groups_failed": len(error_results)
-                }
-            )
+        # Update status to SUCCESS
+        success_count = len(successful_results)
+        total_count = len(successful_results) + len(error_results)
+        analyzed_groups = ', '.join(
+            [r['group_name'] for r in successful_results])
+        failed_groups = ', '.join(
+            [r['group_name'] for r in error_results]) if error_results else None
 
-            # Update status to SUCCESS
-            success_count = len(successful_results)
-            total_count = len(successful_results) + len(error_results)
-            analyzed_groups = ', '.join(
-                [r['group_name'] for r in successful_results])
-            failed_groups = ', '.join(
-                [r['group_name'] for r in error_results]) if error_results else None
-
-            success_message = (
-                f"Analysis completed for {success_count}/{total_count} KPI groups. "
-                f"Analyzed: ({analyzed_groups})"
-            )
-            if failed_groups:
-                success_message += f" | Failed: ({failed_groups})"
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.SUCCESS,
-                message=success_message,
-                completed_at=datetime.utcnow()
-            )
-            logger.info(
-                f"KPI measures analysis job completed successfully: {job_id}")
-
-        except Exception as e:
-            # Update status to FAILURE
-            error_message = f"KpiMeasuresAnalysisJob failed: {str(e)}"
-            logger.error(
-                error_message,
-                extra={"job_id": job_id},
-                exc_info=True
-            )
-
-            # Save error output data
-            job_repo.update_job_data(
-                job_id=job_id,
-                output_data={
-                    "success": [],
-                    "errors": [{"error": error_message, "fatal": True}],
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
-
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.FAILURE,
-                message=error_message,
-                completed_at=datetime.utcnow()
-            )
+        success_message = (
+            f"Analysis completed for {success_count}/{total_count} KPI groups. "
+            f"Analyzed: ({analyzed_groups})"
+        )
+        if failed_groups:
+            success_message += f" | Failed: ({failed_groups})"
+        job_repo.update_job_status(
+            job_id=job_id,
+            status=JobStatusEnum.SUCCESS,
+            message=success_message,
+            completed_at=utc_now()
+        )
+        logger.info(
+            f"KPI measures analysis job completed successfully: {job_id}")
 
     @staticmethod
     def run_kpi_impact_analysis(db: Session, kpi_group_filter: Optional[str] = None):
@@ -164,7 +121,7 @@ class KpiMeasuresAnalysisJob:
             "kpi_groups": [group.model_dump() for group in kpi_groups],
             "living_labs": [lab.model_dump() for lab in living_labs],
             "kpi_group_filter": kpi_group_filter,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         }
 
         # Instantiate KPIImpactAnalyzer

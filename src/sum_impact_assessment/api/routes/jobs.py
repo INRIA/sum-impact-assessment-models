@@ -30,10 +30,12 @@ from ...services.full_impact_refresh_service import (
     build_initial_dispatch_state,
     build_status_response,
     build_trigger_response,
-    dispatch_full_refresh,
+    dispatch_full_refresh_sync,
 )
 from ...services.job_dispatch_service import execute_job_in_background, resolve_actual_job_name
+from ...utils.exceptions import translate_errors
 from ...utils.logger import get_logger
+from ...utils.time import utc_now
 
 # Initialize logger
 logger = get_logger(__name__)
@@ -50,6 +52,7 @@ admin_router = APIRouter(
 
 
 @router.post("/runs/{job_name}", response_model=JobRunResponse, status_code=api_status.HTTP_201_CREATED)
+@translate_errors
 def trigger_job(
     job_name: JobNameEnum,
     background_tasks: BackgroundTasks,
@@ -193,66 +196,49 @@ def trigger_job(
     logger.info(f"Job trigger request received",
                 extra={"job_name": job_name.value, "params": params})
 
+    # Verify the job exists in the registry
     try:
-        # Verify the job exists in the registry
-        try:
-            get_job_class(job_name)
-        except KeyError:
-            logger.warning(f"Job not found in registry: {job_name.value}")
-            raise HTTPException(
-                status_code=api_status.HTTP_404_NOT_FOUND,
-                detail=f"Job '{job_name.value}' not found in registry"
-            )
-
-        # Create a new job run with PENDING status
-        # For MCDA analysis, append perspective to job name if provided
-        job_repo = JobRepository(db)
-        actual_job_name = resolve_actual_job_name(job_name, params)
-
-        if actual_job_name != job_name.value and params:
-            logger.info(f"MCDA job with perspective: {params['perspective']}")
-
-        job_run = job_repo.create_job_run(job_name=actual_job_name)
-
-        logger.info(
-            f"Job run created",
-            extra={
-                "job_name": actual_job_name,
-                "job_id": job_run.id,
-                "status": job_run.status
-            }
-        )
-
-        # Schedule the job for background execution
-        background_tasks.add_task(
-            execute_job_in_background, job_name, job_run.id, params)
-
-        logger.info(
-            f"Job scheduled for background execution",
-            extra={
-                "job_name": job_name.value,
-                "job_id": job_run.id
-            }
-        )
-
-        # Return the job run response
-        return JobRunResponse.model_validate(job_run)
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(
-            f"Error triggering job",
-            extra={
-                "job_name": job_name.value,
-                "error": str(e)
-            },
-            exc_info=True
-        )
+        get_job_class(job_name)
+    except KeyError:
+        logger.warning(f"Job not found in registry: {job_name.value}")
         raise HTTPException(
-            status_code=api_status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error triggering job: {str(e)}"
+            status_code=api_status.HTTP_404_NOT_FOUND,
+            detail=f"Job '{job_name.value}' not found in registry"
         )
+
+    # Create a new job run with PENDING status
+    # For MCDA analysis, append perspective to job name if provided
+    job_repo = JobRepository(db)
+    actual_job_name = resolve_actual_job_name(job_name, params)
+
+    if actual_job_name != job_name.value and params:
+        logger.info(f"MCDA job with perspective: {params['perspective']}")
+
+    job_run = job_repo.create_job_run(job_name=actual_job_name)
+
+    logger.info(
+        f"Job run created",
+        extra={
+            "job_name": actual_job_name,
+            "job_id": job_run.id,
+            "status": job_run.status
+        }
+    )
+
+    # Schedule the job for background execution
+    background_tasks.add_task(
+        execute_job_in_background, job_name, job_run.id, params)
+
+    logger.info(
+        f"Job scheduled for background execution",
+        extra={
+            "job_name": job_name.value,
+            "job_id": job_run.id
+        }
+    )
+
+    # Return the job run response
+    return JobRunResponse.model_validate(job_run)
 
 
 @admin_router.post(
@@ -286,7 +272,7 @@ def trigger_full_impact_refresh(
             },
         )
 
-    started_at = datetime.utcnow()
+    started_at = utc_now()
     plan = build_dispatch_plan(started_at)
     parent_run = job_repo.create_job_run(job_name=JobNameEnum.FULL_IMPACT_REFRESH.value)
     job_repo.update_job_data(
@@ -318,7 +304,7 @@ def trigger_full_impact_refresh(
         },
     )
 
-    background_tasks.add_task(dispatch_full_refresh, parent_run.id, plan)
+    background_tasks.add_task(dispatch_full_refresh_sync, parent_run.id, plan)
     return build_trigger_response(plan, parent_run.id, started_at)
 
 
@@ -346,6 +332,7 @@ def get_full_impact_refresh_status(
 
 
 @router.get("/{job_id}", response_model=JobRunResponse)
+@translate_errors
 def get_job_run(
     job_id: str,
     db: Session = Depends(get_db)
@@ -367,46 +354,30 @@ def get_job_run(
     logger.info(f"Job run retrieval request received",
                 extra={"job_id": job_id})
 
-    try:
-        job_repo = JobRepository(db)
-        job_run = job_repo.get_job_run(job_id)
+    job_repo = JobRepository(db)
+    job_run = job_repo.get_job_run(job_id)
 
-        if not job_run:
-            logger.warning(f"Job run not found: {job_id}")
-            raise HTTPException(
-                status_code=api_status.HTTP_404_NOT_FOUND,
-                detail=f"Job run with ID '{job_id}' not found"
-            )
-
-        logger.info(
-            f"Job run retrieved successfully",
-            extra={
-                "job_id": job_id,
-                "job_name": job_run.job_name,
-                "status": job_run.status
-            }
-        )
-
-        return JobRunResponse.model_validate(job_run)
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(
-            f"Error retrieving job run",
-            extra={
-                "job_id": job_id,
-                "error": str(e)
-            },
-            exc_info=True
-        )
+    if not job_run:
+        logger.warning(f"Job run not found: {job_id}")
         raise HTTPException(
-            status_code=api_status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error retrieving job run: {str(e)}"
+            status_code=api_status.HTTP_404_NOT_FOUND,
+            detail=f"Job run with ID '{job_id}' not found"
         )
+
+    logger.info(
+        f"Job run retrieved successfully",
+        extra={
+            "job_id": job_id,
+            "job_name": job_run.job_name,
+            "status": job_run.status
+        }
+    )
+
+    return JobRunResponse.model_validate(job_run)
 
 
 @router.get("/", response_model=List[JobRunResponse])
+@translate_errors
 def list_job_runs(
     job_name: Optional[JobNameEnum] = Query(
         None, description="Filter by job name"),
@@ -446,31 +417,17 @@ def list_job_runs(
         }
     )
 
-    try:
-        job_repo = JobRepository(db)
-        job_runs = job_repo.get_job_runs(
-            job_name=job_name,
-            status=status,
-            created_at_from=created_at_from,
-            created_at_to=created_at_to
-        )
+    job_repo = JobRepository(db)
+    job_runs = job_repo.get_job_runs(
+        job_name=job_name,
+        status=status,
+        created_at_from=created_at_from,
+        created_at_to=created_at_to
+    )
 
-        logger.info(
-            f"Job runs retrieved successfully",
-            extra={"count": len(job_runs)}
-        )
+    logger.info(
+        f"Job runs retrieved successfully",
+        extra={"count": len(job_runs)}
+    )
 
-        return [JobRunResponse.model_validate(job_run) for job_run in job_runs]
-
-    except Exception as e:
-        logger.error(
-            f"Error listing job runs",
-            extra={
-                "error": str(e)
-            },
-            exc_info=True
-        )
-        raise HTTPException(
-            status_code=api_status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error listing job runs: {str(e)}"
-        )
+    return [JobRunResponse.model_validate(job_run) for job_run in job_runs]

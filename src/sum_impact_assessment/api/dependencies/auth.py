@@ -6,8 +6,16 @@ from fastapi.security import APIKeyHeader
 from ...config.settings import settings
 
 
-api_key_header = APIKeyHeader(name="X-Internal-API-Key", auto_error=False)
-admin_refresh_api_key_header = APIKeyHeader(name="X-Admin-Refresh-Key", auto_error=False)
+api_key_header = APIKeyHeader(
+    name="X-Internal-API-Key",
+    scheme_name="InternalApiKey",
+    auto_error=False,
+)
+admin_refresh_api_key_header = APIKeyHeader(
+    name="X-Admin-Refresh-Key",
+    scheme_name="AdminRefreshApiKey",
+    auto_error=False,
+)
 
 
 async def verify_api_key(api_key: str = Security(api_key_header)) -> str:

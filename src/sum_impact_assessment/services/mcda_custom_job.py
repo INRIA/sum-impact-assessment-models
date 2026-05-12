@@ -5,17 +5,19 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from typing import Dict, Optional
 from ..repositories.job_repository import JobRepository
+from .jobs.base import BaseJob
 from ..models.mcda_analysis.promethee_gaia_analysis import PrometheeGaiaAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..schemas.mcda import Goal, Alternative, McdaCustomAnalysisParams
 from ..utils.logger import get_logger
 from ..utils.data_loaders import normalize_goal_weights
+from ..utils.time import utc_now
 
 # Initialize logger
 logger = get_logger(__name__)
 
 
-class McdaCustomJob:
+class McdaCustomJob(BaseJob):
     """
     Job that executes PROMETHEE-GAIA MCDA using fully customized inputs.
 
@@ -118,111 +120,72 @@ class McdaCustomJob:
         logger.info(f"Created {len(goals)} custom goals")
         return goals
 
-    @staticmethod
-    def run(job_id: str, db: Session, params: Optional[Dict] = None) -> None:
+    @classmethod
+    def _execute(cls, job_id: str, db: Session, params: Optional[Dict], job_repo: JobRepository) -> None:
         """
-        Execute the custom MCDA analysis job.
-
-        Args:
-            job_id: UUID of the job run to track
-            db: Database session for updating job status
-            params: Custom analysis parameters with goals and alternatives
+        Domain logic for the custom MCDA analysis job.
         """
-        job_repo = JobRepository(db)
+        if not params:
+            raise ValueError("Custom MCDA analysis requires parameters")
 
-        try:
-            logger.info(f"Starting custom MCDA analysis job: {job_id}")
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.STARTED,
-                started_at=datetime.utcnow()
+        custom_params = McdaCustomAnalysisParams.model_validate(params)
+        analysis_name = custom_params.name
+
+        alternatives = McdaCustomJob.build_alternatives(custom_params)
+        goals = McdaCustomJob.build_goals(custom_params, alternatives)
+
+        if not alternatives:
+            raise ValueError(
+                "No alternatives were provided. Cannot proceed with custom MCDA."
+            )
+        if not goals:
+            raise ValueError(
+                "No goals were provided. Cannot proceed with custom MCDA."
             )
 
-            if not params:
-                raise ValueError("Custom MCDA analysis requires parameters")
+        mcda_analyzer = PrometheeGaiaAnalyzer(
+            goals=goals,
+            alternatives=alternatives
+        )
 
-            custom_params = McdaCustomAnalysisParams.model_validate(params)
-            analysis_name = custom_params.name
+        input_data_snapshot = {
+            "name": analysis_name,
+            "goals": [goal.model_dump() for goal in goals],
+            "alternatives": [alt.model_dump() for alt in alternatives],
+            "timestamp": utc_now().isoformat()
+        }
+        job_repo.update_job_data(
+            job_id=job_id, input_data=input_data_snapshot)
 
-            alternatives = McdaCustomJob.build_alternatives(custom_params)
-            goals = McdaCustomJob.build_goals(custom_params, alternatives)
+        mcda_output = mcda_analyzer.run_analysis(run_visualizations=False)
 
-            if not alternatives:
-                raise ValueError(
-                    "No alternatives were provided. Cannot proceed with custom MCDA."
-                )
-            if not goals:
-                raise ValueError(
-                    "No goals were provided. Cannot proceed with custom MCDA."
-                )
+        output_data_snapshot = {
+            "name": analysis_name,
+            "kpi_impact_results": [],
+            "kpi_impact_errors": [],
+            "mcda_results": mcda_output.model_dump(),
+            "timestamp": utc_now().isoformat()
+        }
+        job_repo.update_job_data(
+            job_id=job_id, output_data=output_data_snapshot)
 
-            mcda_analyzer = PrometheeGaiaAnalyzer(
-                goals=goals,
-                alternatives=alternatives
-            )
+        top_alt_key = mcda_output.ranking[0] if mcda_output.ranking else "N/A"
+        top_alt_name = mcda_output.alternative_labels.get(
+            top_alt_key, "N/A") if mcda_output.ranking else "N/A"
 
-            input_data_snapshot = {
-                "name": analysis_name,
-                "goals": [goal.model_dump() for goal in goals],
-                "alternatives": [alt.model_dump() for alt in alternatives],
-                "timestamp": datetime.utcnow().isoformat()
-            }
-            job_repo.update_job_data(
-                job_id=job_id, input_data=input_data_snapshot)
+        name_info = f" [Name: {analysis_name}]" if analysis_name else ""
+        success_message = (
+            f"Custom MCDA analysis completed successfully{name_info}. "
+            f"Analyzed {len(goals)} goals, {len(alternatives)} alternatives. "
+            f"Top ranked: {top_alt_key} ({top_alt_name}). "
+            f"GAIA quality: {mcda_output.gaia_quality:.1f}%"
+        )
 
-            mcda_output = mcda_analyzer.run_analysis(run_visualizations=False)
-
-            output_data_snapshot = {
-                "name": analysis_name,
-                "kpi_impact_results": [],
-                "kpi_impact_errors": [],
-                "mcda_results": mcda_output.model_dump(),
-                "timestamp": datetime.utcnow().isoformat()
-            }
-            job_repo.update_job_data(
-                job_id=job_id, output_data=output_data_snapshot)
-
-            top_alt_key = mcda_output.ranking[0] if mcda_output.ranking else "N/A"
-            top_alt_name = mcda_output.alternative_labels.get(
-                top_alt_key, "N/A") if mcda_output.ranking else "N/A"
-
-            name_info = f" [Name: {analysis_name}]" if analysis_name else ""
-            success_message = (
-                f"Custom MCDA analysis completed successfully{name_info}. "
-                f"Analyzed {len(goals)} goals, {len(alternatives)} alternatives. "
-                f"Top ranked: {top_alt_key} ({top_alt_name}). "
-                f"GAIA quality: {mcda_output.gaia_quality:.1f}%"
-            )
-
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.SUCCESS,
-                message=success_message,
-                completed_at=datetime.utcnow()
-            )
-            logger.info(
-                f"Custom MCDA analysis job completed successfully: {job_id}")
-
-        except Exception as e:
-            error_message = f"McdaCustomJob failed: {str(e)}"
-            logger.error(
-                error_message,
-                extra={"job_id": job_id},
-                exc_info=True
-            )
-
-            job_repo.update_job_data(
-                job_id=job_id,
-                output_data={
-                    "error": error_message,
-                    "fatal": True,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
-
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.FAILURE,
-                message=error_message,
-                completed_at=datetime.utcnow()
-            )
+        job_repo.update_job_status(
+            job_id=job_id,
+            status=JobStatusEnum.SUCCESS,
+            message=success_message,
+            completed_at=utc_now()
+        )
+        logger.info(
+            f"Custom MCDA analysis job completed successfully: {job_id}")

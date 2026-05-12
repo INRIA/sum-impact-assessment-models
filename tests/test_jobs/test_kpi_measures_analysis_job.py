@@ -16,7 +16,7 @@ class TestKpiMeasuresAnalysisJob:
 
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
     @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.jobs.base.JobRepository")
     def test_job_runs_successfully(
         self,
         mock_job_repo_class,
@@ -79,7 +79,7 @@ class TestKpiMeasuresAnalysisJob:
         mock_analyzer.run_analysis_group.assert_not_called()
 
     @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.jobs.base.JobRepository")
     def test_job_handles_database_error(
         self,
         mock_job_repo_class,
@@ -119,7 +119,7 @@ class TestKpiMeasuresAnalysisJob:
 
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
     @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.jobs.base.JobRepository")
     def test_job_saves_input_output_data_structure(
         self,
         mock_job_repo_class,
@@ -365,7 +365,7 @@ class TestKpiMeasuresAnalysisJob:
 
     @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.KPIImpactAnalyzer")
     @patch("src.sum_impact_assessment.services.analysis_data_service.AnalysisDataRepository")
-    @patch("src.sum_impact_assessment.services.kpi_measures_analysis_job.JobRepository")
+    @patch("src.sum_impact_assessment.services.jobs.base.JobRepository")
     def test_job_handles_partial_failures(
         self,
         mock_job_repo_class,

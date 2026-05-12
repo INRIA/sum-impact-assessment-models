@@ -5,12 +5,14 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from typing import Optional, Dict
 from ..repositories.job_repository import JobRepository
+from .jobs.base import BaseJob
 from .kpi_measures_analysis_job import KpiMeasuresAnalysisJob
 from ..models.mcda_analysis.promethee_gaia_analysis import PrometheeGaiaAnalyzer
 from ..schemas.job import JobStatusEnum
 from ..schemas.mcda import Goal, Alternative
 from ..schemas.core import Measure
 from ..utils.logger import get_logger
+from ..utils.time import utc_now
 from .mcda_goal_builder import (
     apply_normalized_goal_weights,
     build_goal_for_name,
@@ -24,7 +26,7 @@ from .mcda_goal_builder import (
 logger = get_logger(__name__)
 
 
-class McdaQuantitativeJob:
+class McdaQuantitativeJob(BaseJob):
     """
     Job that executes KPI impact analysis followed by PROMETHEE-GAIA MCDA.
 
@@ -167,184 +169,140 @@ class McdaQuantitativeJob:
         """
         return get_resolved_goal_weights(perspective)
 
-    @staticmethod
-    def run(job_id: str, db: Session, params: Optional[Dict] = None) -> None:
+    @classmethod
+    def _execute(cls, job_id: str, db: Session, params: Optional[Dict], job_repo: JobRepository) -> None:
         """
-        Execute the MCDA analysis job.
-
-        Args:
-            job_id: UUID of the job run to track
-            db: Database session for updating job status and fetching data
-            params: Optional job parameters. Supported keys:
-                    - kpi_group_type: Filter to specific KPI group (e.g., "MCDA_GOALS")
-                    - perspective: Stakeholder perspective for goal weighting (e.g., "regulatory", "pto")
+        Domain logic for the MCDA quantitative analysis job.
         """
-        job_repo = JobRepository(db)
-
-        try:
-            # Update status to STARTED
-            logger.info(f"Starting MCDA analysis job: {job_id}")
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.STARTED,
-                started_at=datetime.utcnow()
-            )
-
-            # Extract optional parameters
-            kpi_group_filter = params.get("kpi_group_type") if params else None
-            perspective = params.get("perspective") if params else None
-            analysis_name = params.get("name") if params else None
-            personalized_goal_weights = params.get(
-                "goals_weights") if params else None
-            logger.debug(
-                f"MCDA analysis parameters",
-                extra={
-                    "kpi_group_filter": kpi_group_filter,
-                    "perspective": perspective,
-                    "analysis_name": analysis_name,
-                    "personalized_goal_weights": bool(personalized_goal_weights)
-                }
-            )
-
-            # PHASE 1 & 2: Run KPI impact analysis using shared function
-            logger.info("Phase 1-2: Running KPI impact analysis")
-
-            input_data_snapshot, kpi_impact_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
-                db=db,
-                kpi_group_filter=kpi_group_filter
-            )
-
-            # Save input data snapshot
-            job_repo.update_job_data(
-                job_id=job_id, input_data=input_data_snapshot)
-            logger.debug("Input data snapshot saved")
-
-            # Check if we have enough successful results to proceed
-            if not kpi_impact_results:
-                raise Exception(
-                    "No KPI groups were successfully analyzed. Cannot proceed with MCDA.")
-
-            logger.debug(
-                f"KPI impact analysis completed for {len(kpi_impact_results)} groups")
-
-            # PHASE 3: Build Goals and Alternatives from impact results
-            logger.debug("Phase 3: Building Goals and Alternatives for MCDA")
-
-            # Get measures from input data
-            measures = [Measure(**m) for m in input_data_snapshot['measures']]
-
-            # Build Goals from KPI groups with perspective-based weights
-            # Load weights from perspective if provided, otherwise use equal weights
-            goal_weights = resolve_goal_weights(
-                perspective=perspective,
-                personalized_goal_weights=personalized_goal_weights,
-                personalized_message="Using user-personalized quantitative goal weights",
-            )
-
-            # Build Alternatives from measures
-            alternatives = McdaQuantitativeJob.build_alternatives(
-                measures, kpi_impact_results)
-
-            # Build Goals from KPI groups with perspective-based weights
-            goals = McdaQuantitativeJob.build_goals(
-                kpi_impact_results, alternatives, goal_weights)
-            # PHASE 4: Run PROMETHEE-GAIA analysis
-            logger.debug("Phase 4: Running PROMETHEE-GAIA analysis")
-            mcda_analyzer = PrometheeGaiaAnalyzer(
-                goals=goals,
-                alternatives=alternatives
-            )
-
-            # save MCDA input data snapshot, added to previous input_data_snapshot
-            mcda_input_data_snapshot = {
+        # Extract optional parameters
+        kpi_group_filter = params.get("kpi_group_type") if params else None
+        perspective = params.get("perspective") if params else None
+        analysis_name = params.get("name") if params else None
+        personalized_goal_weights = params.get(
+            "goals_weights") if params else None
+        logger.debug(
+            f"MCDA analysis parameters",
+            extra={
+                "kpi_group_filter": kpi_group_filter,
                 "perspective": perspective,
-                "name": analysis_name,
-                "goals": [goal.model_dump() for goal in goals],
-                "alternatives": [alt.model_dump() for alt in alternatives],
-                "timestamp": datetime.utcnow().isoformat()
+                "analysis_name": analysis_name,
+                "personalized_goal_weights": bool(personalized_goal_weights)
             }
-            # update input data snapshot with MCDA input data
-            input_data_snapshot.update(mcda_input_data_snapshot)
-            job_repo.update_job_data(
-                job_id=job_id, input_data=input_data_snapshot)
-            logger.debug("MCDA input data snapshot saved")
+        )
 
-            # Get structured MCDA output with standardized keys
-            mcda_output = mcda_analyzer.run_analysis(run_visualizations=False)
+        # PHASE 1 & 2: Run KPI impact analysis using shared function
+        logger.info("Phase 1-2: Running KPI impact analysis")
 
-            logger.info(
-                f"MCDA analysis completed",
-                extra={
-                    "gaia_quality": mcda_output.gaia_quality,
-                    "top_alternative": mcda_output.ranking[0] if mcda_output.ranking else None
-                }
-            )
+        input_data_snapshot, kpi_impact_results, error_results = KpiMeasuresAnalysisJob.run_kpi_impact_analysis(
+            db=db,
+            kpi_group_filter=kpi_group_filter
+        )
 
-            # PHASE 5: Save output data
-            logger.debug("Phase 5: Saving MCDA output")
-            output_data_snapshot = {
-                "name": analysis_name,
-                "kpi_impact_results": kpi_impact_results,
-                "kpi_impact_errors": error_results,
-                "mcda_results": mcda_output.model_dump(),
-                "timestamp": datetime.utcnow().isoformat()
+        # Save input data snapshot
+        job_repo.update_job_data(
+            job_id=job_id, input_data=input_data_snapshot)
+        logger.debug("Input data snapshot saved")
+
+        # Check if we have enough successful results to proceed
+        if not kpi_impact_results:
+            raise Exception(
+                "No KPI groups were successfully analyzed. Cannot proceed with MCDA.")
+
+        logger.debug(
+            f"KPI impact analysis completed for {len(kpi_impact_results)} groups")
+
+        # PHASE 3: Build Goals and Alternatives from impact results
+        logger.debug("Phase 3: Building Goals and Alternatives for MCDA")
+
+        # Get measures from input data
+        measures = [Measure(**m) for m in input_data_snapshot['measures']]
+
+        # Build Goals from KPI groups with perspective-based weights
+        # Load weights from perspective if provided, otherwise use equal weights
+        goal_weights = resolve_goal_weights(
+            perspective=perspective,
+            personalized_goal_weights=personalized_goal_weights,
+            personalized_message="Using user-personalized quantitative goal weights",
+        )
+
+        # Build Alternatives from measures
+        alternatives = McdaQuantitativeJob.build_alternatives(
+            measures, kpi_impact_results)
+
+        # Build Goals from KPI groups with perspective-based weights
+        goals = McdaQuantitativeJob.build_goals(
+            kpi_impact_results, alternatives, goal_weights)
+        # PHASE 4: Run PROMETHEE-GAIA analysis
+        logger.debug("Phase 4: Running PROMETHEE-GAIA analysis")
+        mcda_analyzer = PrometheeGaiaAnalyzer(
+            goals=goals,
+            alternatives=alternatives
+        )
+
+        # save MCDA input data snapshot, added to previous input_data_snapshot
+        mcda_input_data_snapshot = {
+            "perspective": perspective,
+            "name": analysis_name,
+            "goals": [goal.model_dump() for goal in goals],
+            "alternatives": [alt.model_dump() for alt in alternatives],
+            "timestamp": utc_now().isoformat()
+        }
+        # update input data snapshot with MCDA input data
+        input_data_snapshot.update(mcda_input_data_snapshot)
+        job_repo.update_job_data(
+            job_id=job_id, input_data=input_data_snapshot)
+        logger.debug("MCDA input data snapshot saved")
+
+        # Get structured MCDA output with standardized keys
+        mcda_output = mcda_analyzer.run_analysis(run_visualizations=False)
+
+        logger.info(
+            f"MCDA analysis completed",
+            extra={
+                "gaia_quality": mcda_output.gaia_quality,
+                "top_alternative": mcda_output.ranking[0] if mcda_output.ranking else None
             }
+        )
 
-            job_repo.update_job_data(
-                job_id=job_id, output_data=output_data_snapshot)
-            logger.debug("Output data snapshot saved")
+        # PHASE 5: Save output data
+        logger.debug("Phase 5: Saving MCDA output")
+        output_data_snapshot = {
+            "name": analysis_name,
+            "kpi_impact_results": kpi_impact_results,
+            "kpi_impact_errors": error_results,
+            "mcda_results": mcda_output.model_dump(),
+            "timestamp": utc_now().isoformat()
+        }
 
-            # Update status to SUCCESS
-            top_alt_key = mcda_output.ranking[0] if mcda_output.ranking else "N/A"
-            top_alt_name = mcda_output.alternative_labels.get(
-                top_alt_key, "N/A") if mcda_output.ranking else "N/A"
+        job_repo.update_job_data(
+            job_id=job_id, output_data=output_data_snapshot)
+        logger.debug("Output data snapshot saved")
 
-            success_count = len(kpi_impact_results)
-            total_count = len(kpi_impact_results) + len(error_results)
-            failed_groups = ', '.join(
-                [r['group_name'] for r in error_results]) if error_results else None
+        # Update status to SUCCESS
+        top_alt_key = mcda_output.ranking[0] if mcda_output.ranking else "N/A"
+        top_alt_name = mcda_output.alternative_labels.get(
+            top_alt_key, "N/A") if mcda_output.ranking else "N/A"
 
-            perspective_info = f" [Perspective: {perspective}]" if perspective else ""
-            success_message = (
-                f"MCDA analysis completed successfully{perspective_info}. "
-                f"Analyzed {success_count}/{total_count} KPI groups, "
-                f"{len(alternatives)} alternatives. "
-                f"Top ranked: {top_alt_key} ({top_alt_name}). "
-                f"GAIA quality: {mcda_output.gaia_quality:.1f}%"
-            )
-            if failed_groups:
-                success_message += f" | Failed groups: ({failed_groups})"
+        success_count = len(kpi_impact_results)
+        total_count = len(kpi_impact_results) + len(error_results)
+        failed_groups = ', '.join(
+            [r['group_name'] for r in error_results]) if error_results else None
 
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.SUCCESS,
-                message=success_message,
-                completed_at=datetime.utcnow()
-            )
-            logger.info(f"MCDA analysis job completed successfully: {job_id}")
+        perspective_info = f" [Perspective: {perspective}]" if perspective else ""
+        success_message = (
+            f"MCDA analysis completed successfully{perspective_info}. "
+            f"Analyzed {success_count}/{total_count} KPI groups, "
+            f"{len(alternatives)} alternatives. "
+            f"Top ranked: {top_alt_key} ({top_alt_name}). "
+            f"GAIA quality: {mcda_output.gaia_quality:.1f}%"
+        )
+        if failed_groups:
+            success_message += f" | Failed groups: ({failed_groups})"
 
-        except Exception as e:
-            # Update status to FAILURE
-            error_message = f"McdaQuantitativeJob failed: {str(e)}"
-            logger.error(
-                error_message,
-                extra={"job_id": job_id},
-                exc_info=True
-            )
-
-            # Save error output data
-            job_repo.update_job_data(
-                job_id=job_id,
-                output_data={
-                    "error": error_message,
-                    "fatal": True,
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            )
-
-            job_repo.update_job_status(
-                job_id=job_id,
-                status=JobStatusEnum.FAILURE,
-                message=error_message,
-                completed_at=datetime.utcnow()
-            )
+        job_repo.update_job_status(
+            job_id=job_id,
+            status=JobStatusEnum.SUCCESS,
+            message=success_message,
+            completed_at=utc_now()
+        )
+        logger.info(f"MCDA analysis job completed successfully: {job_id}")

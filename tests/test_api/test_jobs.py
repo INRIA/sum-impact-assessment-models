@@ -132,7 +132,7 @@ class TestJobsAPI:
 
         # Assertions
         assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        assert "Error triggering job" in response.json()["detail"]
+        assert "Database connection error" in response.json()["detail"]
 
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
     @patch("src.sum_impact_assessment.api.routes.jobs.get_job_class")
@@ -255,9 +255,9 @@ class TestJobsAPI:
 class TestAdminFullRefreshAPI:
     """Test suite for the admin full impact refresh endpoints."""
 
-    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh", new_callable=Mock)
+    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh_sync", new_callable=Mock)
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
-    def test_trigger_full_impact_refresh_success(self, mock_job_repo_class, mock_dispatch_full_refresh):
+    def test_trigger_full_impact_refresh_success(self, mock_job_repo_class, mock_dispatch_full_refresh_sync):
         """Admin refresh endpoint should accept a new refresh run and return the dispatch plan."""
         mock_parent_run = JobRun(
             id="parent-run-1",
@@ -289,7 +289,9 @@ class TestAdminFullRefreshAPI:
         assert response_data["dispatched_jobs"][0]["job_name"] == "kpi_measures_analysis"
         assert response_data["dispatched_jobs"][1]["actual_job_name"] == "mcda_analysis_quantitative_regulatory"
         mock_repo_instance.get_in_progress_full_refresh.assert_called_once()
-        mock_dispatch_full_refresh.assert_called_once()
+        mock_dispatch_full_refresh_sync.assert_called_once()
+        assert mock_dispatch_full_refresh_sync.call_args.args[0] == "parent-run-1"
+        assert len(mock_dispatch_full_refresh_sync.call_args.args[1]) == 7
 
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
     def test_trigger_full_impact_refresh_conflict(self, mock_job_repo_class):
@@ -326,9 +328,9 @@ class TestAdminFullRefreshAPI:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh", new_callable=Mock)
+    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh_sync", new_callable=Mock)
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
-    def test_trigger_full_impact_refresh_rejects_duplicate_idempotency_key(self, mock_job_repo_class, mock_dispatch_full_refresh):
+    def test_trigger_full_impact_refresh_rejects_duplicate_idempotency_key(self, mock_job_repo_class, mock_dispatch_full_refresh_sync):
         """Admin refresh endpoint should reject a duplicate idempotent request within the configured window."""
         mock_parent_run = JobRun(
             id="parent-run-1",
@@ -354,11 +356,11 @@ class TestAdminFullRefreshAPI:
         assert first_response.status_code == status.HTTP_202_ACCEPTED
         assert second_response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert second_response.json()["detail"]["error"] == "duplicate_request"
-        mock_dispatch_full_refresh.assert_called_once()
+        mock_dispatch_full_refresh_sync.assert_called_once()
 
-    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh", new_callable=Mock)
+    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh_sync", new_callable=Mock)
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
-    def test_trigger_full_impact_refresh_rate_limit(self, mock_job_repo_class, mock_dispatch_full_refresh):
+    def test_trigger_full_impact_refresh_rate_limit(self, mock_job_repo_class, mock_dispatch_full_refresh_sync):
         """Admin refresh endpoint should rate limit repeated successful triggers."""
         mock_parent_run = JobRun(
             id="parent-run-1",
@@ -381,7 +383,7 @@ class TestAdminFullRefreshAPI:
         assert first_response.status_code == status.HTTP_202_ACCEPTED
         assert second_response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
         assert second_response.json()["detail"]["error"] == "rate_limited"
-        mock_dispatch_full_refresh.assert_called_once()
+        mock_dispatch_full_refresh_sync.assert_called_once()
 
     @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
     def test_get_full_impact_refresh_status(self, mock_job_repo_class):

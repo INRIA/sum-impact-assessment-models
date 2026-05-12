@@ -507,7 +507,7 @@ class TestRunUserPersonalized:
     """Integration-style tests for user-personalized quantitative runs."""
 
     @patch('sum_impact_assessment.services.mcda_quantitative_job.PrometheeGaiaAnalyzer')
-    @patch('sum_impact_assessment.services.mcda_quantitative_job.JobRepository')
+    @patch('sum_impact_assessment.services.jobs.base.JobRepository')
     @patch('sum_impact_assessment.services.mcda_quantitative_job.KpiMeasuresAnalysisJob.run_kpi_impact_analysis')
     def test_run_uses_user_personalized_goal_weights_and_saves_name(
         self,
