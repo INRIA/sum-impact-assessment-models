@@ -1,57 +1,52 @@
 """
 Job management API routes.
 """
-from fastapi import APIRouter, Body, Depends, HTTPException, BackgroundTasks, status as api_status, Query
-from sqlalchemy.orm import Session
-from typing import List, Optional
 from datetime import datetime
-from ...database.connection import get_db, get_db_session
+from typing import List, Optional
+
+from fastapi import APIRouter, BackgroundTasks, Body, Depends, Header, HTTPException, Query, Request, status as api_status
+from sqlalchemy.orm import Session
+
+from ...api.dependencies.admin_refresh_guards import (
+    check_rate_limit,
+    enforce_ip_allowlist,
+    mark_rate_limit,
+    remember_idempotency_key,
+    validate_idempotency_key,
+)
+from ...api.dependencies.auth import verify_admin_refresh_api_key, verify_api_key
+from ...database.connection import get_db
 from ...repositories.job_repository import JobRepository
-from ...schemas.job import JobNameEnum, JobRunResponse, TriggerJobRequest
+from ...schemas.job import (
+    FullImpactRefreshStatusResponse,
+    FullImpactRefreshTriggerResponse,
+    JobNameEnum,
+    JobRunResponse,
+    TriggerJobRequest,
+)
 from ...jobs import get_job_class
+from ...services.full_impact_refresh_service import (
+    build_dispatch_plan,
+    build_initial_dispatch_state,
+    build_status_response,
+    build_trigger_response,
+    dispatch_full_refresh,
+)
+from ...services.job_dispatch_service import execute_job_in_background, resolve_actual_job_name
 from ...utils.logger import get_logger
 
 # Initialize logger
 logger = get_logger(__name__)
 
 # Create router
-router = APIRouter(prefix="/jobs")
-
-
-def execute_job_in_background(job_name: JobNameEnum, job_id: str, params: Optional[dict] = None):
-    """
-    Execute a job in the background.
-
-    Args:
-        job_name: The name of the job to execute
-        job_id: The UUID of the job run to track
-        params: Optional parameters for the job
-    """
-    logger.info(
-        f"Background task started for job",
-        extra={
-            "job_name": job_name.value,
-            "job_id": job_id,
-            "params": params
-        }
-    )
-
-    # Get a new database session for the background task
-    with get_db_session() as db:
-        try:
-            # Get the job class and execute
-            job_class = get_job_class(job_name)
-            job_class.run(job_id=job_id, db=db, params=params)
-        except Exception as e:
-            logger.error(
-                f"Background job execution failed",
-                extra={
-                    "job_name": job_name.value,
-                    "job_id": job_id,
-                    "error": str(e)
-                },
-                exc_info=True
-            )
+router = APIRouter(prefix="/jobs", dependencies=[Depends(verify_api_key)])
+admin_router = APIRouter(
+    prefix="/jobs",
+    dependencies=[
+        Depends(verify_admin_refresh_api_key),
+        Depends(enforce_ip_allowlist),
+    ],
+)
 
 
 @router.post("/runs/{job_name}", response_model=JobRunResponse, status_code=api_status.HTTP_201_CREATED)
@@ -212,13 +207,10 @@ def trigger_job(
         # Create a new job run with PENDING status
         # For MCDA analysis, append perspective to job name if provided
         job_repo = JobRepository(db)
-        actual_job_name = job_name.value
+        actual_job_name = resolve_actual_job_name(job_name, params)
 
-        if (job_name == JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE or job_name == JobNameEnum.MCDA_ANALYSIS_QUALITATIVE) \
-                and params and "perspective" in params:
-            perspective = params["perspective"]
-            actual_job_name = f"{job_name.value}_{perspective}"
-            logger.info(f"MCDA job with perspective: {perspective}")
+        if actual_job_name != job_name.value and params:
+            logger.info(f"MCDA job with perspective: {params['perspective']}")
 
         job_run = job_repo.create_job_run(job_name=actual_job_name)
 
@@ -261,6 +253,96 @@ def trigger_job(
             status_code=api_status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error triggering job: {str(e)}"
         )
+
+
+@admin_router.post(
+    "/runs/full_impact_refresh",
+    response_model=FullImpactRefreshTriggerResponse,
+    status_code=api_status.HTTP_202_ACCEPTED,
+)
+def trigger_full_impact_refresh(
+    background_tasks: BackgroundTasks,
+    request: Request,
+    api_key: str = Depends(verify_admin_refresh_api_key),
+    idempotency_key: Optional[str] = Depends(validate_idempotency_key),
+    triggered_by: Optional[str] = Header(default=None, alias="X-Triggered-By"),
+    request_id: Optional[str] = Header(default=None, alias="X-Request-Id"),
+    db: Session = Depends(get_db),
+):
+    """
+    Trigger the full impact refresh orchestration.
+    """
+    client_host = request.client.host if request.client else None
+    job_repo = JobRepository(db)
+    check_rate_limit(api_key)
+
+    in_progress_run = job_repo.get_in_progress_full_refresh()
+    if in_progress_run is not None:
+        raise HTTPException(
+            status_code=api_status.HTTP_409_CONFLICT,
+            detail={
+                "error": "refresh_in_progress",
+                "current_run_id": in_progress_run.id,
+            },
+        )
+
+    started_at = datetime.utcnow()
+    plan = build_dispatch_plan(started_at)
+    parent_run = job_repo.create_job_run(job_name=JobNameEnum.FULL_IMPACT_REFRESH.value)
+    job_repo.update_job_data(
+        parent_run.id,
+        input_data={
+            "plan": plan,
+            "triggered_by": triggered_by,
+            "request_id": request_id,
+            "idempotency_key": idempotency_key,
+            "source_ip": client_host,
+        },
+        output_data={
+            "dispatched_jobs": build_initial_dispatch_state(plan),
+        },
+    )
+
+    remember_idempotency_key(idempotency_key, parent_run.id)
+    mark_rate_limit(api_key)
+
+    logger.info(
+        "Admin full impact refresh accepted",
+        extra={
+            "run_id": parent_run.id,
+            "triggered_by": triggered_by,
+            "request_id": request_id,
+            "idempotency_key": idempotency_key,
+            "source_ip": client_host,
+            "status_code": api_status.HTTP_202_ACCEPTED,
+        },
+    )
+
+    background_tasks.add_task(dispatch_full_refresh, parent_run.id, plan)
+    return build_trigger_response(plan, parent_run.id, started_at)
+
+
+@admin_router.get(
+    "/runs/full_impact_refresh/{run_id}",
+    response_model=FullImpactRefreshStatusResponse,
+)
+def get_full_impact_refresh_status(
+    run_id: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Retrieve the status of a previously triggered full impact refresh run.
+    """
+    job_repo = JobRepository(db)
+    parent_run = job_repo.get_job_run(run_id)
+
+    if parent_run is None or parent_run.job_name != JobNameEnum.FULL_IMPACT_REFRESH.value:
+        raise HTTPException(
+            status_code=api_status.HTTP_404_NOT_FOUND,
+            detail=f"Full impact refresh run with ID '{run_id}' not found",
+        )
+
+    return build_status_response(parent_run, job_repo)
 
 
 @router.get("/{job_id}", response_model=JobRunResponse)

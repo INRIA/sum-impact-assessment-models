@@ -1,8 +1,11 @@
 """
 Application configuration settings.
 """
+from typing import Any, Dict, List
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from ..__version__ import __version__
+from ..schemas.job import JobNameEnum
 
 
 class Settings(BaseSettings):
@@ -23,10 +26,15 @@ class Settings(BaseSettings):
     API_TITLE: str = "SUM Impact Assessment API"
     API_VERSION: str = __version__
     INTERNAL_API_KEY: str = ""
+    ADMIN_REFRESH_API_KEY: str = ""
 
     # Application configuration
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"
+    REFRESH_DISPATCH_INTERVAL_SECONDS: float = 1.5
+    REFRESH_IDEMPOTENCY_WINDOW_SECONDS: int = 60
+    REFRESH_RATE_LIMIT_SECONDS: int = 60
+    ADMIN_REFRESH_ALLOWED_IPS: List[str] = ["127.0.0.1", "::1", "localhost", "testclient"]
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -44,3 +52,37 @@ class Settings(BaseSettings):
 
 # Global settings instance
 settings = Settings()
+
+JOB_RUN_CONFIGURATION: List[Dict[str, Any]] = [
+    {
+        "job_name": JobNameEnum.KPI_MEASURES_ANALYSIS,
+        "kpi_group_type": "KPI_SIEF",
+    },
+    {
+        "job_name": JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE,
+        "perspective": "regulatory",
+        "kpi_group_type": "MCDA_GOALS",
+    },
+    {
+        "job_name": JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE,
+        "perspective": "pto",
+        "kpi_group_type": "MCDA_GOALS",
+    },
+    {
+        "job_name": JobNameEnum.MCDA_ANALYSIS_QUANTITATIVE,
+        "perspective": "nsm_providers",
+        "kpi_group_type": "MCDA_GOALS",
+    },
+    {
+        "job_name": JobNameEnum.MCDA_ANALYSIS_QUALITATIVE,
+        "perspective": "regulatory",
+    },
+    {
+        "job_name": JobNameEnum.MCDA_ANALYSIS_QUALITATIVE,
+        "perspective": "pto",
+    },
+    {
+        "job_name": JobNameEnum.MCDA_ANALYSIS_QUALITATIVE,
+        "perspective": "nsm_providers",
+    },
+]

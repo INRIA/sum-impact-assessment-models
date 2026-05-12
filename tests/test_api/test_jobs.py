@@ -2,15 +2,19 @@
 Unit tests for job management API.
 """
 import os
+from datetime import datetime
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
 from fastapi import status
 from fastapi.testclient import TestClient
-from datetime import datetime
 
 os.environ["INTERNAL_API_KEY"] = "test-key"
+os.environ["ADMIN_REFRESH_API_KEY"] = "admin-key"
 
 from src.sum_impact_assessment.api.main import app
+from src.sum_impact_assessment.config.settings import settings
+from src.sum_impact_assessment.api.dependencies.admin_refresh_guards import reset_admin_refresh_guards_state
 from sum_impact_assessment.database.models.job import JobRun
 from src.sum_impact_assessment.schemas.job import JobNameEnum, JobStatusEnum
 
@@ -18,6 +22,25 @@ from src.sum_impact_assessment.schemas.job import JobNameEnum, JobStatusEnum
 # Create test client
 client = TestClient(app)
 AUTH_HEADERS = {"X-Internal-API-Key": "test-key"}
+ADMIN_HEADERS = {"X-Admin-Refresh-Key": "admin-key"}
+
+
+@pytest.fixture(autouse=True)
+def reset_admin_guard_state():
+    """Reset in-memory admin refresh guard state between tests."""
+    original_internal_api_key = settings.INTERNAL_API_KEY
+    original_admin_refresh_api_key = settings.ADMIN_REFRESH_API_KEY
+    original_allowed_ips = settings.ADMIN_REFRESH_ALLOWED_IPS
+
+    settings.INTERNAL_API_KEY = "test-key"
+    settings.ADMIN_REFRESH_API_KEY = "admin-key"
+    settings.ADMIN_REFRESH_ALLOWED_IPS = ["127.0.0.1", "::1", "localhost", "testclient"]
+    reset_admin_refresh_guards_state()
+    yield
+    settings.INTERNAL_API_KEY = original_internal_api_key
+    settings.ADMIN_REFRESH_API_KEY = original_admin_refresh_api_key
+    settings.ADMIN_REFRESH_ALLOWED_IPS = original_allowed_ips
+    reset_admin_refresh_guards_state()
 
 
 class TestJobsAPI:
@@ -227,3 +250,204 @@ class TestJobsAPI:
         # Verify repository was called with perspective-suffixed job name
         mock_repo_instance.create_job_run.assert_called_once_with(
             job_name="mcda_analysis_quantitative_regulatory")
+
+
+class TestAdminFullRefreshAPI:
+    """Test suite for the admin full impact refresh endpoints."""
+
+    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh", new_callable=Mock)
+    @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
+    def test_trigger_full_impact_refresh_success(self, mock_job_repo_class, mock_dispatch_full_refresh):
+        """Admin refresh endpoint should accept a new refresh run and return the dispatch plan."""
+        mock_parent_run = JobRun(
+            id="parent-run-1",
+            job_name="full_impact_refresh",
+            status=JobStatusEnum.PENDING,
+            created_at=datetime(2026, 5, 12, 10, 0, 0),
+        )
+
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_in_progress_full_refresh.return_value = None
+        mock_repo_instance.create_job_run.return_value = mock_parent_run
+        mock_job_repo_class.return_value = mock_repo_instance
+
+        response = client.post(
+            "/jobs/runs/full_impact_refresh",
+            headers={
+                **ADMIN_HEADERS,
+                "X-Triggered-By": "admin@example.com",
+                "X-Request-Id": "request-123",
+                "Idempotency-Key": "idem-123",
+            },
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        response_data = response.json()
+        assert response_data["run_id"] == "parent-run-1"
+        assert response_data["status"] == "dispatching"
+        assert len(response_data["dispatched_jobs"]) == 7
+        assert response_data["dispatched_jobs"][0]["job_name"] == "kpi_measures_analysis"
+        assert response_data["dispatched_jobs"][1]["actual_job_name"] == "mcda_analysis_quantitative_regulatory"
+        mock_repo_instance.get_in_progress_full_refresh.assert_called_once()
+        mock_dispatch_full_refresh.assert_called_once()
+
+    @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
+    def test_trigger_full_impact_refresh_conflict(self, mock_job_repo_class):
+        """Admin refresh endpoint should reject a trigger if another refresh is still dispatching."""
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_in_progress_full_refresh.return_value = JobRun(
+            id="existing-parent",
+            job_name="full_impact_refresh",
+            status=JobStatusEnum.STARTED,
+            created_at=datetime(2026, 5, 12, 10, 0, 0),
+        )
+        mock_job_repo_class.return_value = mock_repo_instance
+
+        response = client.post("/jobs/runs/full_impact_refresh", headers=ADMIN_HEADERS)
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.json()["detail"]["error"] == "refresh_in_progress"
+
+    def test_trigger_full_impact_refresh_requires_admin_key(self):
+        """Admin refresh endpoint should reject missing admin refresh credentials."""
+        response = client.post("/jobs/runs/full_impact_refresh")
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_trigger_full_impact_refresh_rejects_disallowed_ip(self):
+        """Admin refresh endpoint should reject requests from a non-allowlisted client host."""
+        original_ips = settings.ADMIN_REFRESH_ALLOWED_IPS
+        settings.ADMIN_REFRESH_ALLOWED_IPS = ["127.0.0.1"]
+
+        try:
+            response = client.post("/jobs/runs/full_impact_refresh", headers=ADMIN_HEADERS)
+        finally:
+            settings.ADMIN_REFRESH_ALLOWED_IPS = original_ips
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh", new_callable=Mock)
+    @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
+    def test_trigger_full_impact_refresh_rejects_duplicate_idempotency_key(self, mock_job_repo_class, mock_dispatch_full_refresh):
+        """Admin refresh endpoint should reject a duplicate idempotent request within the configured window."""
+        mock_parent_run = JobRun(
+            id="parent-run-1",
+            job_name="full_impact_refresh",
+            status=JobStatusEnum.PENDING,
+            created_at=datetime(2026, 5, 12, 10, 0, 0),
+        )
+
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_in_progress_full_refresh.return_value = None
+        mock_repo_instance.create_job_run.return_value = mock_parent_run
+        mock_job_repo_class.return_value = mock_repo_instance
+
+        first_response = client.post(
+            "/jobs/runs/full_impact_refresh",
+            headers={**ADMIN_HEADERS, "Idempotency-Key": "idem-123"},
+        )
+        second_response = client.post(
+            "/jobs/runs/full_impact_refresh",
+            headers={**ADMIN_HEADERS, "Idempotency-Key": "idem-123"},
+        )
+
+        assert first_response.status_code == status.HTTP_202_ACCEPTED
+        assert second_response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert second_response.json()["detail"]["error"] == "duplicate_request"
+        mock_dispatch_full_refresh.assert_called_once()
+
+    @patch("src.sum_impact_assessment.api.routes.jobs.dispatch_full_refresh", new_callable=Mock)
+    @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
+    def test_trigger_full_impact_refresh_rate_limit(self, mock_job_repo_class, mock_dispatch_full_refresh):
+        """Admin refresh endpoint should rate limit repeated successful triggers."""
+        mock_parent_run = JobRun(
+            id="parent-run-1",
+            job_name="full_impact_refresh",
+            status=JobStatusEnum.PENDING,
+            created_at=datetime(2026, 5, 12, 10, 0, 0),
+        )
+
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_in_progress_full_refresh.return_value = None
+        mock_repo_instance.create_job_run.return_value = mock_parent_run
+        mock_job_repo_class.return_value = mock_repo_instance
+
+        first_response = client.post("/jobs/runs/full_impact_refresh", headers=ADMIN_HEADERS)
+        second_response = client.post(
+            "/jobs/runs/full_impact_refresh",
+            headers={**ADMIN_HEADERS, "Idempotency-Key": "different-idem"},
+        )
+
+        assert first_response.status_code == status.HTTP_202_ACCEPTED
+        assert second_response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+        assert second_response.json()["detail"]["error"] == "rate_limited"
+        mock_dispatch_full_refresh.assert_called_once()
+
+    @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
+    def test_get_full_impact_refresh_status(self, mock_job_repo_class):
+        """Status endpoint should return the parent refresh run and child job statuses."""
+        parent_run = JobRun(
+            id="parent-run-1",
+            job_name="full_impact_refresh",
+            status=JobStatusEnum.SUCCESS,
+            message="Dispatched 7/7 jobs",
+            created_at=datetime(2026, 5, 12, 10, 0, 0),
+            started_at=datetime(2026, 5, 12, 10, 0, 1),
+            completed_at=datetime(2026, 5, 12, 10, 0, 9),
+            input_data={
+                "triggered_by": "admin@example.com",
+                "request_id": "request-123",
+                "idempotency_key": "idem-123",
+                "source_ip": "testclient",
+            },
+            output_data={
+                "dispatched_jobs": [
+                    {
+                        "sequence": 0,
+                        "job_name": "kpi_measures_analysis",
+                        "actual_job_name": "kpi_measures_analysis",
+                        "params": {"kpi_group_type": "KPI_SIEF"},
+                        "scheduled_at": "2026-05-12T10:00:00",
+                        "dispatch_status": "scheduled",
+                        "job_run_id": "child-1",
+                        "error": None,
+                    }
+                ]
+            },
+        )
+        child_run = JobRun(
+            id="child-1",
+            job_name="kpi_measures_analysis",
+            status=JobStatusEnum.SUCCESS,
+            message="Completed",
+            created_at=datetime(2026, 5, 12, 10, 0, 0),
+        )
+
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_job_run.side_effect = [parent_run, child_run]
+        mock_job_repo_class.return_value = mock_repo_instance
+
+        response = client.get(
+            "/jobs/runs/full_impact_refresh/parent-run-1",
+            headers=ADMIN_HEADERS,
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        response_data = response.json()
+        assert response_data["run_id"] == "parent-run-1"
+        assert response_data["dispatched_jobs"][0]["child_status"] == JobStatusEnum.SUCCESS
+        assert response_data["dispatched_jobs"][0]["child_message"] == "Completed"
+
+    @patch("src.sum_impact_assessment.api.routes.jobs.JobRepository")
+    def test_get_full_impact_refresh_status_not_found(self, mock_job_repo_class):
+        """Status endpoint should return 404 when the parent refresh run does not exist."""
+        mock_repo_instance = Mock()
+        mock_repo_instance.get_job_run.return_value = None
+        mock_job_repo_class.return_value = mock_repo_instance
+
+        response = client.get(
+            "/jobs/runs/full_impact_refresh/missing-run",
+            headers=ADMIN_HEADERS,
+        )
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -76,7 +76,8 @@ async def log_requests(request: Request, call_next):
 # Include routers
 app.include_router(health.router, tags=["Health"])
 app.include_router(kpis.router, tags=["KPIs"], dependencies=[Depends(verify_api_key)])
-app.include_router(jobs.router, tags=["Jobs"], dependencies=[Depends(verify_api_key)])
+app.include_router(jobs.admin_router, tags=["Jobs"])
+app.include_router(jobs.router, tags=["Jobs"])
 app.include_router(simulation.router, tags=["Simulation (NON-prod only)⚠️"], dependencies=[Depends(verify_api_key)])
 
 

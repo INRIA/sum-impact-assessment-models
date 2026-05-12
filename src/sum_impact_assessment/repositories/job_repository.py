@@ -3,9 +3,9 @@ Repository for job run database operations.
 """
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import Optional, List
+from typing import Dict, List, Optional
 from ..database.models.job import JobRun
-from ..schemas.job import JobStatusEnum
+from ..schemas.job import JobNameEnum, JobStatusEnum
 from ..utils.logger import get_logger
 
 # Initialize logger
@@ -58,6 +58,18 @@ class JobRepository:
         )
 
         return job_run
+
+    def get_in_progress_full_refresh(self) -> Optional[JobRun]:
+        """
+        Retrieve the most recent full refresh run that is still dispatching jobs.
+        """
+        return (
+            self.session.query(JobRun)
+            .filter(JobRun.job_name == JobNameEnum.FULL_IMPACT_REFRESH.value)
+            .filter(JobRun.status.in_([JobStatusEnum.PENDING, JobStatusEnum.STARTED]))
+            .order_by(JobRun.created_at.desc())
+            .first()
+        )
 
     def get_job_run(self, job_id: str) -> Optional[JobRun]:
         """
@@ -168,6 +180,45 @@ class JobRepository:
                 "has_output_data": output_data is not None
             }
         )
+
+        return job_run
+
+    def update_dispatched_job(
+        self,
+        job_id: str,
+        sequence: int,
+        updates: Dict,
+    ) -> Optional[JobRun]:
+        """
+        Update a child dispatch entry inside the parent refresh run output payload.
+        """
+        job_run = self.get_job_run(job_id)
+
+        if not job_run:
+            logger.warning(f"Job run not found: {job_id}")
+            return None
+
+        output_data = job_run.output_data or {}
+        dispatched_jobs = output_data.get("dispatched_jobs", [])
+        entry_found = False
+
+        for index, dispatched_job in enumerate(dispatched_jobs):
+            if dispatched_job.get("sequence") == sequence:
+                dispatched_jobs[index] = {
+                    **dispatched_job,
+                    **updates,
+                }
+                entry_found = True
+                break
+
+        if not entry_found:
+            dispatched_jobs.append({"sequence": sequence, **updates})
+
+        output_data["dispatched_jobs"] = dispatched_jobs
+        job_run.output_data = output_data
+
+        self.session.commit()
+        self.session.refresh(job_run)
 
         return job_run
 
