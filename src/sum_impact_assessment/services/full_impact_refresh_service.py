@@ -4,6 +4,8 @@ Orchestration service for admin-triggered full impact refresh runs.
 from __future__ import annotations
 
 import asyncio
+import threading
+import time
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
@@ -69,14 +71,11 @@ def build_initial_dispatch_state(plan: List[Dict[str, Any]]) -> List[Dict[str, A
 
 def dispatch_full_refresh_sync(parent_run_id: str, plan: List[Dict[str, Any]]) -> None:
     """
-    Run the async dispatcher from a sync entrypoint compatible with BackgroundTasks.
-    """
-    asyncio.run(dispatch_full_refresh(parent_run_id, plan))
+    Create child job runs for the configured plan and launch each execution in a dedicated thread.
 
-
-async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) -> None:
-    """
-    Create child job runs for the configured plan and launch each execution asynchronously.
+    Threads are independent of the event loop lifetime, ensuring every dispatched job is started —
+    including the last one in the sequence (which was previously vulnerable to asyncio task
+    cancellation when the loop closed before the task had a turn to run).
     """
     dispatch_failures = 0
     dispatch_count = len(plan)
@@ -122,14 +121,20 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                         },
                     )
 
-                asyncio.create_task(
-                    asyncio.to_thread(
-                        execute_job_in_background,
-                        job_name,
-                        child_job_run_id,
-                        params,
-                    )
+                logger.info(
+                    "Child job thread spawned",
+                    extra={
+                        "parent_run_id": parent_run_id,
+                        "child_run_id": child_job_run_id,
+                        "job_name": plan_item["job_name"],
+                        "sequence": sequence,
+                    },
                 )
+                threading.Thread(
+                    target=execute_job_in_background,
+                    args=(job_name, child_job_run_id, params),
+                    daemon=False,
+                ).start()
             except Exception as error:
                 dispatch_failures += 1
                 logger.error(
@@ -154,7 +159,7 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                     )
 
             if index < dispatch_count - 1:
-                await asyncio.sleep(settings.REFRESH_DISPATCH_INTERVAL_SECONDS)
+                time.sleep(settings.REFRESH_DISPATCH_INTERVAL_SECONDS)
 
         with get_db_session() as db:
             job_repository = JobRepository(db)
@@ -185,6 +190,13 @@ async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) 
                 message=str(error),
                 completed_at=datetime.utcnow(),
             )
+
+
+async def dispatch_full_refresh(parent_run_id: str, plan: List[Dict[str, Any]]) -> None:
+    """
+    Async wrapper around dispatch_full_refresh_sync for use from async contexts.
+    """
+    await asyncio.to_thread(dispatch_full_refresh_sync, parent_run_id, plan)
 
 
 def build_trigger_response(plan: List[Dict[str, Any]], parent_run_id: str, started_at: datetime) -> FullImpactRefreshTriggerResponse:
