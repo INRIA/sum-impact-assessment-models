@@ -1,57 +1,111 @@
-# sum-impact-assessment-models
-SUM impact assessment models
+# SUM Impact Assessment Models
 
-# Introduction
-The library contains different models to analyse living labs' measures and KPIs. The models will provide analytic data to analyse and study the impact of the measures implemented in the Living Labs.
+A library of models to analyse Living Labs' measures and KPIs, plus a FastAPI
+service that exposes the results. It provides the analytic data used to study
+the impact of the measures implemented in the Living Labs.
 
-The results are expected to be displayed in a graphical interface, through a web application connected to SUM Open Data Platform : sum-odp.eu 
+Results are intended to be displayed in a web application connected to the
+SUM Open Data Platform: [sum-odp.eu](https://sum-odp.eu).
 
-# Features
-The models execute the following analysis : 
-- the impact analysis evaluates the effects of measures on specific outcomes (e.g. social, economic)
-- the multi-criteria decision analysis based on Promethee-Gaia methodology, compares and ranks alternatives based on multiple weighted criteria.
+> **This repository is one of three components** that make up the production platform — see [The production platform](#the-production-platform) below.
 
-The model requires the following information : 
-- Living labs
+## What it provides
+
+- **Impact analysis** — evaluates the effects of measures on specific outcomes
+  (e.g. social, economic).
+- **Multi-criteria decision analysis (MCDA)** — based on the Promethee-Gaia
+  methodology, compares and ranks alternatives against multiple weighted criteria.
+- **A FastAPI service** to trigger these analyses as jobs and serve KPI data
+  from the MySQL database.
+
+The models require the following inputs:
+- Living Labs
 - New Shared Modes measures implemented by Living Labs
-- Normalized variatons of KPIs values (comparison before and after values), for every Living Lab
+- Normalized variations of KPI values (before/after comparison), per Living Lab
 
-# How to contribute
+---
 
-## Local installation for development
+## The production platform
 
-Ensure you have Python installed (recommended: Python 3.13+).
+The live product, **[odp.sum-project.eu](https://odp.sum-project.eu)**, is built from three coupled web services that share a single MySQL database and run as containers on one managed server. 
 
-1. Clone the repository
-2. Create an environment
-3. Install the necessary packages
-4. Create experiments and run the models
-5. Analyze the results
+| Component | Repository | Owner | Role |
+| :--- | :--- | :--- | :--- |
+| **Public website + Living Lab editor space** | [INRIA/inocs-sum-odp-webapp](https://github.com/INRIA/inocs-sum-odp-webapp) | INRIA | Public consultation surface and the authenticated space where Living Lab cities submit measures and KPI results. Served at `odp.sum-project.eu`. |
+| **Administration back-office** | [SUM-project/SUM-Open-data-Platform](https://github.com/SUM-project/SUM-Open-data-Platform) | UTwente | Editorial / moderation back-office used by consortium administrators. Served at `odp-admin.sum-project.eu`. |
+| **Impact analysis API** *(this repo)* | [INRIA/sum-impact-assessment-models](https://github.com/INRIA/sum-impact-assessment-models) | INRIA | Runs the data analysis powering the platform's decision tools (MCDA / impact assessment). Internal network service — not publicly reachable. |
+
+All three components read from and write to the **shared MySQL database**, which is the single source of truth for labs, measures, KPI definitions, KPI results, users, messages and impact-analysis results. The two front-facing components additionally call the Impact analysis API over an internal HTTP interface to trigger and read analysis jobs.
+
+The platform has one external dependency: the **Eurostat GISCO** geocoding service, queried server-side by the webapp to autocomplete a Living Lab's city, country and coordinates (the editor's browser never reaches GISCO directly).
+
+```mermaid
+graph TB
+    subgraph external["External users"]
+        public["Public visitors<br/>(researchers, cities, mobility providers)"]
+        ll["Living Lab editors<br/>(European cities)"]
+        admins["SUM ODP administrators<br/>(consortium moderators)"]
+    end
+
+    subgraph platform["SUM Open Data Platform"]
+        subgraph inria["INRIA-owned components"]
+            frontend["Public website with <br/>lab editor space <br/>odp.sum-project.eu"]
+            impact["Impact analysis API<br/>(Internal network service)"]
+        end
+
+        subgraph utwente["UTwente-owned component"]
+            admin["Administration back-office<br/>odp-admin.sum-project.eu"]
+        end
+
+        db[("Shared MySQL database<br/>")]
+    end
+
+    gisco["Eurostat GISCO<br/>geocoding service<br/>gisco-services.ec.europa.eu"]
+
+    public ==>|HTTPS| frontend
+    ll ==>|HTTPS, authenticated| frontend
+    admins ==>|HTTPS, authenticated| admin
+
+    frontend <--> db
+    admin <--> db
+    impact <--> db
+
+    frontend -.intranet.-> impact
+    admin -.intranet.-> impact
+
+    frontend -.Public internet.-> gisco
+```
+
+This repository is the **Impact analysis API** in the diagram above: an internal network service that reads from and writes to the shared MySQL database and is called over the intranet by the two front-facing components to trigger and read analysis jobs. It is not publicly reachable.
+
+## Tech stack
+
+- Python 3.13
+- [pipenv](https://pipenv.pypa.io/) for dependency management
+- FastAPI + Uvicorn (API)
+- SQLAlchemy + PyMySQL (MySQL access)
+- pandas / numpy / scikit-learn / pydecision (models)
+
+---
+
+## Develop locally
 
 ### 1. Clone the repository
 
-Clone the repository using the following command:
-
 ```bash
 git clone https://github.com/INRIA/sum-impact-assessment-models
+cd sum-impact-assessment-models
 ```
 
-### 2. Create an environment
+### 2. Create the environment and install dependencies
 
-Check the [Python packaging user guide](https://packaging.python.org/en/latest/tutorials/managing-dependencies/) for more information on how to manage dependencies in Python.
+On a protected/Debian system, create a virtual environment first:
 
-On Debian protected environment, create a virtual enviornment first :
-
-#### Environment with python natively
 ```bash
-python3 -m venv env && source env/bin/activate && pip install pipenv
-pip install pipenv
+python3 -m venv env && source env/bin/activate
 ```
 
-Install library pipenv to handle the environment and the dependencies.
-
-#### Environment with pipenv
-Install `pipenv`, then create and activate environment. Finally install dependencies. 
+Then use `pipenv` to manage the environment and dependencies:
 
 ```bash
 pip install pipenv
@@ -59,250 +113,202 @@ pipenv shell
 pipenv install --dev
 ```
 
-## Build and publish the package
+### 3. Configure environment variables
 
-### 1. Install dependencies
-Create environment and install pipenv, then install dependencies. 
-Finally, build the package. 
+Copy the template and fill in the values:
 
 ```bash
-pip install pipenv
-pipenv shell
-pipenv install --dev
+cp env.template .env
 ```
 
-#### 1.1. Run tests 
+Point the `DB_*` variables at the **shared dev database**. Its credentials are
+provided by the team — **never commit real credentials** to the repository.
+See [`env.template`](env.template) for every available option.
+
+### 4. Run the API
+
+```bash
+python run_api.py
+# or
+pipenv run python run_api.py
+```
+
+The API starts on `http://localhost:8000` with interactive docs at:
+
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+
+### 5. Run the tests
+
 ```bash
 pipenv run pytest
 ```
 
-#### 1.2. Build package 
-```bash
-# Build the wheel
-python3 -m build
+### Notebooks (optional)
 
-# Generate the docs
-python3 build_docs.py
-```
-**The compiled wheel package .whl file will be at `./dist` folder.**
+The `demo_*.ipynb` notebooks (e.g. [`demo_impact_analysis.ipynb`](demo_impact_analysis.ipynb),
+[`demo_mcda.ipynb`](demo_mcda.ipynb)) were used during development and debugging
+with the different teams to launch an analysis quickly without going through the
+API. They are handy for exploring the models interactively. Run them inside the
+pipenv environment (the dev dependencies include `ipykernel`).
 
+---
 
-```bash
-# OPTIONAL : clean and reset the build files 
-rm -rf build dist *.egg-info
-```
+## API endpoints
 
-#### 1.3. Build the doc files 
-```bash
-# Generate the docs
-python3 build_docs.py
-```
+Authenticated endpoints expect the API key in a request header (see
+[`env.template`](env.template)).
 
-**The documentation will be at `./docs` folder.**
+| Endpoint            | Auth                                    | Description                                              |
+| ------------------- | --------------------------------------- | -------------------------------------------------------- |
+| `GET /health`       | public                                  | Health check — verifies the API is running.              |
+| `GET /kpis`         | `INTERNAL_API_KEY`                      | Retrieve all KPI definitions from the database.          |
+| `/jobs/*`           | `INTERNAL_API_KEY`                      | Trigger, list and inspect analysis job runs.             |
+| `/jobs` (admin)     | `ADMIN_REFRESH_API_KEY` + IP allowlist  | Admin full impact-refresh routes.                        |
+| `/simulation/*`     | `INTERNAL_API_KEY`                      | Simulation endpoints — **disabled when `ENV=production`**. |
 
-## Run the API Server
-
-The project includes a lightweight FastAPI-based API to trigger data analysis jobs and retrieve KPI data from MySQL database.
-
-### 1. Configure environment variables
-
-Copy the example environment file and configure your database credentials:
+Example:
 
 ```bash
-cp .env.example .env
-```
-
-Edit `.env` with your database configuration:
-
-```bash
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=your_database_user
-DB_PASSWORD=your_database_password
-DB_NAME=sum_odp
-
-# API Configuration
-API_HOST=0.0.0.0
-API_PORT=8000
-```
-
-### 2. Install API dependencies
-
-If not already done, install the API dependencies:
-
-```bash
-pipenv install
-```
-
-### 3. Start the API server
-
-Run the API server using the provided script:
-
-```bash
-python run_api.py
-```
-
-Or using pipenv:
-
-```bash
-pipenv run python run_api.py
-```
-
-The API will start on `http://localhost:8000`
-
-### 4. Access API documentation
-
-Once the server is running, you can access:
-
-- **Interactive API docs (Swagger UI):** http://localhost:8000/docs
-- **Alternative API docs (ReDoc):** http://localhost:8000/redoc
-
-### 5. Available API endpoints
-
-- `GET /health` - Health check endpoint to verify the API is running
-- `GET /kpis` - Retrieve all KPI definitions from the database
-
-### Example API requests
-
-**Health check:**
-```bash
+# Public health check
 curl http://localhost:8000/health
 ```
 
-**Get all KPIs:**
-```bash
-curl http://localhost:8000/kpis
-```
+Explore the full, always-up-to-date contract at `/docs`.
 
-## Build and Push Docker Image
+---
 
-The project includes CI/CD automation to build and publish Docker images to GitLab Container Registry.
+## Dependency management
 
-### Version Management
-
-The API version is managed through semantic versioning in `src/sum_impact_assessment/__version__.py`:
-
-```python
-__version__ = "0.0.0"  # MAJOR.MINOR.PATCH
-```
-
-**To release a new version:**
-
-1. Update the version number in `src/sum_impact_assessment/__version__.py`
-2. Commit the version change
-3. Trigger the Docker build workflow (see below)
-
-Follow [semantic versioning](https://semver.org/) guidelines:
-- **MAJOR**: Breaking changes
-- **MINOR**: New features, backward compatible
-- **PATCH**: Bug fixes, backward compatible
-
-### Requirements Management
-
-The project uses `pipenv` for dependency management but generates `requirements.txt` for Docker builds.
-
-**After installing new packages:**
+The project uses `pipenv`, but Docker builds install from `requirements.txt`.
+After changing dependencies, regenerate it and commit both lockfiles:
 
 ```bash
-# Install a new package
 pipenv install <package-name>
-
-# Regenerate requirements.txt for Docker
 pipenv requirements > requirements.txt
-
-# Commit both Pipfile.lock and requirements.txt
 git add Pipfile.lock requirements.txt
 git commit -m "Add <package-name> dependency"
 ```
 
-> **Important:** Always regenerate `requirements.txt` after modifying dependencies to keep Docker builds in sync.
+> Always regenerate `requirements.txt` after modifying dependencies, or Docker
+> builds will fall out of sync.
 
-### Manual Docker Build (Local)
+---
 
-Build and test the Docker image locally before pushing to registry:
+## Versioning & release
+
+The image version comes from [`src/sum_impact_assessment/__version__.py`](src/sum_impact_assessment/__version__.py):
+
+```python
+__version__ = "0.1.0"  # MAJOR.MINOR.PATCH
+```
+
+To release a new version, follow [semantic versioning](https://semver.org/):
+
+1. Bump `__version__` (MAJOR = breaking, MINOR = new feature, PATCH = fix).
+2. Commit the change.
+3. Run the build workflow (below).
+
+---
+
+## Build & publish the Docker image (CI/CD)
+
+Images are built and published by **GitHub Actions** and pushed to the **INRIA
+GitLab Container Registry**.
+
+- Workflow: [`.github/workflows/docker-build.yml`](.github/workflows/docker-build.yml)
+  — *Build and Push Docker image to GitLab Registry* (manual trigger,
+  `workflow_dispatch`).
+- A separate workflow ([`test.yml`](.github/workflows/test.yml)) runs the test
+  suite on every push / PR to `main`.
+
+**Image name:** `inocs-sum-odp-impact-api`
+
+**Registry:** `registry.gitlab.inria.fr/inocs-lab/inocs-sum-docker-images/inocs-sum-odp-impact-api`
+([container registry](https://gitlab.inria.fr/inocs-lab/inocs-sum-docker-images/container_registry/4463))
+
+### Required GitHub configuration
+
+Set these under **Settings → Secrets and variables → Actions**:
+
+**Secrets**
+- `GITLAB_REGISTRY` — `registry.gitlab.inria.fr`
+- `GITLAB_USER` — GitLab (deploy) token username
+- `GITLAB_PASSWORD` — GitLab (deploy) token / access token
+
+**Variables**
+- `GITLAB_PROJECT_PATH` — `inocs-lab/inocs-sum-docker-images`
+
+### Run the workflow
+
+1. Go to the **Actions** tab.
+2. Select **Build and Push Docker image to GitLab Registry**.
+3. **Run workflow** and pick the branch.
+
+The workflow runs the tests, extracts the version, then builds and pushes two tags:
+
+- `…/inocs-sum-odp-impact-api:<version>` (e.g. `:0.1.0`)
+- `…/inocs-sum-odp-impact-api:latest`
+
+### Build & run locally
 
 ```bash
-# Build the image
-docker build -t sum-impact-api:local .
+# Build
+docker build -t inocs-sum-odp-impact-api:local .
 
-# Run the container
+# Run
 docker run -p 8000:8000 \
   -e DB_HOST=host.docker.internal \
   -e DB_PORT=3306 \
   -e DB_USER=your_user \
   -e DB_PASSWORD=your_password \
   -e DB_NAME=sum_odp \
-  sum-impact-api:local
+  -e INTERNAL_API_KEY=your_key \
+  inocs-sum-odp-impact-api:local
 
-# Test the health endpoint
 curl http://localhost:8000/health
 ```
 
-### CI/CD Workflow (GitHub Actions)
-
-The project uses GitHub Actions to automatically build and push Docker images to GitLab Container Registry.
-
-**Workflow file:** `.github/workflows/docker-build.yml`
-
-**Prerequisites:**
-
-Configure the following secrets and variables in your GitHub repository:
-
-**Secrets (Settings → Secrets and variables → Actions → Secrets):**
-- `GITLAB_REGISTRY` - GitLab Container Registry URL (e.g., `registry.gitlab.com`)
-- `GITLAB_USER` - GitLab username or deploy token username
-- `GITLAB_PASSWORD` - GitLab access token or deploy token password
-
-**Variables (Settings → Secrets and variables → Actions → Variables):**
-- `GITLAB_PROJECT_PATH` - GitLab project path (e.g., `inria/sum-odp`)
-
-**Trigger the workflow:**
-
-1. Go to **Actions** tab in GitHub repository
-2. Select **"Build and Push Docker image to GitLab Registry"**
-3. Click **"Run workflow"**
-4. Select branch and click **"Run workflow"**
-
-**Workflow steps:**
-
-1. **Test** - Runs full test suite with pytest
-2. **Version** - Extracts version from `__version__.py`
-3. **Build** - Builds multi-stage Docker image and pushes with two tags:
-   - `<registry>/<project>/<image>:<version>` (e.g., `registry.gitlab.com/inria/sum-odp/inocs-sum-odp-api:0.0.0`)
-   - `<registry>/<project>/<image>:latest`
-
-**Pull the image from GitLab:**
+### Pull the published image
 
 ```bash
-# Login to GitLab Container Registry
-docker login registry.gitlab.com
-
-# Pull specific version
-docker pull registry.gitlab.com/inria/sum-odp/inocs-sum-odp-api:0.0.0
-
-# Pull latest
-docker pull registry.gitlab.com/inria/sum-odp/inocs-sum-odp-api:latest
+docker login registry.gitlab.inria.fr
+docker pull registry.gitlab.inria.fr/inocs-lab/inocs-sum-docker-images/inocs-sum-odp-impact-api:latest
 ```
 
-### Docker Image Details
+### Image details
 
-**Base image:** `python:3.13-slim`
+- Base: `python:3.13-slim`, multi-stage build for a small image.
+- Runs as a non-root user (`appuser`).
+- Exposes port `8000` and defines a `HEALTHCHECK` on `/health`.
+- All configuration is via environment variables — see [`env.template`](env.template).
 
-**Features:**
-- Multi-stage build for optimized image size
-- Non-root user (`appuser`) for security
-- Health check on `/health` endpoint
-- Exposed port: `8000`
-- Automatic dependency installation from `requirements.txt`
+---
 
-**Environment variables:**
+## Deploy
 
-All configuration is done via environment variables. See `.env.example` for available options.
+The published image is self-contained: pull it from the registry and run it with
+the required environment variables (`DB_*`, `INTERNAL_API_KEY`,
+`ADMIN_REFRESH_API_KEY`, `ADMIN_REFRESH_ALLOWED_IPS`, `ENV`, `LOG_*`). Set
+`ENV=production` to disable the simulation endpoints.
 
-**Image tags:**
+Any container platform works (plain `docker run`, Compose, Kubernetes, …). The
+generic flow is:
 
-- `<version>` - Immutable version tag (e.g., `0.0.0`, `1.2.3`)
-- `latest` - Always points to the most recent build
+1. Configure the platform with credentials for the GitLab registry.
+2. Point the deployment at `registry.gitlab.inria.fr/inocs-lab/inocs-sum-docker-images/inocs-sum-odp-impact-api:latest`
+   (or a pinned `:<version>`).
+3. Provide the environment variables above.
+4. Expose the container's port `8000`.
 
+> **Current setup:** the service is deployed with **CapRover**, using the
+> "Deploy from image name" method pointed at the registry image, with the
+> environment variables configured in the CapRover app. This is noted for
+> context only — the image is platform-agnostic, so migrating to another tool
+> only means reproducing the steps above.
 
+---
+
+## License
+
+See [LICENSE](LICENSE).
