@@ -75,6 +75,11 @@ class AnalysisDataRepository:
         """
         logger.debug("Fetching KPI groups from database")
 
+        # Only include KPI definitions that have at least two living labs
+        # with at least two KPI result records each (comparable before/after values).
+        # The inner subquery finds (kpidefinition_id, living_lab_id) pairs with
+        # COUNT(*) >= 2, then we keep kpidefinition_id values that appear for at
+        # least two distinct living_lab_id entries.
         query = text("""
             SELECT 
                 c.id,
@@ -94,7 +99,19 @@ class AnalysisDataRepository:
             INNER JOIN kpidefinitions k ON kc.kpidefinition_id = k.id
             LEFT JOIN kpidefinitions kp on k.parent_kpi_id  = kp.id
             WHERE c.`type` = :category_type
-            AND k.id IN (SELECT kr.kpidefinition_id  from kpiresults kr)
+            AND k.id IN (
+                SELECT kp_id FROM (
+                    SELECT kpidefinition_id AS kp_id
+                    FROM (
+                        SELECT kpidefinition_id, living_lab_id, COUNT(*) AS recs
+                        FROM kpiresults
+                        GROUP BY kpidefinition_id, living_lab_id
+                        HAVING COUNT(*) >= 2
+                    ) per_lab
+                    GROUP BY kpidefinition_id
+                    HAVING COUNT(*) >= 2
+                ) valid_kpis
+            )
         """)
         result = self.session.execute(query, {'category_type': category_type})
 
