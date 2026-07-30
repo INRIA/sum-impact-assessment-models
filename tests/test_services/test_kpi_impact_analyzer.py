@@ -94,6 +94,16 @@ class TestFilterMeasuresWithMinImplementations:
         assert X_f.shape[1] == 0
         assert kept == []
 
+    def test_no_feasible_living_labs_returns_empty_filter_result(self):
+        analyzer = self._analyzer()
+        X = np.array([], dtype=int)
+        measures = [make_measure("m1"), make_measure("m2")]
+
+        X_f, kept = analyzer.filter_measures_with_min_implementations(X, measures)
+
+        assert X_f.size == 0
+        assert kept == []
+
     def test_does_not_mutate_input_measures_list(self):
         analyzer = self._analyzer()
         X = np.array([[1, 1], [0, 0]])

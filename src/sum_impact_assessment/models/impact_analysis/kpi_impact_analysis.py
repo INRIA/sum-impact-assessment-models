@@ -205,6 +205,15 @@ class KPIImpactAnalyzer:
         - X_filtered (numpy array): X with single-lab-or-never columns removed
         - kept_measures (list): measure objects for the retained columns
         """
+        if X is None:
+            return np.empty((0, 0), dtype=int), []
+
+        if X.size == 0:
+            return np.empty((0, 0), dtype=X.dtype), []
+
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+
         # Count non-zero entries per column (number of labs implementing each measure)
         labs_per_measure = np.count_nonzero(X, axis=0)
         keep_mask = labs_per_measure >= min_labs
