@@ -1,8 +1,10 @@
 from ...schemas.impact_analysis import MeasureImpactCoefficient, LivingLabImpactError, KPIGroupImpactOutput
 from ...schemas.core import LivingLab, Measure, KPILivingLabResult, KPIGroup
 import numpy as np
+import logging
 from sklearn.linear_model import ridge_regression
 from enum import Enum
+logger = logging.getLogger(__name__)
 
 
 class KPIAnalysisParam(Enum):
@@ -46,6 +48,14 @@ class KPIImpactAnalyzer:
         - feasible_ll (list[LivingLab]): list of living labs used in the analysis
         - kpi_group (KPIGroup): the same KPI group passed as input
         '''
+        # Log basic context to help diagnose empty input cases
+        logger.debug(
+            "compute_X_y_input: group=%s id=%s kpi_ids=%s transport_filter=%s measures_count=%d living_labs=%d",
+            getattr(kpi_group, "name", None), getattr(kpi_group, "id", None),
+            getattr(kpi_group, "kpi_ids", None), getattr(kpi_group, "transport_mode_type_filter", None),
+            len(self.measures), len(self.living_labs),
+        )
+
         # Initialise data matrix X and target vector y
         n_living_labs = len(self.living_labs)
         X_rows = []  # Rows of data matrix X
@@ -61,6 +71,15 @@ class KPIImpactAnalyzer:
                 kpi for kpi in lab.kpis if kpi.id in kpi_group.kpi_ids
                 ]
 
+            # Defensive check: empty KPI group means analysis cannot proceed
+            if not getattr(kpi_group, "kpi_ids", None):
+                logger.warning(
+                    "compute_X_y_input: KPI group %s (%s) has no KPI ids; cannot compute X/y",
+                    getattr(kpi_group, "id", None), getattr(kpi_group, "name", None),
+                )
+                # return empty matrices to let the caller handle the empty case
+                return np.empty((0, len(self.measures)), dtype=int), np.empty((0,), dtype=float), [], kpi_group
+
             if kpi_group.transport_mode_type_filter:
                 mode_filters = {
                     mode.strip().lower() for mode in kpi_group.transport_mode_type_filter
@@ -70,7 +89,12 @@ class KPIImpactAnalyzer:
                     if (kpi.transport_mode_type or '').strip().lower() in mode_filters
                 ]
             
-            if len(measured_kpis_in_lab)/len(kpi_group.kpi_ids) >= KPIAnalysisParam.MIN_PERC_MEASURED_KPI_IN_GROUP.value:
+            # Compute measured fraction safely (denominator guarded above)
+            measured_count = len(measured_kpis_in_lab)
+            total_kpis = len(kpi_group.kpi_ids)
+            measured_fraction = measured_count / total_kpis if total_kpis else 0.0
+
+            if measured_fraction >= KPIAnalysisParam.MIN_PERC_MEASURED_KPI_IN_GROUP.value:
                 # Add living lab to list of feasible leaving labs
                 feasible_ll.append(lab)
 
@@ -86,10 +110,24 @@ class KPIImpactAnalyzer:
                     kpi.abs_variation for kpi in measured_kpis_in_lab
                     )
                 y_rows.append(variation)
-        
+                logger.debug(
+                    "compute_X_y_input: included lab=%s measured=%d/%d variation=%s",
+                    lab.id, measured_count, total_kpis, variation
+                )
+            else:
+                logger.warning(
+                    "compute_X_y_input: KPI group=%s,%s excluded lab=%s measured=%d/%d threshold=%s",
+                    kpi_group.id, kpi_group.name, lab.id, measured_count, total_kpis, KPIAnalysisParam.MIN_PERC_MEASURED_KPI_IN_GROUP.value,
+                )
+
         # Convert to X and y to numpy arrays
         X = np.array(X_rows, dtype=int)
         y = np.array(y_rows, dtype=float)
+        
+        logger.info(
+            "compute_X_y_input: result feasible_labs=%d X_rows=%d y_rows=%d X_shape=%s",
+            len(feasible_ll), len(X_rows), len(y_rows), X.shape,
+        )
         
         return X, y, feasible_ll, kpi_group
     

@@ -114,6 +114,22 @@ class TestFilterMeasuresWithMinImplementations:
 
         assert len(measures) == original_len
 
+    def test_compute_X_y_input_returns_empty_when_kpi_group_has_no_kpis(self):
+        analyzer = KPIImpactAnalyzer(
+            living_labs=[make_lab("lab_a", ["k1"], ["m1"])],
+            measures=[make_measure("m1")],
+            kpis=[],
+            kpi_groups=[],
+        )
+        group = KPIGroup(id="g1", name="g1", kpi_ids=[])
+
+        X, y, feasible_ll, returned_group = analyzer.compute_X_y_input(group)
+
+        assert X.shape == (0, 1)
+        assert y.shape == (0,)
+        assert feasible_ll == []
+        assert returned_group == group
+
 
 # ---------------------------------------------------------------------------
 # run_analysis_group — example 1 and 2
